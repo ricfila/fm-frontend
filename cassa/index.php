@@ -1,7 +1,8 @@
 <!doctype html>
 <html lang="it"><!-- Ausilio alle casse - Versione 1.2 - Marzo 2024 -->
 <head>
-	<?php include "php/bootstrap.php" ?>
+	<base href="../" />
+	<?php include "../bootstrap.php" ?>
 	<title>Ausilio alle casse</title>
 	<link rel="icon" type="image/png" href="media/heart-fill.png" />
 </head>
