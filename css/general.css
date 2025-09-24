@@ -1,4 +1,9 @@
 
+.navbar {
+	padding-top: 0.4rem !important;
+	padding-bottom: 0.4rem !important;
+}
+
 .colonnadx {
 	padding: 20px 40px 0px 40px;
 }
