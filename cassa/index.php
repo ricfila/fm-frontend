@@ -1,9 +1,9 @@
-<!doctype html>
-<html lang="it"><!-- Ausilio alle casse - Versione 1.2 - Marzo 2024 -->
+<!DOCTYPE html>
+<html lang="it">
 <head>
 	<base href="../" />
 	<?php include "../bootstrap.php" ?>
-	<title>Ausilio alle casse</title>
+	<title>Cassa - Festival Management</title>
 	<link rel="icon" type="image/png" href="media/heart-fill.png" />
 </head>
 <!--
@@ -12,29 +12,12 @@ DA FARE:
 * Correggere il totale: per gli ordini omaggio il totale deve restare 0 anche dopo la modifica
 -->
 <body style="height: 100vh;">
-<?php
-if (isset($_GET['logout'])) {
-	unset($_COOKIE['logincasse']);
-	setcookie('logincasse', '', time() -1);
-	setcookie('login', '', time() -1);
-	header('Location: ' . $_SERVER['PHP_SELF']);
-}
-
-if (isset($_POST['pwd']) && $_POST['pwd'] == $pwd_ausilio) {
-	setcookie('logincasse', $_POST['nome'], time() + 60 * 60 * 24 * 365 * 2);
-	header('Location: ' . $_SERVER['PHP_SELF']);
-}
-
-if (isset($_COOKIE['logincasse'])) {
-	setcookie('login', '1', time() + 60 * 60 * 24 * 365);
-	setcookie('logincasse', $_COOKIE['logincasse'], time() + 60 * 60 * 24 * 365 * 2);
-	?>
 	<audio id="wxp" src="media/wxp.mp3" preload="auto"></audio>
 	<audio id="sallarme" src="media/allarme.wav" preload="auto"></audio>
 	<div class="container-lg h-100" style="padding-top: 67px; max-width: 100%;">
 		<nav class="fixed-top navbar navbar-expand-lg navbar-dark bg-danger">
 			<div class="container-lg">
-				<span class="navbar-brand"><i class="bi bi-heart-fill"></i> Ausilio alle casse <i class="bi bi-<?php echo $lido; ?>-circle"></i></span>
+				<span class="navbar-brand"><i class="bi bi-heart-fill"></i> Cassa <i class="bi bi-<?php echo $lido; ?>-circle"></i></span>
 				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
 					<span class="navbar-toggler-icon"></span>
 				</button>
@@ -43,10 +26,14 @@ if (isset($_COOKIE['logincasse'])) {
 					<ul class="navbar-nav me-auto">
 						<?php menuturno(); ?>
 						<li class="nav-item">
-							<a class="nav-link" href="<?php echo $_SERVER['PHP_SELF']; ?>?logout=1"><i class="bi bi-person-fill"></i> <?php echo $_COOKIE['logincasse']; ?></a>
+							<a class="nav-link" href="<?php echo $_SERVER['PHP_SELF']; ?>?logout=1"><i class="bi bi-person-fill"></i> <?php //echo $_COOKIE['logincasse']; ?></a>
 						</li>
 					</ul>
-					<?php navdx(); ?>
+					<ul class="navbar-nav">
+						<li class="nav-item">
+							<span class="nav-link" style="cursor:pointer;" onclick="logout();"><i class="bi bi-box-arrow-right"></i> Logout</span>
+						</li>
+					</ul>
 				</div>
 			</div>
 		</nav>
@@ -112,6 +99,7 @@ if (isset($_COOKIE['logincasse'])) {
 					</div>
 				</div>
 	<?php
+	/*
 	include "php/toast.php";
 	include "php/menuturno.php";
 	include "php/strumenti/modificaordine.php";
@@ -119,9 +107,10 @@ if (isset($_COOKIE['logincasse'])) {
 	include "php/strumenti/chiudicassa.php";
 	include "php/strumenti/bonifica.php";
 	include "php/strumenti/ingredienti.php";
+	*/
 	?>
-	<script src="js/ordinirecenti.js"></script>
-	<script src="js/ultimevendite.js"></script>
+	<!--script src="js/ordinirecenti.js"></script-->
+	<!--script src="js/ultimevendite.js"></script-->
 				<div id="tabstatistiche" class="tab-pane fade flex-column">
 					<div class="tab-content flex-grow-1 colonnadx h-100"><div class="d-flex h-100 flex-column">
 						<div class="row">
@@ -141,7 +130,7 @@ if (isset($_COOKIE['logincasse'])) {
 				<div id="tabdatabase" class="tab-pane fade flex-column">
 					<div class="tab-content flex-grow-1 colonnadx" style="overflow-y: auto;">
 						<h4><i class="bi bi-clipboard-check"></i> Azioni di bonifica del database</h4><hr>
-						<?php echo azionibonifica(); ?><br>
+						<?php //echo azionibonifica(); ?><br>
 					</div>
 				</div>
 				<div id="tabingredienti" class="tab-pane fade flex-column">
@@ -164,6 +153,14 @@ if (isset($_COOKIE['logincasse'])) {
 	</div>
 	
 	<script>
+	$(document).ready(function() {
+		const token = localStorage.getItem('jwt_token');
+		if (!token) {
+			setCookie('login_redirect', 'cassa/');
+			window.location.href = 'login/';
+		}
+	});
+
 	function accessoalturno() {
 		var out = '<div class="row"><div class="col-auto"><h4><i class="bi bi-clock-history"></i> Ordini recenti</h4></div><div class="col"><button class="btn btn-light" onclick="ultimiordini();"><i class="bi bi-arrow-clockwise"></i> Aggiorna</button></div></div><hr>';
 		out += '<small>Legenda:&emsp;<span class="badge rounded-pill bg-success">&emsp;</span>&nbsp;Servito in sala&emsp;<span class="badge rounded-pill bg-info">&emsp;</span>&nbsp;Asporto&emsp;<i class="bi bi-cart3"></i>&nbsp;Ordinato&emsp;<i class="bi bi-check-circle"></i>&nbsp;Evaso</small><br><br><div id="bodyhome"></div>';
@@ -186,50 +183,6 @@ if (isset($_COOKIE['logincasse'])) {
 		tab.show();
 	}
 	</script>
-	
-<?php
-} else {
-?>
-	<div class="container" style="max-width: 500px;"><center>
-		<br>
-		<h3><i class="bi bi-heart-fill"></i> Ausilio alle casse</h3>
-		<p>Questa è un'area riservata.<br>Per potervi accedere inserisci la password:</p>
-		<div id="login"></div>
-		<p class="text-danger" id="err1"></p>
 
-		<script>
-			$.getJSON("php/ajaxcasse.php?a=listacasse")
-			.done(function(json) {
-				try {
-					let lista = '';
-					$.each(json, function(i, res) {
-						lista += '<option value="' + res + '">' + res + '</option>';
-					});
-					if (lista == '') {
-						$('#login').html('<span class="text-danger">Impossibile accedere: effettuare prima un ordine.</span>');
-					} else {
-						$('#login').html('<form method="post">\
-							<select class="form-select" name="nome">' + lista + '</select><br>\
-							<input type="password" class="form-control" placeholder="Password" name="pwd"><br>\
-							<input type="submit" class="btn btn-danger" value="Accedi">\
-						</form>');
-					}
-				} catch (err) {
-					$('#err1').html('<strong class="text-danger">Errore durante l\'analisi della richiesta:</strong> ' + json);
-				}
-			})
-			.fail(function(jqxhr, textStatus, error) {
-				$('#err1').html('<strong class="text-danger">Richiesta fallita:</strong> ' + textStatus + '<br>' + jqxhr.responseText);
-				console.log(jqxhr);
-			});
-		</script>
-		
-		<?php if (isset($_POST['pwd']))
-			echo '<span class="text-danger">La password è errata</span>';
-		?>
-	</center></div>
-<?php
-}
-?>
 </body>
 </html>

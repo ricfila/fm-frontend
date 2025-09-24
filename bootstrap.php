@@ -8,16 +8,17 @@
 <script src="js/bootstrap-5.0.2/bootstrap.bundle.min.js"></script>
 <script src="js/jquery-3.6.0.min.js"></script>
 <script src="js/chart.js"></script>
+<script src="js/general.js"></script>
 <!-- Info compilazione bootstrap:
 Il file sorgente da modificare per sovrascrivere le variabili è "bootstrap-5.0.2/scss/bootstrap.scss"
 Compilare lanciando lo script "compila.bat", che sovrascrive il file "bootstrap-5.0.2/dist/css/bootstrap.css" già importato in questa pagina.
 sass.bat e la cartella src servono al compilatore, non vanno rimossi o spostati. -->
-<link rel="stylesheet" href="css/stile.css" />
+<link rel="stylesheet" href="css/general.css" />
 
 <?php
 require 'connect.php';
 $pagina = (str_ends_with($_SERVER['PHP_SELF'], 'index.php') ? 'pannello' : (str_ends_with($_SERVER['PHP_SELF'], 'casse.php') ? 'ausilio' : 'associazioni'));
-$lido = str_ends_with($server, '1') ? 1 : 2;
+$lido = str_ends_with($api_url, '1') ? 1 : 2;
 
 // MODIFICARE QUESTI IP SE DIVERSI DAI PROPRI:
 $ipserver1 = '192.168.1.201';
