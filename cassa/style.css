@@ -1,0 +1,36 @@
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+	appearance: textfield;
+	-moz-appearance: textfield;
+}
+
+.btn-product {
+	height: 64px;
+	width: 100%;
+	background-color: var(--bg-color);
+	transition-property: -moz-filter, -ms-filter, -o-filter, -webkit-filter, filter, box-shadow;
+	transition-duration: 0.2s;
+}
+
+.btn-product:hover {
+	border: 3px var(--bs-dark) solid;
+	filter: brightness(1.15);
+}
+
+.btn-product:focus, .btn-product:active:focus, .btn-product.active:focus {
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), 0 0 0 0.25rem color-mix(in srgb, var(--bg-color) 50%, transparent);
+}
+
+.btn-product:active {
+	filter: brightness(0.95);
+}
+
+.orderrow:hover {
+	background: #DDDDDD;
+}

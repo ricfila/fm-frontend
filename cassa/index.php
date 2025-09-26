@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
+	<title>Cassa - Festival Management</title>
 	<base href="../" />
 	<?php include "../bootstrap.php" ?>
-	<title>Cassa - Festival Management</title>
+	<script src="js/session.js"></script>
+	<link rel="stylesheet" href="cassa/style.css" />
 	<link rel="icon" type="image/png" href="media/heart-fill.png" />
 </head>
 <!--
@@ -12,12 +14,14 @@ DA FARE:
 * Correggere il totale: per gli ordini omaggio il totale deve restare 0 anche dopo la modifica
 -->
 <body style="height: 100vh;">
-	<audio id="wxp" src="media/wxp.mp3" preload="auto"></audio>
-	<audio id="sallarme" src="media/allarme.wav" preload="auto"></audio>
-	<div class="container-lg h-100" style="padding-top: 67px; max-width: 100%;">
-		<nav class="fixed-top navbar navbar-expand-lg navbar-dark bg-danger">
+	<div class="container-lg h-100" style="padding-top: 53px; max-width: 100%;">
+		<nav class="fixed-top navbar navbar-expand-md navbar-dark bg-danger">
 			<div class="container-lg">
-				<span class="navbar-brand"><i class="bi bi-heart-fill"></i> Cassa <i class="bi bi-<?php echo $lido; ?>-circle"></i></span>
+				<span class="navbar-brand">
+					<i class="bi bi-heart-fill"></i>&nbsp;
+					<span class="username"></span>&nbsp;
+					<i class="bi bi-<?php echo $lido; ?>-circle"></i>
+				</span>
 				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
 					<span class="navbar-toggler-icon"></span>
 				</button>
@@ -25,9 +29,6 @@ DA FARE:
 				<div class="collapse navbar-collapse" id="navbarColor01">
 					<ul class="navbar-nav me-auto">
 						<?php menuturno(); ?>
-						<li class="nav-item">
-							<a class="nav-link" href="<?php echo $_SERVER['PHP_SELF']; ?>?logout=1"><i class="bi bi-person-fill"></i> <?php //echo $_COOKIE['logincasse']; ?></a>
-						</li>
 					</ul>
 					<ul class="navbar-nav">
 						<li class="nav-item">
@@ -39,29 +40,92 @@ DA FARE:
 		</nav>
 	
 		<div class="row h-100">
-			<div class="col-3 h-100" id="colonnasx" style="display: none;">
+			<div class="col-2 h-100" id="colonnasx" style="display: none;">
 				<div class="d-flex flex-column h-100">
 					<div class="tab-content flex-grow-1" style="overflow-y: auto;">
 						<ul class="nav nav-pills" style="padding: 10px 0px 10px 0px;">
 							<li class="dropdown-header">Operazioni sugli ordini</li>
-								<li class="nav-item w-100 ml-2" style="margin-left: 15px;"><a class="linkcasse nav-link active" data-bs-toggle="tab" data-bs-target="#tabordinirecenti" href="#"><i class="bi bi-clock-fill"></i> Ordini recenti</a></li>
+								<li class="nav-item w-100 ml-2" style="margin-left: 15px;"><a class="linkcasse nav-link active" data-bs-toggle="tab" data-bs-target="#tabneworder" href="#"><i class="bi bi-file-earmark-plus-fill"></i> Nuovo ordine</a></li>
+								<li class="nav-item w-100 ml-2" style="margin-left: 15px;"><a class="linkcasse nav-link" data-bs-toggle="tab" data-bs-target="#tabordinirecenti" href="#"><i class="bi bi-clock-fill"></i> Ordini recenti</a></li>
 								<li class="nav-item w-100" style="margin-left: 15px;"><a class="linkcasse nav-link" data-bs-toggle="tab" data-bs-target="#tabmodificaordine" href="#"><i class="bi bi-pencil-fill"></i> Modifica ordine</a></li>
 							<li><hr class="dropdown-divider" /></li>
 							<li class="dropdown-header">Resoconti</li>
 								<li class="nav-item w-100" style="margin-left: 15px;"><a class="linkcasse nav-link" data-bs-toggle="tab" data-bs-target="#tabultimevendite" href="#"><i class="bi bi-cart-fill"></i> Ultime vendite</a></li>
-								<li class="nav-item w-100" style="margin-left: 15px;"><a class="linkcasse nav-link" data-bs-toggle="tab" data-bs-target="#tabstatistiche" href="#"><i class="bi bi-bar-chart-fill"></i> Statistiche sul servizio</a></li>
+								<li class="nav-item w-100" style="margin-left: 15px;"><a class="linkcasse nav-link" data-bs-toggle="tab" data-bs-target="#tabstatistiche" href="#"><i class="bi bi-bar-chart-fill"></i> Statistiche</a></li>
 								<li class="nav-item w-100" style="margin-left: 15px;"><a class="linkcasse nav-link" data-bs-toggle="tab" data-bs-target="#tabchiudicassa" href="#"><i class="bi bi-printer-fill"></i> Stampa rapporti</a></li>
 							<li class="dropdown-header">Gestione del sistema</li>
 								<li class="nav-item w-100" style="margin-left: 15px;"><a class="linkcasse nav-link" data-bs-toggle="tab" data-bs-target="#tabdatabase" href="#"><i class="bi bi-clipboard-check-fill"></i> Bonifica database</a></li>
-								<li class="nav-item w-100" style="margin-left: 15px;"><a class="linkcasse nav-link" data-bs-toggle="tab" data-bs-target="#tabingredienti" href="#"><i class="bi bi-list-task"></i> Anagrafica ingredienti</a></li>
+								<li class="nav-item w-100" style="margin-left: 15px;"><a class="linkcasse nav-link" data-bs-toggle="tab" data-bs-target="#tabingredienti" href="#"><i class="bi bi-list-task"></i> Ingredienti</a></li>
 						</ul>
 					</div>
 				</div>
 			</div>
 			<div class="col h-100 tab-content p-0">
-				<div id="tabordinirecenti" class="tab-pane fade show active flex-column d-flex h-100">
-					<div id="start" class="tab-content flex-grow-1 colonnadx" style="overflow-y: auto;">
-						<div style="text-align: center; width: 100%;" id="avvio"></div>
+				<div id="tabneworder" class="tab-pane fade flex-column active show d-flex h-100">
+					<div class="tab-content flex-grow-1 colonnadx h-100">
+						<div class="d-flex h-100 flex-column">
+							<div class="row mb-2">
+								<div class="col-md-4 me-md-5">
+									<div class="row">
+										<div class="col-4 my-auto">Nome cliente:</div>
+										<div class="col-8"><input id="customer" type="text" class="form-control form-control-sm d-inline mb-1" maxlength="31"></div>
+									</div>
+									<div class="row">
+										<div class="col-4 my-auto">Coperti:</div>
+										<div class="col-4"><input id="guests" type="number" class="form-control form-control-sm d-inline" min="0"></div>
+										<div class="col-4 my-auto">
+											<div class="form-check"><input class="form-check-input" type="checkbox" id="is_take_away"><label class="form-check-label" for="is_take_away">Asporto</label></div>
+										</div>
+									</div>
+								</div>
+								<div class="col-md">
+									<div class="row">
+										<div class="col-auto my-auto">
+											<div class="form-check"><input class="form-check-input" type="checkbox" id="is_fast_order"><label class="form-check-label" for="is_fast_order">Cassa veloce</label></div>
+										</div>
+										<div class="col-auto my-auto">Tavolo:</div>
+										<div class="col"><input id="table" type="text" class="form-control form-control-sm d-inline mb-1" maxlength="31"></div>
+										<div class="col-4 my-auto">
+											<div class="form-check"><input class="form-check-input" type="checkbox" id="is_voucher"><label class="form-check-label" for="is_voucher">Ordine omaggio</label></div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-auto">Note:</div>
+										<div class="col"><input id="notes" type="text" class="form-control form-control-sm d-inline mb-1" maxlength="63"></div>
+									</div>
+								</div>
+							</div>
+							<div class="row d-flex" style="overflow-x: hidden;">
+								<div class="col-6 h-100 ps-3 pb-3" id="productList" style="overflow-y: scroll;">
+									<div class="row">
+										<div class="col-auto spinner-border m-3"></div>
+										<div class="col my-auto">Caricamento in corso...</div>
+									</div>
+								</div>
+								<div class="col-6 h-100 d-flex flex-column">
+									<div id="orderProducts" class="px-3 flex-fill" style="overflow-x: hidden; overflow-y: auto;"></div>
+									<div class="p-3" style="bottom: 0px;">
+										<button class="btn btn-success">Salva</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div id="tabordinirecenti" class="tab-pane fade flex-column">
+					<div class="tab-content flex-grow-1 colonnadx" style="overflow-y: auto;">
+						<div class="row">
+							<div class="col-auto">
+								<h4><i class="bi bi-clock-history"></i> Ordini recenti</h4>
+							</div>
+							<div class="col">
+								<button class="btn btn-light" onclick="ultimiordini();"><i class="bi bi-arrow-clockwise"></i> Aggiorna</button>
+							</div>
+						</div>
+						<hr>
+						<small>Legenda:&emsp;<span class="badge rounded-pill bg-success">&emsp;</span>&nbsp;Servito in sala&emsp;<span class="badge rounded-pill bg-info">&emsp;</span>&nbsp;Asporto&emsp;<i class="bi bi-cart3"></i>&nbsp;Ordinato&emsp;<i class="bi bi-check-circle"></i>&nbsp;Evaso</small>
+						<br><br>
+						<div id="bodyhome"></div>
 					</div>
 				</div>
 				<div id="tabmodificaordine" class="tab-pane fade flex-column">
@@ -109,17 +173,20 @@ DA FARE:
 	include "php/strumenti/ingredienti.php";
 	*/
 	?>
+	<script src="cassa/js/neworder.js"></script>
 	<!--script src="js/ordinirecenti.js"></script-->
 	<!--script src="js/ultimevendite.js"></script-->
 				<div id="tabstatistiche" class="tab-pane fade flex-column">
-					<div class="tab-content flex-grow-1 colonnadx h-100"><div class="d-flex h-100 flex-column">
-						<div class="row">
-							<div class="col-auto"><h4><i class="bi bi-bar-chart"></i> Statistiche sul servizio</h4></div>
-							<div class="col"><button class="btn btn-light" onclick="caricastatistiche('#statistichebody');"><i class="bi bi-arrow-clockwise"></i> Aggiorna</button></div>
+					<div class="tab-content flex-grow-1 colonnadx h-100">
+						<div class="d-flex h-100 flex-column">
+							<div class="row">
+								<div class="col-auto"><h4><i class="bi bi-bar-chart"></i> Statistiche sul servizio</h4></div>
+								<div class="col"><button class="btn btn-light" onclick="caricastatistiche('#statistichebody');"><i class="bi bi-arrow-clockwise"></i> Aggiorna</button></div>
+							</div>
+							<hr />
+							<div id="statistichebody" class="d-flex" style="padding-top: 0px; padding-right: 0px; padding-bottom: 0px; overflow-x: hidden;"></div>
 						</div>
-						<hr />
-						<div id="statistichebody" class="d-flex" style="padding-top: 0px; padding-right: 0px; padding-bottom: 0px; overflow-x: hidden;"></div>
-					</div></div>
+					</div>
 				</div>
 				<div id="tabchiudicassa" class="tab-pane fade flex-column">
 					<div class="tab-content flex-grow-1 colonnadx" style="overflow-y: auto;">
@@ -154,11 +221,7 @@ DA FARE:
 	
 	<script>
 	function accessoalturno() {
-		var out = '<div class="row"><div class="col-auto"><h4><i class="bi bi-clock-history"></i> Ordini recenti</h4></div><div class="col"><button class="btn btn-light" onclick="ultimiordini();"><i class="bi bi-arrow-clockwise"></i> Aggiorna</button></div></div><hr>';
-		out += '<small>Legenda:&emsp;<span class="badge rounded-pill bg-success">&emsp;</span>&nbsp;Servito in sala&emsp;<span class="badge rounded-pill bg-info">&emsp;</span>&nbsp;Asporto&emsp;<i class="bi bi-cart3"></i>&nbsp;Ordinato&emsp;<i class="bi bi-check-circle"></i>&nbsp;Evaso</small><br><br><div id="bodyhome"></div>';
-		$('#start').html(out);
 		apritab('#tabordinirecenti');
-		ultimiordini();
 	}
 	
 	$('.nav-link').on('shown.bs.tab', function () {
