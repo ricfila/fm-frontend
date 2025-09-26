@@ -153,14 +153,6 @@ DA FARE:
 	</div>
 	
 	<script>
-	$(document).ready(function() {
-		const token = localStorage.getItem('jwt_token');
-		if (!token) {
-			setCookie('login_redirect', 'cassa/');
-			window.location.href = 'login/';
-		}
-	});
-
 	function accessoalturno() {
 		var out = '<div class="row"><div class="col-auto"><h4><i class="bi bi-clock-history"></i> Ordini recenti</h4></div><div class="col"><button class="btn btn-light" onclick="ultimiordini();"><i class="bi bi-arrow-clockwise"></i> Aggiorna</button></div></div><hr>';
 		out += '<small>Legenda:&emsp;<span class="badge rounded-pill bg-success">&emsp;</span>&nbsp;Servito in sala&emsp;<span class="badge rounded-pill bg-info">&emsp;</span>&nbsp;Asporto&emsp;<i class="bi bi-cart3"></i>&nbsp;Ordinato&emsp;<i class="bi bi-check-circle"></i>&nbsp;Evaso</small><br><br><div id="bodyhome"></div>';

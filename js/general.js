@@ -1,7 +1,3 @@
-function logout() {
-	localStorage.removeItem('jwt_token');
-	window.location.href = 'login/';
-}
 
 function setCookie(cname, cvalue) {
 	const d = new Date();

@@ -46,7 +46,8 @@
 				data: $.param(formData),
 				contentType: 'application/x-www-form-urlencoded',
 				success: function(response) {
-					localStorage.setItem('jwt_token', response.access_token);
+					localStorage.setItem('fm_token', response.access_token);
+					localStorage.setItem('fm_username', formData.username)
 					page = getCookie('login_redirect');
 					window.location.href = (page != '' ? page : 'index.html');
 				},
