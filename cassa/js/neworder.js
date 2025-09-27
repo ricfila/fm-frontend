@@ -1,9 +1,8 @@
-$('.nav-pills a[data-bs-target="#tabneworder"]').on('show.bs.tab', function () {
-});
-
 $(document).ready(function() {
+	getSettings();
 	getProducts();
 	newOrder();
+	loadComponents();
 });
 
 var order = null;
@@ -11,52 +10,11 @@ var order_products = [];
 var last_products = null;
 var subcats = [];
 var subcat_products = [];
+var payment_methods = [];
 
-function getProducts() {
-	const params = {
-		offset: 0,
-		order_by: 'order',
-		only_name: false,
-		include_dates: false,
-		include_ingredients: false,
-		include_roles: false,
-		include_subcategory: true,
-		include_variants: false
-	};
-
-	$.ajax({
-		async: false,
-		url: apiUrl + '/products/',
-		type: "GET",
-		data: params,
-		headers: {
-			"Authorization": "Bearer " + token
-		},
-		success: function(response) {
-			console.log("Dati ricevuti dal backend:", response);
-			last_products = response.products;
-			loadProducts();
-		},
-		error: function(jqXHR, textStatus, errorThrown) {
-			let errorMessage = '';
-
-			if (jqXHR.status === 0) {
-				errorMessage = 'Impossibile connettersi al server. Il server potrebbe essere offline o irraggiungibile.';
-			} else if (jqXHR.status === 401) {
-				errorMessage = 'Accesso non autorizzato. Controlla il tuo token.';
-			} else if (jqXHR.status === 404) {
-				errorMessage = 'Risorsa non trovata. Controlla l\'URL della richiesta.';
-			} else if (jqXHR.status >= 500) {
-				errorMessage = 'Errore interno del server. Riprova più tardi.';
-			} else {
-				errorMessage = `Si è verificato un errore: ${textStatus} ${errorThrown}`;
-			}
-
-			$('#productList').html('<div class="alert alert-danger mt-3" role="alert">' + errorMessage + '</div>');
-			console.error("Errore AJAX:", textStatus, errorThrown, jqXHR);
-		}
-	});
-}
+var cover_charge = null;
+var receipt_header = null;
+var order_requires_confirmation = null;
 
 function loadProducts() {
 	let subcat_ids = [];
@@ -103,6 +61,7 @@ function newOrder() {
 		is_voucher: false,
 		has_tickets: true,
 		notes: null,
+		payment_method_id: payment_methods[0].id,
 		price: 0
 	};
 
@@ -114,28 +73,10 @@ function newOrder() {
 	loadOrder();
 }
 
-function loadOrder() {
-	$('#customer').val(order.customer);
-	$('#guests').val(order.guests == null ? '' : order.guests);
-	$('#is_take_away').prop('checked', order.is_take_away);
-	$('#is_fast_order').prop('checked', !order.has_tickets);
-	$('#table').val(order.table == null ? '' : order.table);
-	$('#is_voucher').prop('checked', order.is_voucher);
-	$('#notes').val(order.notes == null ? '' : order.notes);
-	checkInputDisabled();
-	loadOrderProducts();
-}
-
-function checkInputDisabled() {
-	$('#guests').prop('disabled', order.is_take_away);
-	$('#table').prop('disabled', order.is_take_away || order.has_tickets);
-}
-
 function loadOrderProducts() {
 	let out = '';
 	subcats.forEach((subcat, i) => {
 		if (order_products[i].length > 0) {
-			//out += '<div class="row mt-2"><div class="col-12" style="border-bottom: 2px solid #000;"><strong>' + subcat.name + '</strong></div></div>';
 			out += headSubcat(subcat.name);
 		}
 		order_products[i].forEach((p, j) => {
@@ -186,99 +127,53 @@ function formatPrice(p) {
 	return '&euro;&nbsp;' + ('' + p).replace(".", ",") + ((p - Math.trunc(p)) != 0 ? '0' : ',00');
 }
 
-$('#customer').change(function() {
-	order.customer = $(this).val().trim();
-});
-
-$('#guests').change(function() {
-	let val = parseInt($(this).val());
-	if (isNaN(val) || val < 0) {
-		order.guests = null;
-		$(this).val('');
-	} else {
-		order.guests = val;
+async function saveOrder() {
+	// Check products
+	let include_cover_charge = false;
+	let num_products = 0;
+	order_products.forEach((list, i) => {
+		num_products += list.length;
+		if (list.length > 0 && subcats[i].include_cover_charge) {
+			include_cover_charge = true;
+		}
+	});
+	if (num_products == 0) {
+		showToast(false, 'Nessun prodotto selezionato!', 1);
+		return;
 	}
-});
 
-$('#is_take_away').change(function() {
-	order.is_take_away = $(this).is(':checked');
-	checkInputDisabled();
-});
-
-$('#is_fast_order').change(function() {
-	order.has_tickets = !$(this).is(':checked');
-	checkInputDisabled();
-});
-
-$('#table').change(function() {
-	let val = $(this).val().trim();
-	order.table = val == '' ? null : val;
-});
-
-$('#is_voucher').change(function() {
-	order.is_voucher = $(this).is(':checked');
-	checkInputDisabled();
-	updatePrice();
-});
-
-$('#notes').change(function() {
-	let val = $(this).val().trim();
-	order.notes = val == '' ? null : val;
-});
-
-function addProd(subcat_index, prod_index) {
-	let p = order_products[subcat_index][prod_index];
-	if (p) {
-		p.quantity++;
-	} else {
-		order_products[subcat_index][prod_index] = { quantity: 1, notes: null };
+	// Check fields
+	if (order.customer.trim() == '') {
+		showToast(false, 'Inserire il nome del cliente!', 1);
+		$('#customer').focus();
+		return;
 	}
-	loadOrderProducts();
-}
+	if (!order.is_take_away && order.has_tickets && order.guests == null) {
+		showToast(false, 'Inserire il numero di coperti!', 1);
+		$('#guests').focus();
+		return;
+	}
 
-function removeProd(subcat_index, prod_index) {
-	let p = order_products[subcat_index][prod_index];
-	if (p) {
-		p.quantity--;
-		if (p.quantity <= 0) {
-			order_products[subcat_index].splice(prod_index, 1);
-			if (order_products[subcat_index].filter( element => element.id != "" ).length == 0) {
-				order_products[subcat_index] = [];
-			}
+	// Check include cover charge
+	if (order.guests != null && order.guests > 0) {
+		if (!include_cover_charge) {
+			let ok = await modalConfirm('Conferma ordine senza coperto', 'Nessun prodotto selezionato prevede il coperto, pertanto <strong>i coperti indicati verranno azzerati.</strong><br>Continuare?');
+			if (!ok) return;
+			$('#guests').val(0);
+			order.guests = 0;
+			updatePrice();
 		}
 	}
-	loadOrderProducts();
-}
 
-function addNotes(subcat_index, prod_index) {
-	let id = subcat_index + '_' + prod_index;
-	$('#tagnotes' + id).removeClass('d-none');
-	$('#btnaddnotes' + id).addClass('d-none');
-	$('#notes' + id).val('').focus();
-}
-
-function updateNotes(subcat_index, prod_index) {
-	let val = $('#notes' + subcat_index + '_' + prod_index).val().trim();
-	order_products[subcat_index][prod_index].notes = val == '' ? null : val;
-}
-
-function removeNotes(subcat_index, prod_index) {
-	let id = subcat_index + '_' + prod_index;
-	$('#btnaddnotes' + id).removeClass('d-none');
-	$('#tagnotes' + id).addClass('d-none');
-	order_products[subcat_index][prod_index].notes = null;
-}
-
-function updatePrice() {
-	let total = 0;
-	if (!order.is_voucher) {
-		subcats.forEach((_, i) => {
-			order_products[i].forEach((p, j) => {
-				let prod = subcat_products[i][j];
-				total += prod.price * p.quantity;
-			});
-		});
+	// Alert for no tickets
+	if (!order.has_tickets) {
+		let ok = await modalConfirm('Conferma cassa veloce', 'La modalità <strong>cassa veloce</strong> non prevede la stampa delle comande, e dopo la stampa della ricevuta l\'ordine verrà contrassegnato come completato.<br>Confermi la modalità <strong>cassa veloce</strong>?');
+		if (!ok) return;
 	}
-	order.price = total;
-	$('#totalPrice').html(formatPrice(total));
+
+	sendOrder();
+}
+
+async function printOrder() {
+
 }

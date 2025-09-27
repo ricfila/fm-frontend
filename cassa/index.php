@@ -2,11 +2,18 @@
 <html lang="it">
 <head>
 	<title>Cassa - Festival Management</title>
+
 	<base href="../" />
 	<?php include "../bootstrap.php" ?>
-	<script src="js/session.js"></script>
+
 	<link rel="stylesheet" href="cassa/style.css" />
 	<link rel="icon" type="image/png" href="media/heart-fill.png" />
+
+	<script src="js/session.js"></script>
+	<script src="cassa/js/neworder.js"></script>
+	<script src="cassa/js/inputs.js"></script>
+	<script src="cassa/js/get_data.js"></script>
+	<script src="cassa/js/send_data.js"></script>
 </head>
 <!--
 DA FARE:
@@ -108,7 +115,7 @@ DA FARE:
 									</div>
 									<div class="px-3 py-2" id="orderFooter">
 										<div class="row mb-2">
-											<div class="col"><strong>Totale:</strong></div>
+											<div class="col my-auto"><strong>Totale:</strong></div>
 											<div class="col-auto">
 												<div class="lead p-1 border border-dark rounded-3 bg-light"><strong id="totalPrice"></strong></div>
 											</div>
@@ -123,7 +130,7 @@ DA FARE:
 												</div>
 											</div>
 											<div class="col">
-												<button class="btn btn-success w-100">Salva</button>
+												<button class="btn btn-success w-100" onclick="saveOrder();">Salva</button>
 											</div>
 										</div>
 									</div>
@@ -183,8 +190,8 @@ DA FARE:
 					</div>
 				</div>
 	<?php
+	include "../pannello/php/toast.php";
 	/*
-	include "php/toast.php";
 	include "php/menuturno.php";
 	include "php/strumenti/modificaordine.php";
 	include "php/strumenti/statistiche.php";
@@ -193,7 +200,6 @@ DA FARE:
 	include "php/strumenti/ingredienti.php";
 	*/
 	?>
-	<script src="cassa/js/neworder.js"></script>
 	<!--script src="js/ordinirecenti.js"></script-->
 	<!--script src="js/ultimevendite.js"></script-->
 				<div id="tabstatistiche" class="tab-pane fade flex-column">
