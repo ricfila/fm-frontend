@@ -96,16 +96,36 @@ DA FARE:
 								</div>
 							</div>
 							<div class="row d-flex" style="overflow-x: hidden;">
-								<div class="col-6 h-100 ps-3 pb-3" id="productList" style="overflow-y: scroll;">
+								<div class="col-6 h-100 ps-3 pb-3" id="productList">
 									<div class="row">
 										<div class="col-auto spinner-border m-3"></div>
 										<div class="col my-auto">Caricamento in corso...</div>
 									</div>
 								</div>
 								<div class="col-6 h-100 d-flex flex-column">
-									<div id="orderProducts" class="px-3 flex-fill" style="overflow-x: hidden; overflow-y: auto;"></div>
-									<div class="p-3" style="bottom: 0px;">
-										<button class="btn btn-success">Salva</button>
+									<div id="orderProductsContainer" class="flex-fill mb-3">
+										<div id="orderProducts" class="px-4"></div>
+									</div>
+									<div class="px-3 py-2" id="orderFooter">
+										<div class="row mb-2">
+											<div class="col"><strong>Totale:</strong></div>
+											<div class="col-auto">
+												<div class="lead p-1 border border-dark rounded-3 bg-light"><strong id="totalPrice"></strong></div>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-8 my-auto">
+												<div class="row">
+													<div class="col-auto my-auto">Pagamento:</div>
+													<div class="col">
+														<select id="paymentMethod" class="form-select form-select-sm"></select>
+													</div>
+												</div>
+											</div>
+											<div class="col">
+												<button class="btn btn-success w-100">Salva</button>
+											</div>
+										</div>
 									</div>
 								</div>
 							</div>

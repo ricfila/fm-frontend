@@ -1,13 +1,19 @@
+/* Header */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
 	-webkit-appearance: none;
 	margin: 0;
 }
 
-/* Firefox */
 input[type=number] {
 	appearance: textfield;
 	-moz-appearance: textfield;
+}
+
+
+/* Product list */
+#productList {
+	overflow-y: scroll;
 }
 
 .btn-product {
@@ -31,6 +37,78 @@ input[type=number] {
 	filter: brightness(0.95);
 }
 
-.orderrow:hover {
+
+/* Order products */
+#orderProductsContainer {
+	position: relative;
+	overflow-y: hidden;
+	width: 100%;
+}
+
+#orderProducts {
+	height: 100%;
+	overflow-x: hidden;
+	overflow-y: auto;
+	border: 2px solid var(--bs-dark);
+	border-radius: 10px;
+
+    --scroll: 0;
+    --shadow-active: 0;
+    --shadow-size: 30px;
+    --shadow-color-base: 0, 0, 0;
+    --shadow-opacity: calc(0.2 * var(--shadow-active));
+    --shadow-color: rgba(var(--shadow-color-base), var(--shadow-opacity));
+
+    animation: scroll-shadows-unified linear;
+    animation-timeline: scroll(self);
+}
+
+#orderProducts::after {
+	content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+	z-index: 5;
+	border-radius: 10px;
+    
+    background-image: 
+        linear-gradient(to bottom, 
+            var(--shadow-color) 0%, 
+            transparent calc(var(--shadow-size) * (1 - var(--scroll) * 0.95))),
+        linear-gradient(to top, 
+            var(--shadow-color) 0%, 
+            transparent calc(var(--shadow-size) * (var(--scroll) * 0.95))); 
+            
+    background-repeat: no-repeat;
+    background-size: 100% var(--shadow-size);
+    background-position: top, bottom;
+}
+
+
+@property --scroll {
+    syntax: '<number>';
+    inherits: true;
+    initial-value: 0; 
+}
+/*
+@property --shadow-active {
+    syntax: '<number>';
+    inherits: true;
+    initial-value: 0; 
+}
+*/
+@keyframes scroll-shadows-unified {
+    from { --scroll: 1; --shadow-active: 1; }
+    to { --scroll: 0; --shadow-active: 1; }
+}
+
+.order-row:hover {
 	background: #DDDDDD;
+}
+
+
+/* Order footer */
+#orderFooter {
+	background-color: #c7d8ff;
+	border-radius: 10px 10px 0px 0px;
 }

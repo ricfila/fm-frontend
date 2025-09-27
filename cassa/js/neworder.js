@@ -85,20 +85,12 @@ function loadProducts() {
 		for (let j = 0; j < subcat_products[i].length; j++) {
 			let prod = subcat_products[i][j];
 			out += '<div class="col-3 ps-0 pe-1">';
-			out += '<button class="btn btn-product px-1 mb-1 text-light" style="--bg-color: ' + prod.color + ';" onclick="addProd(' + i + ', ' + j + ');">' + prod.short_name + '</button>';
+			out += '<button class="btn btn-product px-2 mb-1 text-light" style="--bg-color: ' + prod.color + ';" onclick="addProd(' + i + ', ' + j + ');">' + prod.short_name + '</button>';
 			out += '</div>';
 		}
 		out += '</div>';
 	}
 	$('#productList').html(out+out);
-}
-
-function headSubcat(name) {
-	let out = '<div class="row mt-2">';
-	out += '<div class="col-auto my-auto"><h6>' + name + '</h6></div>';
-	out += '<div class="col p-0"><hr class="m-2"></div>';
-	out += '</div>';
-	return out;
 }
 
 function newOrder() {
@@ -137,63 +129,56 @@ function loadOrder() {
 function checkInputDisabled() {
 	$('#guests').prop('disabled', order.is_take_away);
 	$('#table').prop('disabled', order.is_take_away || order.has_tickets);
-	// Cambiare totale
 }
 
 function loadOrderProducts() {
 	let out = '';
 	subcats.forEach((subcat, i) => {
 		if (order_products[i].length > 0) {
-			out += '<div class="row mt-2"><div class="col-12" style="border-bottom: 2px solid #000;"><strong>' + subcat.name + '</strong></div></div>';
-			//out += headSubcat(subcat.name);
+			//out += '<div class="row mt-2"><div class="col-12" style="border-bottom: 2px solid #000;"><strong>' + subcat.name + '</strong></div></div>';
+			out += headSubcat(subcat.name);
 		}
 		order_products[i].forEach((p, j) => {
 			let prod = subcat_products[i][j];
 			out += productRow(i, j, prod.name, prod.price, p.quantity, p.notes);
-			/*
-			out += '<div class="row mb-1">';
-			out += '<div class="col-3 pe-0"><div class="row d-flex align-items-center">';
-
-			out += '<div class="col pe-0"><button class="btn btn-sm btn-dark" onclick="removeProd(' + i + ', ' + j + ');"><i class="bi bi-dash-lg"></i></button></div>';
-			out += '<div class="col text-center p-0"><strong>' + p.quantity + '</strong></div>';
-			out += '<div class="col ps-0 text-right"><button class="btn btn-sm btn-info" onclick="addProd(' + i + ', ' + j + ');"><i class="bi bi-plus-lg"></i></button></div>';
-			out += '</div></div>';
-
-			out += '<div class="col my-auto">' + prod.name + '</div>';
-
-			out += '<div class="col-2 text-end">';
-			out += '</div>';
-			out += '</div>';
-			*/
 		});
 	});
 
 	$('#orderProducts').html(out);
+	updatePrice();
+}
 
-
+function headSubcat(name) {
+	let out = '<div class="row mt-2">';
+	out += '<div class="col-auto my-auto"><h6>' + name + '</h6></div>';
+	out += '<div class="col p-0"><hr class="m-2"></div>';
+	out += '</div>';
+	return out;
 }
 
 function productRow(i, j, name, price, quantity, notes) {
 	let id = i + '_' + j;
 	let out = '';
-	out += '<div class="row d-flex align-items-center orderrow py-1">';
-	out += '<div class="col-2 p-0"><div class="row d-flex align-items-center">';
+	out += '<div class="row d-flex align-items-center order-row py-1">';
 
-	// Decremento
-	out += '<div class="col" style="padding-right: 0px;"><button class="btn btn-sm btn-dark" onclick="removeProd(' + i + ', ' + j + ');"><i class="bi bi-dash-lg"></i></button></div>';
-
-	// Aumento
-	out += '<div class="col" style="padding-left: 0px; text-align: right;"><button class="btn btn-sm btn-info" onclick="addProd(' + i + ', ' + j + ');"><i class="bi bi-plus-lg"></i></button></div>';
-
-	// Quantità
-	out += '<div class="col text-center p-0"><strong>' + quantity + '</strong></div>';
-
+	// Buttons and quantity
+	out += '<div class="col-auto p-0"><div class="row d-flex align-items-center">';
+	out += '<div class="col pe-1"><button class="btn btn-sm btn-dark" onclick="removeProd(' + i + ', ' + j + ');"><i class="bi bi-dash-lg"></i></button></div>';
+	out += '<div class="col p-0 text-right"><button class="btn btn-sm btn-info" onclick="addProd(' + i + ', ' + j + ');"><i class="bi bi-plus-lg"></i></button></div>';
+	out += '<div class="col"><strong>' + quantity + '</strong></div>';
 	out += '</div>';
 
-	out += '</div><div class="col-8">' + name;
+	// Name and notes
+	out += '</div><div class="col">' + name;
 	out += '<span id="btnaddnotes' + id + '"' + (notes != null ? ' class="d-none"' : '') + '>&emsp;<button class="btn btn-sm btn-light" onclick="addNotes(' + i + ', ' + j + ');"><i class="bi bi-plus-lg"></i> Note</button></span>';
-	out += '<span id="tagnotes' + id + '"' + (notes == null ? ' class="d-none"' : '') + '><br>→&nbsp;<input class="form-control form-control-sm d-inline" type="text" id="notes' + id + '" onchange="updateNotes(' + i + ', ' + j + ');" maxlength="63" style="width: 300px;" value="' + (notes != null ? notes : '') + '" />&nbsp;<button class="btn btn-sm btn-light" onclick="removeNotes(' + i + ', ' + j + ');"><i class="bi bi-x-lg"></i></button></span>' + '</div>';
-	out += '<div class="col-2" style="text-align: right;">' + formatPrice(price * quantity) + '</div></div>';
+	out += '<span id="tagnotes' + id + '"' + (notes == null ? ' class="d-none"' : '') + '><br>';
+	out += '<i class="bi bi-arrow-return-right"></i>&nbsp;';
+	out += '<input class="form-control form-control-sm d-inline" type="text" id="notes' + id + '" onchange="updateNotes(' + i + ', ' + j + ');" maxlength="63" style="width: 300px;" value="' + (notes != null ? notes : '') + '" />&nbsp;';
+	out += '<button class="btn btn-sm btn-light" onclick="removeNotes(' + i + ', ' + j + ');"><i class="bi bi-x-lg"></i></button></span>';
+	out += '</div>';
+
+	// Price
+	out += '<div class="col-auto p-0">' + formatPrice(price * quantity) + '</div></div>';
 	return out;
 }
 
@@ -233,6 +218,7 @@ $('#table').change(function() {
 $('#is_voucher').change(function() {
 	order.is_voucher = $(this).is(':checked');
 	checkInputDisabled();
+	updatePrice();
 });
 
 $('#notes').change(function() {
@@ -281,4 +267,18 @@ function removeNotes(subcat_index, prod_index) {
 	$('#btnaddnotes' + id).removeClass('d-none');
 	$('#tagnotes' + id).addClass('d-none');
 	order_products[subcat_index][prod_index].notes = null;
+}
+
+function updatePrice() {
+	let total = 0;
+	if (!order.is_voucher) {
+		subcats.forEach((_, i) => {
+			order_products[i].forEach((p, j) => {
+				let prod = subcat_products[i][j];
+				total += prod.price * p.quantity;
+			});
+		});
+	}
+	order.price = total;
+	$('#totalPrice').html(formatPrice(total));
 }
