@@ -14,6 +14,7 @@
 	<script src="cassa/js/inputs.js"></script>
 	<script src="cassa/js/get_data.js"></script>
 	<script src="cassa/js/send_data.js"></script>
+	<script src="cassa/js/print.js"></script>
 </head>
 <!--
 DA FARE:

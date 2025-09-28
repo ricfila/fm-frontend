@@ -181,7 +181,3 @@ async function saveOrder() {
 
 	sendOrder();
 }
-
-async function printOrder() {
-
-}

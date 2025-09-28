@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+	<title>Stampa ricevuta</title>
+
+	<base href="../" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta charset="utf-8" />
+
+	<link href="css/bootstrap-5.0.2/bootstrap.css" rel="stylesheet" />
+	<link href="css/bootstrap-5.0.2/bootstrap-icons.css" rel="stylesheet" />
+
+	<style>
+		@page { margin: 0.3cm 0.2cm; }
+		body { margin: 0cm; }
+		hr { border-top: solid 1px #000 !important; }
+	</style>
+</head>
+<body>
+	<div class="container-lg w-100">
+		<div id="orderHeader">
+			<div class="row mb-2">
+				<div class="col-auto"><img src="logo_sagra2022_nero.png" />&nbsp;<strong>Sagra di Stra</strong></div>
+				<div class="col"><small><span id="outDate"></span> <i class="bi bi-dot"></i> <span id="outUser"></span></small></div>
+				<div class="col-auto"><strong>RICEVUTA</strong></div>
+			</div>
+			<div class="row">
+				<div class="col-auto my-auto"><small>N°</small></div>
+				<div class="col-auto lead px-0" id="outId"></div>
+				<div class="col-auto my-auto ps-1"><i class="bi bi-dot"></i> <strong><i id="outCustomer"></i></strong></div>
+				<div class="col-auto my-auto pe-0" id="outService"><i class="bi bi-person-check-fill"></i> ..................</div>
+				<div class="col my-auto text-end" id="outGuests"></div>
+			</div>
+		</div>
+
+		<div id="orderProducts"></div>
+		<hr class="my-2" />
+
+		<div id="orderFooter">
+			<div class="row mb-2">
+				<div class="col"><strong>TOTALE:</strong></div>
+				<div class="col-auto"><strong id="outPrice"></strong></div>
+			</div>
+			<div class="row mb-2" id="divNotes">
+				<div class="col"><strong>Note:</strong> <span id="outNotes"></span></div>
+			</div>
+			<div class="row">
+				<div class="col"><small>
+					<i class="bi bi-globe"></i> www.parrocchiadistra.it<br>
+					<i class="bi bi-facebook"></i> Sagra Paesana di Stra
+				</small></div>
+				<div class="col-auto"><h5><strong><i>Buon appetito!</i></strong></h5></div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+	window.addEventListener('DOMContentLoaded', function() {
+		try {
+			if (window.opener && typeof window.opener.__printWindowReady === 'function') {
+				window.opener.__printWindowReady(window);
+			}
+		} catch (e) {
+		}
+	});
+	</script>
+</body>
+</html>
