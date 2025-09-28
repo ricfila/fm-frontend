@@ -6,6 +6,7 @@ function loadOrder() {
 	$('#table').val(order.table == null ? '' : order.table);
 	$('#is_voucher').prop('checked', order.is_voucher);
 	$('#notes').val(order.notes == null ? '' : order.notes);
+	$('#paymentMethod').val(order.payment_method_id);
 	checkInputDisabled();
 	loadOrderProducts();
 }
@@ -16,6 +17,15 @@ function checkInputDisabled() {
 }
 
 function loadComponents() {
+	// Menu
+	$('#newOrderItem').click(async function() {
+		if (selectedProducts() > 0) {
+			let ok = await modalConfirm('<span class="text-success"><i class="bi bi-plus-circle"></i> Nuovo ordine</span>', 'Iniziare un <strong>nuovo ordine</strong>? Tutte le modifiche non salvate andranno perse.');
+			if (ok) newOrder();
+		} else newOrder();
+	});
+
+	// Inputs
 	$('#customer').change(function() {
 		order.customer = $(this).val().trim();
 	});
@@ -76,7 +86,7 @@ function loadComponents() {
 
 	$('#paymentMethod').change(function() {
 		order.payment_method_id = $(this).val();
-	})
+	});
 }
 
 function addProd(subcat_index, prod_index) {

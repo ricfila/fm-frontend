@@ -30,12 +30,22 @@ function sendOrder() {
 		data: JSON.stringify(params),
 		contentType: 'application/json; charset=utf-8',
 		headers: { "Authorization": "Bearer " + token },
-		success: async function() {
+		success: async function(response) {
 			showToast(true, 'L\'ordine è stato salvato con successo');
+
+			order.guests = response.order.guests;
+			order.table = response.order.table;
+			order.price = response.order.price;
+			
 			if (order.id == null) {
+				order.id = response.order.id;
+				order.created_at = response.order.created_at;
+				order.user = { name: username };
 				await printOrder();
+				//newOrder();
+			} else {
+				loadOrder();
 			}
-			newOrder();
 		},
 		error: handleError
 	});
