@@ -1,9 +1,9 @@
 var ordineatt = null;
 
 function ultimiassociati() {
-	coloremenu('bg-info');
-	$('#titolo').html('<h3 class="m-0"><button class="btn btn-info" onclick="preparalista();"><i class="bi bi-caret-left-fill"></i></button> Ultimi associati');
-	$('#corpo').html('');
+	menuColor('bg-info');
+	$('#page-header').html('<h3 class="m-0"><button class="btn btn-info" onclick="initList();"><i class="bi bi-caret-left-fill"></i></button> Ultimi associati');
+	$('#page-body').html('');
 	let sorting = [];
 	$.getJSON("ajax.php?a=ultimi")
 	.done(function(json) {
@@ -13,11 +13,11 @@ function ultimiassociati() {
 				sorting.push(res.id);
 			});
 		} catch (err) {
-			$('#corpo').html('<span class="text-danger"><strong>Errore nell\'elaborazione della richiesta:</strong></span>' + json);
+			$('#page-body').html('<span class="text-danger"><strong>Errore nell\'elaborazione della richiesta:</strong></span>' + json);
 		}
 	})
 	.fail(function(jqxhr, textStatus, error) {
-		$('#corpo').html('<span class="text-danger"><strong>Errore durante la richiesta:</strong></span>' + jqxhr.responseText);
+		$('#page-body').html('<span class="text-danger"><strong>Errore durante la richiesta:</strong></span>' + jqxhr.responseText);
 	})
 	.always(function() {
 		let sortingc = ordiniCookie();
@@ -30,16 +30,16 @@ function ultimiassociati() {
 				return b.ora - a.ora});
 		let delay = 0;
 		for (let i = sortingc.length - 1; i >= 0; i--) {
-			$('#corpo').append('<button class="btn btn-secondary w-100 mb-3 ordinesala" style="animation-delay: ' + delay + 's;" onclick="apriordine(' + ordinic[sortingc[i]].id + ', \'ordinic\');"><div class="row"><div class="col-4"><big>&emsp;&emsp;' + ordinic[sortingc[i]].progressivo + '</big></div><div class="col my-auto">' + ordinic[sortingc[i]].cliente + '</div></div></button><br>');
+			$('#page-body').append('<button class="btn btn-secondary w-100 mb-3 ordinesala" style="animation-delay: ' + delay + 's;" onclick="apriordine(' + ordinic[sortingc[i]].id + ', \'ordinic\');"><div class="row"><div class="col-4"><big>&emsp;&emsp;' + ordinic[sortingc[i]].progressivo + '</big></div><div class="col my-auto">' + ordinic[sortingc[i]].cliente + '</div></div></button><br>');
 			delay += 0.02;
 		}
 		for (let i = 0; i < sorting.length; i++) {
-			$('#corpo').append('<button class="btn btn-secondary w-100 mb-3 ordinesala" style="animation-delay: ' + delay + 's;" onclick="apriordine(' + sorting[i] + ', \'fatti\');"><div class="row"><div class="col-4"><big><i class="bi bi-check' + (fatti[sorting[i]].stato > 0 ? '-all text-info' : '') + '"></i>&emsp;' + fatti[sorting[i]].progressivo + '</big></div><div class="col my-auto">' + fatti[sorting[i]].cliente + '</div></div></button><br>');
+			$('#page-body').append('<button class="btn btn-secondary w-100 mb-3 ordinesala" style="animation-delay: ' + delay + 's;" onclick="apriordine(' + sorting[i] + ', \'fatti\');"><div class="row"><div class="col-4"><big><i class="bi bi-check' + (fatti[sorting[i]].stato > 0 ? '-all text-info' : '') + '"></i>&emsp;' + fatti[sorting[i]].progressivo + '</big></div><div class="col my-auto">' + fatti[sorting[i]].cliente + '</div></div></button><br>');
 			delay += 0.02;
 		}
 		if (delay == 0)
-			$('#corpo').append('Nessun ordine associato recentemente.');
-		aggiornastato();
+			$('#page-body').append('Nessun ordine associato recentemente.');
+		updateStatus();
 	});
 }
 
@@ -58,7 +58,7 @@ function apriordine(id, array = false) {
 		ordineatt = trovati[id];
 	}
 	
-	testataordine(ordineatt, 'info', (array == 'trovati' ? (tipocerca > 2 ? 'rescerca();' : 'cercaordine();') : 'ultimiassociati();'));
+	loadOrderHeader(ordineatt, 'info', (array == 'trovati' ? (tipocerca > 2 ? 'rescerca();' : 'cercaordine();') : 'ultimiassociati();'));
 	let out = '';
 	if (!ordineatt.questoturno)
 		out += '<div class="p-2 alert alert-danger"><strong class="text-danger">Attenzione!</strong> Il presente ordine non è stato emesso in questo turno di servizio. Verifica la data sulla comanda!</div>';
@@ -72,9 +72,9 @@ function apriordine(id, array = false) {
 		let notavolo = ordineatt.tavolo == null || ordineatt.tavolo == '' || ordineatt.tavolo == 'null';
 		out += '<h4 class="mt-2 mb-0">Tavolo: <strong>';
 		if (notavolo) {
-			if (ordini[ordineatt.id] == null)
-				ordini[ordineatt.id] = ordineatt;
-			out += '<small class="text-body-secondary"><i>non associato</i>&emsp;<button class="btn btn-sm btn-success" onclick="ordine(' + ordineatt.id + ');">Associa ora</button></small>';
+			if (orders[ordineatt.id] == null)
+				orders[ordineatt.id] = ordineatt;
+			out += '<small class="text-body-secondary"><i>non associato</i>&emsp;<button class="btn btn-sm btn-success" onclick="associateOrder(' + ordineatt.id + ');">Associa ora</button></small>';
 		} else
 			out += ordineatt.tavolo;
 		out += '</strong>' + (array == 'ordinic' || (!notavolo && ordineatt.stato == 0) ? '&emsp;<button class="btn btn-sm btn-outline-danger" onclick="dialogRipristina();">Dissocia</button>' : '') + '</h4>';
@@ -120,7 +120,7 @@ function apriordine(id, array = false) {
 			out += '&emsp;<i class="bi bi-star' + (cevasa ? '-fill"></i> Evasa' + (ordineatt.stato_cucina != '' ? ' alle ' + ordineatt.stato_cucina.substr(0, 5) : '') : '"></i>');
 		}
 	}
-	$('#corpo')
+	$('#page-body')
 	.css('opacity', 0)
 	.html(out)
 	.animate({opacity: 1});
@@ -160,7 +160,7 @@ function dialogRipristina() {
 function ripristina() {
 	setCookie('action' + Date.now(), '-_' + ordineatt.id);
 	ordineatt.tavolo = null;
-	ordini[ordineatt.id] = ordineatt;
+	orders[ordineatt.id] = ordineatt;
 	fatti[ordineatt.id] = null;
 	ordineatt = null;
 	modal.hide();
@@ -179,19 +179,19 @@ function ripristina() {
 			}
 		}
 		salvati = salvati2;
-		ordini[id] = ordine;
-		ordini[id].tavolo = null;
+		orders[current_id] = ordine;
+		orders[current_id].tavolo = null;
 		modal.hide();
 		ultimiassociati();
 	} else {
-		ordine = fatti[id];
-		fatti[id] = null;
+		ordine = fatti[current_id];
+		fatti[current_id] = null;
 		$.ajax({
-			url: "ajax.php?a=dissocia&id=" + id,
+			url: "ajax.php?a=dissocia&id=" + current_id,
 			success: function(res) {
 				if (res == '1') {
-					ordini[id] = ordine;
-					ordini[id].tavolo = null;
+					orders[current_id] = ordine;
+					orders[current_id].tavolo = null;
 					modal.hide();
 					ultimiassociati();
 				} else {

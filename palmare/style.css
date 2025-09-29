@@ -37,7 +37,7 @@
 	margin-top: 20px;
 }
 
-#tasticonferma {
+#confirm-buttons {
 	animation: tastiSu 0.4s;
 	animation-fill-mode: forwards;
 	animation-timing-function: ease;

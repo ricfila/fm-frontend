@@ -8,9 +8,9 @@ var tipocerca = 0;
 var trovati = [];
 
 function cercaordine() {
-	coloremenu('bg-info');
-	$('#titolo').html('<h3 class="m-0"><button class="btn btn-info" onclick="preparalista();"><i class="bi bi-caret-left-fill"></i></button> Cerca un ordine');
-	$('#corpo').html('<div class="btn-group-vertical w-100"><button class="btn btn-lg btn-outline-info" onclick="dialogcerca(1);"><i class="bi bi-123"></i> Per numero</button>\
+	menuColor('bg-info');
+	$('#page-header').html('<h3 class="m-0"><button class="btn btn-info" onclick="initList();"><i class="bi bi-caret-left-fill"></i></button> Cerca un ordine');
+	$('#page-body').html('<div class="btn-group-vertical w-100"><button class="btn btn-lg btn-outline-info" onclick="dialogcerca(1);"><i class="bi bi-123"></i> Per numero</button>\
 					<button class="btn btn-lg btn-outline-info" onclick="dialogcerca(2);"><i class="bi bi-123"></i> Per ID <small>(numerazione interna)</small></button>\
 					<button class="btn btn-outline-info btn-lg" onclick="dialogcerca(3);"><i class="bi bi-compass"></i> Per tavolo</button>\
 					<button class="btn btn-outline-info btn-lg" onclick="dialogcerca(4);"><i class="bi bi-person"></i> Per nominativo</button></div>');
@@ -74,14 +74,14 @@ function cerca() {
 }
 
 function rescerca() {
-	$('#titolo').html('<h3 class="m-0"><button class="btn btn-info" onclick="cercaordine();"><i class="bi bi-caret-left-fill"></i></button> Ordini ' + (tipocerca == 3 ? 'del tavolo ' : (tipocerca == 4 ? 'associati al nome ' : 'numerati ')) + $('#inputcerca').val());
+	$('#page-header').html('<h3 class="m-0"><button class="btn btn-info" onclick="cercaordine();"><i class="bi bi-caret-left-fill"></i></button> Ordini ' + (tipocerca == 3 ? 'del tavolo ' : (tipocerca == 4 ? 'associati al nome ' : 'numerati ')) + $('#inputcerca').val());
 	if (trovati.length == 0) {
-		$('#corpo').html('Nessun ordine trovato.');
+		$('#page-body').html('Nessun ordine trovato.');
 	} else {
-		$('#corpo').html('');
+		$('#page-body').html('');
 		let delay = 0;
 		for (let i = 0; i < trovati.length; i++) {
-			$('#corpo').append('<button class="btn btn-secondary w-100 mb-3 ordinesala" style="animation-delay: ' + delay + 's;" onclick="apriordine(' + i + ', \'trovati\');"><div class="row"><div class="col-4 my-auto"><big>' + trovati[i].progressivo + '</big></div><div class="col my-auto">' + trovati[i].cliente + '<hr style="margin: 5px;">Ore ' + trovati[i].ora.substr(0, 5) + (trovati[i].tavolo != '' ? ' - Tavolo ' + trovati[i].tavolo : '') + '</div></div></button><br>');
+			$('#page-body').append('<button class="btn btn-secondary w-100 mb-3 ordinesala" style="animation-delay: ' + delay + 's;" onclick="apriordine(' + i + ', \'trovati\');"><div class="row"><div class="col-4 my-auto"><big>' + trovati[i].progressivo + '</big></div><div class="col my-auto">' + trovati[i].cliente + '<hr style="margin: 5px;">Ore ' + trovati[i].ora.substr(0, 5) + (trovati[i].tavolo != '' ? ' - Tavolo ' + trovati[i].tavolo : '') + '</div></div></button><br>');
 			delay += 0.02;
 		}
 	}
