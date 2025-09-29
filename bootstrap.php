@@ -9,7 +9,7 @@ sass.bat e la cartella src servono al compilatore, non vanno rimossi o spostati.
 
 <link href="css/bootstrap-5.0.2/bootstrap.css" rel="stylesheet" />
 <link href="css/bootstrap-5.0.2/bootstrap-icons.css" rel="stylesheet" />
-<link rel="stylesheet" href="css/general.css" />
+<link href="css/general.css" rel="stylesheet" />
 
 <script src="js/bootstrap-5.0.2/bootstrap.bundle.min.js"></script>
 <script src="js/jquery-3.6.0.min.js"></script>

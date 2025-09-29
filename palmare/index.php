@@ -1,39 +1,17 @@
-<!doctype html>
-<html lang="it"><!-- Palmare - Versione 1.2 - Ottobre 2024 -->
+<!DOCTYPE html>
+<html lang="it">
 <head>
-	<meta name="viewport" content="width=device-width, initial-scale=1" />
-	<meta charset="utf-8" />
-	<link href="../css/bootstrap-5.0.2/bootstrap.css" rel="stylesheet" />
-	<link href="../css/bootstrap-5.0.2/bootstrap-icons.css" rel="stylesheet" />
-	<script src="../js/bootstrap-5.0.2/bootstrap.bundle.min.js"></script>
-	<script src="../js/jquery-3.6.0.min.js"></script>
-	<link rel="stylesheet" href="../css/stile.css" />
-	<link rel="stylesheet" href="stile_palmare.css" />
-	<link rel="icon" type="image/png" href="../pannello/media/compass-fill.png" />
 	<title>Palmare sagra</title>
+
+	<base href="../" />
+	<?php include "../bootstrap.php" ?>
+
+	<link href="palmare/style.css" rel="stylesheet" />
+	<link href="../pannello/media/compass-fill.png" rel="icon" type="image/png" />
+
+	<script src="js/session.js"></script>
 </head>
 <body style="height: 100vh;">
-<?php
-include '../connect.php';
-$conn = pg_connect((filter_var($server, FILTER_VALIDATE_IP) ? "hostaddr" : "host") . "=$server port=$port dbname=$dbname user=$user password=$password connect_timeout=5") or die('Connessione al database non riuscita.');
-if (pg_connection_status($conn) == PGSQL_CONNECTION_BAD) {
-	echo 'Errore di connessione al database.';
-}
-
-if (isset($_GET['logout'])) {
-	unset($_COOKIE['cameriere']);
-	setcookie('cameriere', '', time() -1);
-	header('Location: ' . $_SERVER['PHP_SELF']);
-}
-if (isset($_POST['submit']) && $_POST['pwd'] == $pwd_palmare) {
-	echo $server;
-	setcookie('cameriere', pg_escape_string($conn, $_POST['nome']), time() + 60 * 60 * 24 * 7);
-	header('Location: ' . $_SERVER['PHP_SELF']);
-}
-
-if (isset($_COOKIE['cameriere'])) {
-	setcookie('cameriere', $_COOKIE['cameriere'], time() + 60 * 60 * 24 * 7);
-	?>
 	<div class="container-lg h-100" style="padding-top: 80px;">
 		<nav class="fixed-top navbar navbar-expand-lg navbar-dark bg-success" style="transition: 0.2s;">
 			<div class="container-lg">
@@ -143,49 +121,6 @@ if (isset($_COOKIE['cameriere'])) {
 		$('nav').removeClass('bg-warning').removeClass('bg-info').removeClass('bg-success').addClass(colore);
 		$(".collapse").collapse('hide');
 	}
-	
-	// Libreria cookie
-	function setCookie(cname, cvalue) {
-		const d = new Date();
-		d.setTime(d.getTime() + (730 * 24 * 60 * 60 * 1000));
-		let expires = "expires="+ d.toUTCString();
-		document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
-	}
-
-	function getCookie(cname) {
-		let name = cname + "=";
-		let decodedCookie = decodeURIComponent(document.cookie);
-		let ca = decodedCookie.split(';');
-		for (let i = 0; i < ca.length; i++) {
-			let c = ca[i];
-			while (c.charAt(0) == ' ') {
-				c = c.substring(1);
-			}
-			if (c.indexOf(name) == 0) {
-				return c.substring(name.length, c.length);
-			}
-		}
-		return "";
-	}
 	</script>
-<?php
-} else {
-?>
-	<div class="container" style="max-width: 500px;"><center>
-		<br>
-		<h3><i class="bi bi-compass-fill"></i> Palmare sagra</h3><br>
-		<p>Questa è un'area riservata.<br>Per potervi accedere inserisci il tuo nome e la password:</p>
-		<form method="post">
-			<input type="text" class="form-control mb-2" placeholder="Nome" name="nome">
-			<input type="password" class="form-control mb-2" placeholder="Password" name="pwd">
-			<?php if (isset($_POST['submit']))
-				echo '<span class="text-danger">La password è errata</span><br>';
-			?>
-			<br><input type="submit" class="btn btn-success" value="Accedi" name="submit">
-		</form>
-	</center></div>
-<?php
-}
-?>
 </body>
 </html>
