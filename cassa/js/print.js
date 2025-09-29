@@ -25,18 +25,7 @@ async function printOrder() {
 
 function populateAndPrint(print_w) {
 	try {
-		const dateObj = new Date(order.created_at);
-		const dateStr = new Intl.DateTimeFormat('it-IT', {
-			weekday: 'short',
-			day: '2-digit',
-			month: 'short',
-			year: 'numeric',
-			hour: '2-digit',
-			minute: '2-digit',
-			hour12: false,
-		}).format(dateObj).replace(/\./g, '');
-
-		print_w.document.getElementById('outDate').innerHTML = dateStr;
+		print_w.document.getElementById('outDate').innerHTML = formatDateTime(order.created_at);
 		print_w.document.getElementById('outUser').innerHTML = order.user.name + (order.payment_method_id > 1 ? '*' : '');
 		print_w.document.getElementById('outId').innerHTML = order.id;
 		print_w.document.getElementById('outCustomer').innerHTML = order.customer;
@@ -84,7 +73,7 @@ function productRowPrint(name, price, quantity, notes) {
 	let out = '';
 	out += '<div class="row">';
 
-	out += '<div class="col-1 text-end">' + quantity + '</div>';
+	out += '<div class="col-1 text-center">' + quantity + '</div>';
 
 	out += '<div class="col">' + name;
 	if (notes != null && notes != '')

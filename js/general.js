@@ -1,4 +1,3 @@
-
 function setCookie(cname, cvalue) {
 	const d = new Date();
 	d.setTime(d.getTime() + (730 * 24 * 60 * 60 * 1000));
@@ -20,4 +19,35 @@ function getCookie(cname) {
 		}
 	}
 	return '';
+}
+
+function formatDateTime(fullStr) {
+	const dateObj = new Date(fullStr);
+	return new Intl.DateTimeFormat('it-IT', {
+		weekday: 'short',
+		day: '2-digit',
+		month: 'short',
+		year: 'numeric',
+		hour: '2-digit',
+		minute: '2-digit',
+		hour12: false,
+	}).format(dateObj).replace(/\./g, '');
+}
+
+function formatShortDate(fullStr) {
+	const dateObj = new Date(fullStr);
+	return new Intl.DateTimeFormat('it-IT', {
+		weekday: 'short',
+		day: '2-digit',
+		month: 'short',
+	}).format(dateObj).replace(/\./g, '');
+}
+
+function formatTime(fullStr) {
+	const dateObj = new Date(fullStr);
+	return new Intl.DateTimeFormat('it-IT', {
+		hour: '2-digit',
+		minute: '2-digit',
+		hour12: false,
+	}).format(dateObj);
 }

@@ -48,7 +48,7 @@ DA FARE:
 					<?php //menuturno(); ?>
 					<ul class="navbar-nav">
 						<li class="nav-item">
-							<span class="nav-link" style="cursor:pointer;" onclick="logout();"><i class="bi bi-box-arrow-right"></i> Logout</span>
+							<span class="nav-link" style="cursor: pointer;" onclick="logout();"><i class="bi bi-box-arrow-right"></i> Logout</span>
 						</li>
 					</ul>
 				</div>
