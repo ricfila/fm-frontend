@@ -43,12 +43,12 @@ function loadProducts() {
 		for (let j = 0; j < subcat_products[i].length; j++) {
 			let prod = subcat_products[i][j];
 			out += '<div class="col-6 col-sm-4 col-md-3 col-lg-2 ps-0 pe-1">';
-			out += '<button class="btn btn-product px-2 mb-1 text-light" style="--bg-color: ' + prod.color + ';" onclick="addProd(' + i + ', ' + j + ');">' + prod.short_name + '</button>';
+			out += '<button class="btn btn-product px-1 py-0 mb-1 text-light" style="--bg-color: ' + prod.color + ';" onclick="addProd(' + i + ', ' + j + ');">' + prod.short_name + '</button>';
 			out += '</div>';
 		}
 		out += '</div>';
 	}
-	$('#productList').html(out+out);
+	$('#productList').html(out);
 }
 
 function newOrder() {
