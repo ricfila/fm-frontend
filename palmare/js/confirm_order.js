@@ -49,8 +49,8 @@ function saveTable() {
 function loadOrderHeader(order, style, action = "initList();") {
 	let out = '<div class="row">';
 	out += '<div class="col-auto"><button class="btn btn-' + style + '" onclick="' + action + '"><i class="bi bi-caret-left-fill"></i></button></div>';
-	out += '<div class="col-auto ps-0 my-auto"><h3 class="m-0"><strong>' + order.id + '</strong><i class="bi bi-dot"></i><i>' + order.customer + '</i></h3></div>';
-	out += '<div class="col text-end" style="line-height: 1.2;"><small>' + formatShortDate(order.created_at) + '<br />' + formatTime(order.created_at) + '</small></div>';
+	out += '<div class="col ps-0 my-auto"><h3 class="m-0"><strong>' + order.id + '</strong><i class="bi bi-dot"></i><i>' + order.customer + '</i></h3></div>';
+	out += '<div class="col-auto text-end' + (!isThisSession(order.created_at) ? ' bg-danger text-light' : '') + '" style="line-height: 1.2;"><small>' + formatShortDate(order.created_at) + '<br />' + formatTime(order.created_at) + '</small></div>';
 	out += '</div>';
 	$('#page-header').html(out);
 }

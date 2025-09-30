@@ -67,3 +67,21 @@ function formatTime(fullStr) {
 		hour12: false,
 	}).format(dateObj);
 }
+
+function isThisSession(fullStr) {
+    const dateObj = new Date(fullStr);
+    const now = new Date();
+    const SPLIT_HOUR = 17; // 17:00 (5 PM)
+
+	// Compare date
+    const actualDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const orderDate = new Date(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate());
+    if (actualDate.getTime() != orderDate.getTime()) {
+        return false;
+    }
+
+	// Compare time
+    const actualSession = (now.getHours() >= 0 && now.getHours() < SPLIT_HOUR ? 0 : 1);
+	const orderSession = (dateObj.getHours() >= 0 && dateObj.getHours() < SPLIT_HOUR ? 0 : 1);
+	return actualSession == orderSession;
+}
