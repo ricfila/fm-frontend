@@ -47,6 +47,8 @@ function sendOrder() {
 				loadOrder();
 			}
 		},
-		error: handleError
+		error: function(jqXHR, textStatus, errorThrown) {
+			showToast(false, getErrorMessage(jqXHR, textStatus, errorThrown));
+		}
 	});
 }

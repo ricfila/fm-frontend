@@ -20,7 +20,9 @@ function getProducts() {
 			last_products = response.products;
 			loadProducts();
 		},
-		error: handleError
+		error: function(jqXHR, textStatus, errorThrown) {
+			showToast(false, getErrorMessage(jqXHR, textStatus, errorThrown));
+		}
 	});
 }
 
@@ -35,7 +37,9 @@ function getSettings() {
 			receipt_header = response.settings.receipt_header;
 			order_requires_confirmation = response.settings.order_requires_confirmation;
 		},
-		error: handleError
+		error: function(jqXHR, textStatus, errorThrown) {
+			showToast(false, getErrorMessage(jqXHR, textStatus, errorThrown));
+		}
 	});
 
 	$.ajax({
@@ -55,24 +59,8 @@ function getSettings() {
 				});
 			}
 		},
-		error: handleError
+		error: function(jqXHR, textStatus, errorThrown) {
+			showToast(false, getErrorMessage(jqXHR, textStatus, errorThrown));
+		}
 	});
-}
-
-function handleError(jqXHR, textStatus, errorThrown) {
-	let errorMessage = '';
-
-	if (jqXHR.status === 0) {
-		errorMessage = 'Impossibile connettersi al server. Il server potrebbe essere offline o irraggiungibile.';
-	} else if (jqXHR.status === 401) {
-		errorMessage = 'Accesso non autorizzato. Controlla il tuo token.';
-	} else if (jqXHR.status === 404) {
-		errorMessage = 'Risorsa non trovata. Controlla l\'URL della richiesta.';
-	} else if (jqXHR.status >= 500) {
-		errorMessage = 'Errore interno del server. Riprova più tardi.';
-	} else {
-		errorMessage = `Si è verificato un errore: ${textStatus} ${errorThrown}<br><strong>${jqXHR.responseJSON.message}</strong>`;
-	}
-	showToast(false, errorMessage);
-	console.error("Errore AJAX:", textStatus, errorThrown, jqXHR);
 }

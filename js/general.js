@@ -21,6 +21,22 @@ function getCookie(cname) {
 	return '';
 }
 
+function getErrorMessage(jqXHR, textStatus, errorThrown) {
+	console.error("Errore AJAX:", textStatus, errorThrown, jqXHR);
+
+	if (jqXHR.status === 0) {
+		return 'Impossibile connettersi al server. Il server potrebbe essere offline o irraggiungibile.';
+	} else if (jqXHR.status === 401) {
+		return 'Accesso non autorizzato. Controlla il tuo token.';
+	} else if (jqXHR.status === 404) {
+		return 'Risorsa non trovata. Controlla l\'URL della richiesta.';
+	} else if (jqXHR.status >= 500) {
+		return 'Errore interno del server. Riprova più tardi.';
+	} else {
+		return `Si è verificato un errore: ${textStatus} ${errorThrown}<br><strong>${jqXHR.responseJSON.message}</strong>`;
+	}
+}
+
 function formatDateTime(fullStr) {
 	const dateObj = new Date(fullStr);
 	return new Intl.DateTimeFormat('it-IT', {
