@@ -5,13 +5,19 @@ function lastAssociated() {
 	let ids_from_server = [];
 	
 	function btnOrder(id, delay) {
-		$('#page-body').append('<button class="btn btn-secondary w-100 mb-3 ordinesala" style="animation-delay: ' + delay + 's;" onclick="orderSummary(' + id + ', \'ordinic\');"><div class="row"><div class="col-4"><big>&emsp;&emsp;' + id + '</big></div><div class="col my-auto">' + confirmed[id].customer + '</div></div></button><br>');
+		$('#page-body').append('<button class="btn btn-secondary w-100 mb-3 ordinesala" style="animation-delay: ' + delay + 's;" onclick="orderSummary(' + id + ');"><div class="row"><div class="col-4"><big>&emsp;&emsp;' + id + '</big></div><div class="col my-auto">' + confirmed[id].customer + '</div></div></button><br>');
 	}
 
 	$.ajax({
 		url: apiUrl + '/orders/',
 		type: "GET",
-		data: { order_by: "created_at", limit: 50, confirmed_by_user: true },
+		data: {
+			order_by: "created_at",
+			limit: 50,
+			confirmed_by_user: true,
+			include_confirmer_user: true,
+			include_tickets: true
+		},
 		contentType: 'application/json; charset=utf-8',
 		headers: { "Authorization": "Bearer " + token },
 		success: function(response) {

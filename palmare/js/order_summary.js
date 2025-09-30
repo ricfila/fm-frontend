@@ -1,91 +1,90 @@
-var ordineatt = null;
-
 let istati = [['compass', 'printer', 'clipboard2-pulse'],
 			['hourglass-split', 'clipboard2-pulse']];
 let lstati = [['In attesa di associazione al tavolo', 'In attesa di stampa', 'In lavorazione'],
 			['In attesa', 'In lavorazione']];
 
-function orderSummary(id, array = false) {
-	// Pescaggio dell'ordine da mostrare
-	if (array == 'ordinic') {
-		ordineatt = ordinic[id];
-	} else if (array == 'confirmed') {
-		ordineatt = confirmed[id];
-	} else {
-		ordineatt = trovati[id];
+
+function orderSummary(id) {
+	current_id = id;
+	if (confirmed[current_id] == null) {
+		initList();
+		dialog('Ordine non trovato', 'L\'ordine ' + id + ' non è presente nell\'archivio locale');
+		return;
 	}
 	
-	loadOrderHeader(ordineatt, 'info', (array == 'trovati' ? (tipocerca > 2 ? 'rescerca();' : 'cercaordine();') : 'lastAssociated();'));
+	loadOrderHeader(confirmed[current_id], 'info', 'lastMenu();');
 	let out = '';
-	if (!ordineatt.questoturno)
+	if (!isThisSession(confirmed[current_id].created_at))
 		out += '<div class="p-2 alert alert-danger"><strong class="text-danger">Attenzione!</strong> Il presente ordine non è stato emesso in questo turno di servizio. Verifica la data sulla comanda!</div>';
-	out += '<h4 class="mb-0">Cliente: <strong>' + ordineatt.cliente + '</strong></h4>';
-	out += (ordineatt.coperti != null ? '&emsp;<strong>' + ordineatt.coperti + '</strong> copert' + (ordineatt.coperti == 1 ? 'o' : 'i') : '');
-	out += (ordineatt.note.length > 0 ? '<br>&emsp;<i class="bi bi-sticky-fill"></i>&nbsp;' + ordineatt.note : '');
+	out += '<h4 class="mb-0">Cliente: <strong>' + confirmed[current_id].customer + '</strong></h4>';
 
-	if (ordineatt.esportazione == true) {
+	let guests = confirmed[current_id].guests
+	out += (guests != null ? '&emsp;<strong>' + guests + '</strong> copert' + (guests == 1 ? 'o' : 'i') : '');
+
+	let notes = confirmed[current_id].notes;
+	out += (notes != null && notes.length > 0 ? '<br>&emsp;<i class="bi bi-sticky-fill"></i>&nbsp;' + notes : '');
+
+	if (confirmed[current_id].is_take_away) {
 		out += '<h4 class="mt-2">Ordine per ASPORTO</h4>';
 	} else {
-		let notavolo = ordineatt.tavolo == null || ordineatt.tavolo == '' || ordineatt.tavolo == 'null';
+		let table = confirmed[current_id].table;
+		let has_table = table != null && table != '';
+
 		out += '<h4 class="mt-2 mb-0">Tavolo: <strong>';
-		if (notavolo) {
-			if (orders[ordineatt.id] == null)
-				orders[ordineatt.id] = ordineatt;
-			out += '<small class="text-body-secondary"><i>non associato</i>&emsp;<button class="btn btn-sm btn-success" onclick="associateOrder(' + ordineatt.id + ');">Associa ora</button></small>';
-		} else
-			out += ordineatt.tavolo;
-		out += '</strong>' + (array == 'ordinic' || (!notavolo && ordineatt.stato == 0) ? '&emsp;<button class="btn btn-sm btn-outline-danger" onclick="dialogRipristina();">Dissocia</button>' : '') + '</h4>';
-		out += (array == 'ordinic' ? '&emsp;Associato da <strong><i>te stesso</i></strong>' :
-			(ordineatt.associazione != null && ordineatt.associazione != 'null' ? '&emsp;Associato da <strong>' + ordineatt.cameriere + '</strong> alle ' + ordineatt.associazione.substr(0, 5) : ''));
-	}
-	if (array != 'ordinic') {
-		out += '<br><hr>';
-		let statocomanda;
-		if (ordineatt.esportazione) {
-			if (ordineatt.stato == 0)
-				statocomanda = 0; // In attesa
-			else
-				statocomanda = 1; // In lavorazione
+		if (has_table) {
+			out += table;
 		} else {
-			if (ordineatt.associazione == null || ordineatt.associazione == 'null')
-				statocomanda = 0; // In attesa di associazione al tavolo
-			else {
-				if (ordineatt.stato == 0)
-					statocomanda = 1; // Trascrizione tavolo in corso
-				else
-					statocomanda = 2; // In lavorazione
-			}
+			if (orders[current_id] == null)
+				orders[current_id] = confirmed[current_id];
+			out += '<small class="text-body-secondary"><i>non associato</i>&emsp;<button class="btn btn-sm btn-success" onclick="associateOrder(' + current_id + ');">Associa ora</button></small>';
 		}
-		let bevasa = ordineatt.stato_bar != 'ordinato';
-		let cevasa = ordineatt.stato_cucina != 'ordinato';
-		if (ordineatt.copia_bar && !ordineatt.esportazione) {
-			out += '<div class="row"><div class="col"><h4 class="mb-0 text-info">Comanda bevande:</h4></div>';
-			out += '<div class="col-auto"><button class="btn btn-sm btn-info" onclick="apricomanda(1);"><i class="bi bi-list-task"></i> Leggi</button></div></div>';
-			for (let i = 0; i < 3; i++) {
-				out += '&emsp;<i class="bi bi-' + istati[0][i] + (i < statocomanda || bevasa ? '-fill' : '') + '"></i> ' + (i == statocomanda && !bevasa ? lstati[0][i] : '') + '<br>';
-			}
-			out += '&emsp;<i class="bi bi-star' + (bevasa ? '-fill"></i> Evasa' + (ordineatt.stato_bar != '' ? ' alle ' + ordineatt.stato_bar.substr(0, 5) : '') : '"></i>');
+
+		out += '</strong>';
+		
+		let started_to_print = false;
+		if (confirmed[current_id].tickets != null) {
+			confirmed[current_id].tickets.forEach(ticket => { if (ticket.is_printed) started_to_print = true; });
 		}
-		if (ordineatt.copia_cucina) {
-			out += '<div class="row"><div class="col"><h4 class="mt-2 mb-0" style="color: var(--bs-orange);">Comanda cucina:</h4></div>';
-			out += '<div class="col-auto"><button class="btn btn-sm text-light" style="background-color: var(--bs-orange);" onclick="apricomanda(2);"><i class="bi bi-list-task"></i> Leggi</button></div></div>';
-			for (let i = 0; i < 3; i++) {
-				if (ordineatt.esportazione && i == 2)
-					break;
-				out += '&emsp;<i class="bi bi-' + istati[(ordineatt.esportazione ? 1 : 0)][i] + (i < statocomanda || cevasa ? '-fill' : '') + '"></i> ' + (i == statocomanda && !cevasa ? lstati[(ordineatt.esportazione ? 1 : 0)][i] : '') + '<br>';
-			}
-			out += '&emsp;<i class="bi bi-star' + (cevasa ? '-fill"></i> Evasa' + (ordineatt.stato_cucina != '' ? ' alle ' + ordineatt.stato_cucina.substr(0, 5) : '') : '"></i>');
-		}
+		if (!started_to_print)
+			out += '&emsp;<button class="btn btn-sm btn-outline-danger" onclick="confirmRollback();">Dissocia</button>';
+		out += '</h4>';
+
+		if (confirmed[current_id].done_at != null)
+			out += '&emsp;Associato da <strong><i>te stesso</i></strong>';
+		else if (confirmed[current_id].confirmed_at != null && confirmed[current_id].confirmed_by)
+			out += '&emsp;Associato da <strong>' + confirmed[current_id].confirmed_by.username + '</strong> alle ' + formatTime(confirmed[current_id].confirmed_at);
 	}
+
+	if (confirmed[current_id].tickets != null) {
+		out += '<br><hr>';
+		confirmed[current_id].tickets.forEach(ticket => {
+			out += '<div class="row">';
+			out += '<div class="col"><h4 class="mb-0 text-info">Comanda ' + ticket.category.name + '</h4></div>';
+			out += '<div class="col-auto"><button class="btn btn-sm btn-light" onclick="showTicket(' + ticket.category.id + ');"><i class="bi bi-list-task"></i> Leggi</button></div>';
+			out += '</div>';
+
+			let c_at = new Date(confirmed[current_id].confirmed_at);
+			let p_at = new Date(c_at.getTime() + ticket.category.print_delay * 1000);
+			let print_at = formatTime(p_at.toISOString());
+
+			if (ticket.is_printed) {
+				out += '<strong class="text-success"><i class="bi bi-check-square"></i> Stampata</strong> alle ore ' + print_at;
+			} else {
+				out += '<i class="bi bi-check-square"></i> Stampa prevista alle ore ' + print_at;
+			}
+		});
+	}
+
 	$('#page-body')
 	.css('opacity', 0)
 	.html(out)
 	.animate({opacity: 1});
 }
 
-function apricomanda(tipo) {
+
+function showTicket(tipo) {
 	out = '';
-	$.getJSON("ajax.php?a=comanda&id=" + ordineatt.id + "&tipo=" + tipo)
+	$.getJSON("ajax.php?a=comanda&id=" + confirmed[current_id].id + "&tipo=" + tipo)
 	.done(function(json) {
 		try {
 			tipologia = null;
@@ -110,56 +109,26 @@ function apricomanda(tipo) {
 	});
 }
 
-function dialogRipristina() {
-	dialog('Dissocia tavolo', 'Sei sicuro di voler annullare l\'associazione al tavolo di questo ordine?<br><br><span id="msgdrip"></span>', '<button class="btn btn-success" onclick="ripristina();"><i class="bi bi-check-circle-fill"></i> Conferma</button>');
+
+function confirmRollback() {
+	dialog('Dissocia tavolo', 'Sei sicuro di voler annullare l\'associazione al tavolo di questo ordine?<br><br><span id="msgdrip"></span>', '<button class="btn btn-success" onclick="rollback();"><i class="bi bi-check-circle-fill"></i> Conferma</button>');
 }
 
-function ripristina() {
-	setCookie('action' + Date.now(), '-_' + ordineatt.id);
-	ordineatt.tavolo = null;
-	orders[ordineatt.id] = ordineatt;
-	confirmed[ordineatt.id] = null;
-	ordineatt = null;
+
+function rollback() {
+	localStorage.setItem('rollback_' + current_id, JSON.stringify({ id: current_id, done_at: Date.now()	}));
+	
+	confirmed[current_id].table = null;
+	orders[current_id] = confirmed[current_id];
+	confirmed[current_id] = null;
+	current_id = null;
+
 	modal.hide();
 	lastAssociated();
-	
-	/*
-	let ordine;
-	$('#msgdrip').html('<span class="text-success">Elaborazione in corso...</span>');
-	if (array == 'salvati') {
-		let salvati2;
-		for (let i = 0; i < salvati.length; i++) {
-			if (salvati[0].id == id) {
-				ordine = salvati.shift();
-			} else {
-				salvati2.push(salvati.shift());
-			}
-		}
-		salvati = salvati2;
-		orders[current_id] = ordine;
-		orders[current_id].tavolo = null;
-		modal.hide();
-		lastAssociated();
-	} else {
-		ordine = confirmed[current_id];
-		confirmed[current_id] = null;
-		$.ajax({
-			url: "ajax.php?a=dissocia&id=" + current_id,
-			success: function(res) {
-				if (res == '1') {
-					orders[current_id] = ordine;
-					orders[current_id].tavolo = null;
-					modal.hide();
-					lastAssociated();
-				} else {
-					$('#msgdrip').html('<span class="text-danger">' + res + '</span>');
-				}
-			},
-			error: function(xhr, status, error) { // Server non raggiungibile
-				$('#msgdrip').html('<span class="text-danger">Errore nell\'invio dei dati: ' + error + '</span>');
-			},
-			timeout: 2000
-		});
-	}
-	*/
 }
+
+
+function lastMenu() {
+
+}
+
