@@ -54,7 +54,7 @@ function cerca() {
 					$('#rescerca').html('<br>Ordine non trovato.');
 				} else {
 					trovati[0] = json[0];
-					apriordine(0, 'trovati');
+					orderSummary(0, 'trovati');
 					modcerca.hide();
 				}
 			} else {
@@ -81,7 +81,7 @@ function rescerca() {
 		$('#page-body').html('');
 		let delay = 0;
 		for (let i = 0; i < trovati.length; i++) {
-			$('#page-body').append('<button class="btn btn-secondary w-100 mb-3 ordinesala" style="animation-delay: ' + delay + 's;" onclick="apriordine(' + i + ', \'trovati\');"><div class="row"><div class="col-4 my-auto"><big>' + trovati[i].progressivo + '</big></div><div class="col my-auto">' + trovati[i].cliente + '<hr style="margin: 5px;">Ore ' + trovati[i].ora.substr(0, 5) + (trovati[i].tavolo != '' ? ' - Tavolo ' + trovati[i].tavolo : '') + '</div></div></button><br>');
+			$('#page-body').append('<button class="btn btn-secondary w-100 mb-3 ordinesala" style="animation-delay: ' + delay + 's;" onclick="orderSummary(' + i + ', \'trovati\');"><div class="row"><div class="col-4 my-auto"><big>' + trovati[i].progressivo + '</big></div><div class="col my-auto">' + trovati[i].cliente + '<hr style="margin: 5px;">Ore ' + trovati[i].ora.substr(0, 5) + (trovati[i].tavolo != '' ? ' - Tavolo ' + trovati[i].tavolo : '') + '</div></div></button><br>');
 			delay += 0.02;
 		}
 	}
