@@ -14,6 +14,8 @@
 	<script src="palmare/js/confirm_order.js"></script>
 	<script src="palmare/js/last_associated.js"></script>
 	<script src="palmare/js/order_summary.js"></script>
+	<script src="palmare/js/search.js"></script>
+	<script src="palmare/js/contest.js"></script>
 </head>
 <body style="height: 100vh;">
 	<div class="container-lg h-100" style="padding-top: 53px;">
@@ -43,26 +45,11 @@
 		</nav>
 		
 		<div id="page-header" style="transition: 0.3s;" class="pt-3">
-			<div class="alert alert-success" style="width: 100%; padding: 50px 15px;" onclick="$(this).remove(); $('#page-body').html(''); initList();">
+			<div class="alert alert-success mb-4" style="width: 100%; padding: 50px 15px;" onclick="$(this).remove(); $('#page-body').html(''); initList();">
 				<h4 class="text-success">Bentornato/a, <strong class="username"></strong></h4>
 				Tocca qui per iniziare
 			</div>
-			<?php
-			/*
-			$tot = pg_fetch_assoc(pg_query($conn, "SELECT count(*) as tot FROM ordini WHERE cassiere = '" . $_COOKIE['cameriere'] . "';"))['tot'];
-			$gradi = ['Associatore novizio', 'Principiante promettente', 'Abile tirocinante', 'Adocchia-clienti provetto', 'Gira-tavoli ferrato', 'Cameriere bersagliere',
-			'Abbinatore esperto', 'Servitore assessore', 'Maggiordomo qualificato', 'Generale pluridecorato', 'Sovrano della sala'];
-			$icone = ['dice-1-fill', 'dice-2-fill', 'dice-3-fill', 'dice-4-fill', 'dice-5-fill', 'dice-6-fill',
-			'fire', 'award-fill', 'mortarboard-fill', 'stars', 'trophy-fill'];
-			$grado = $tot >= 100 ? 11 : intval($tot / 10) + 1;
-			*/
-			$tot = 0; $grado = '';
-			?>
-			<br>
-			<h6>Fino ad ora hai abbinato <strong><?php echo $tot; ?></strong> ordini</h6>
-			<p>Hai raggiunto il grado <?php echo ($grado == 11 ? 'massimo' : $grado);?>:</p>
-			<?php //echo '<h5 class="text-' . ($grado < 7 ? 'primary' : ($grado < 11 ? 'danger' : 'warning')) . '"><i class="bi bi-' . $icone[$grado - 1] . '"></i>&nbsp;' . $gradi[$grado - 1] . '</h5>'; ?>
-			<br>
+			<div id="contest" class="mb-3"></div>
 		</div>
 		<hr>
 		<div id="page-body">
@@ -108,13 +95,12 @@
 	<?php include '../pannello/php/toast.php'; ?>
 
 	<script>
-	
 	let modal = new bootstrap.Modal(document.getElementById('dialog'));
-	function dialog(title, body, azione = null) {
+	function dialog(title, body, action = null) {
 		$('#dialogtitle').html(title);
 		$('#dialogbody').html(body);
-		if (azione != null)
-			$('#dialogfooter').html('<button class="btn btn-danger" onclick="modal.hide();"><i class="bi bi-x-circle"></i>&emsp;Annulla</button>&nbsp;' + azione).show();
+		if (action != null)
+			$('#dialogfooter').html('<button class="btn btn-danger" onclick="modal.hide();"><i class="bi bi-x-circle"></i>&emsp;Annulla</button>&nbsp;' + action).show();
 		else
 			$('#dialogfooter').hide();
 		modal.show();
