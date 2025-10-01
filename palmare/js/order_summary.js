@@ -16,21 +16,22 @@ function orderSummary(id) {
 	let out = '';
 	if (!isThisSession(confirmed[current_id].created_at))
 		out += '<div class="p-2 alert alert-danger"><strong class="text-danger">Attenzione!</strong> Il presente ordine non è stato emesso in questo turno di servizio. Verifica la data sulla comanda!</div>';
-	out += '<h4 class="mb-0">Cliente: <strong>' + confirmed[current_id].customer + '</strong></h4>';
 
 	let guests = confirmed[current_id].guests
-	out += (guests != null ? '&emsp;<strong>' + guests + '</strong> copert' + (guests == 1 ? 'o' : 'i') : '');
+	if (guests != null)
+		out += '<h4><i class="bi bi-fork-knife"></i> Copert' + (guests == 1 ? 'o' : 'i') + ': <strong>' + guests + '</strong></h4>';
 
 	let notes = confirmed[current_id].notes;
-	out += (notes != null && notes.length > 0 ? '<br>&emsp;<i class="bi bi-sticky-fill"></i>&nbsp;' + notes : '');
+	if (notes != null && notes.length > 0)
+		out += '&emsp;<i class="bi bi-sticky-fill"></i>&nbsp;' + notes;
 
 	if (confirmed[current_id].is_take_away) {
-		out += '<h4 class="mt-2">Ordine per ASPORTO</h4>';
+		out += '<h4 class="mt-2"><i class="bi bi-handbag"></i> Ordine per ASPORTO</h4>';
 	} else {
 		let table = confirmed[current_id].table;
 		let has_table = table != null && table != '';
 
-		out += '<h4 class="mt-2 mb-0">Tavolo: <strong>';
+		out += '<h4 class="mt-2 mb-0"><i class="bi bi-compass-fill"></i> Tavolo: <strong>';
 		if (has_table) {
 			out += table;
 		} else {
@@ -51,26 +52,29 @@ function orderSummary(id) {
 
 		if (confirmed[current_id].done_at != null)
 			out += '&emsp;Associato da <strong><i>te stesso</i></strong>';
-		else if (confirmed[current_id].confirmed_at != null && confirmed[current_id].confirmed_by)
-			out += '&emsp;Associato da <strong>' + confirmed[current_id].confirmed_by.username + '</strong> alle ' + formatTime(confirmed[current_id].confirmed_at);
+		else if (confirmed[current_id].confirmed_at != null && confirmed[current_id].confirmed_by) {
+			let name = confirmed[current_id].confirmed_by.username;
+			name = name == username ? '<i>te stesso</i>' : name;
+			out += '&emsp;Associato da <strong>' + name + '</strong> alle ' + formatTime(confirmed[current_id].confirmed_at);
+		}
 	}
 
 	if (confirmed[current_id].tickets != null) {
 		out += '<br><hr>';
 		confirmed[current_id].tickets.forEach(ticket => {
 			out += '<div class="row">';
-			out += '<div class="col"><h4 class="mb-0 text-info">Comanda ' + ticket.category.name + '</h4></div>';
-			out += '<div class="col-auto"><button class="btn btn-sm btn-light" onclick="showTicket(' + ticket.category.id + ');"><i class="bi bi-list-task"></i> Leggi</button></div>';
+			out += '<div class="col"><h4 class="mb-0 text-info">Comanda ' + categories[ticket.category_id].name + '</h4></div>';
+			out += '<div class="col-auto"><button class="btn btn-sm btn-light" onclick="showTicket(' + ticket.category_id + ');"><i class="bi bi-list-task"></i> Leggi</button></div>';
 			out += '</div>';
 
 			let c_at = new Date(confirmed[current_id].confirmed_at);
-			let p_at = new Date(c_at.getTime() + ticket.category.print_delay * 1000);
+			let p_at = new Date(c_at.getTime() + categories[ticket.category_id].print_delay * 1000);
 			let print_at = formatTime(p_at.toISOString());
 
 			if (ticket.is_printed) {
-				out += '<strong class="text-success"><i class="bi bi-check-square"></i> Stampata</strong> alle ore ' + print_at;
+				out += '<p><strong class="text-success"><i class="bi bi-check-square"></i> Stampata</strong> alle ore ' + print_at + '</p>';
 			} else {
-				out += '<i class="bi bi-check-square"></i> Stampa prevista alle ore ' + print_at;
+				out += '<p><i class="bi bi-square"></i> Stampa prevista alle ore ' + print_at + '</p>';
 			}
 		});
 	}
@@ -82,31 +86,27 @@ function orderSummary(id) {
 }
 
 
-function showTicket(tipo) {
-	out = '';
-	$.getJSON("ajax.php?a=comanda&id=" + confirmed[current_id].id + "&tipo=" + tipo)
-	.done(function(json) {
-		try {
-			tipologia = null;
-			$.each(json, function(i, art) {
-				if (art.tipologia != tipologia) {
-					out += '<h6 class="' + (tipologia != null ? 'mt-3 ' : '') + 'p-2 text-light" style="background: var(--bs-gray);">' + art.tipologia + '</h6>';
-					tipologia = art.tipologia;
-				}
-				out += '<div class="row"><div class="col-1">' + art.quantita + '</div><div class="col">' + art.descrizione + '</div></div>';
-				if (art.note.length > 0)
-					out += '<div class="row"><div class="col-1"></div><div class="col"><i class="bi bi-sticky-fill"></i>&nbsp;' + art.note + '</div></div>';
-			});
-		} catch (err) {
-			out = '<span class="text-danger"><strong>Errore nell\'elaborazione della richiesta:</strong></span>' + json;
+function showTicket(cat_id) {
+	let out = '';
+	let subcat = null;
+	let products = confirmed[current_id].products;
+
+	products.sort(function(a, b) {
+		if (a == null || b == null) return 0;
+		return subcategories[a.product.subcategory_id].order - subcategories[b.product.subcategory_id].order;
+	}).forEach(product => {
+		if (product.category_id == cat_id) {
+			if (product.product.subcategory_id != subcat) {
+				out += '<h6 class="' + (subcat != null ? 'mt-3 ' : '') + 'p-2 text-light" style="background: var(--bs-gray);">' + subcategories[product.product.subcategory_id].name + '</h6>';
+				subcat = product.product.subcategory_id;
+			}
+			out += '<div class="row"><div class="col-1">' + product.quantity + '</div><div class="col">' + product.product.name + '</div></div>';
+			if (product.notes != null && product.notes.length > 0)
+				out += '<div class="row"><div class="col-1"></div><div class="col"><i class="bi bi-arrow-return-right"></i>&nbsp;' + product.notes + '</div></div>';
 		}
-	})
-	.fail(function(jqxhr, textStatus, error) {
-		out = '<span class="text-danger"><strong>Errore durante la richiesta:</strong></span>' + jqxhr.responseText;
-	})
-	.always(function() {
-		dialog((tipo == 1 ? '<strong class="text-info">Comanda bevande</strong>' : '<strong style="color: var(--bs-orange);">Comanda cucina</strong>'), out);
 	});
+
+	dialog('<strong class="text-info">Comanda ' + categories[cat_id].name + '</strong>', out);
 }
 
 

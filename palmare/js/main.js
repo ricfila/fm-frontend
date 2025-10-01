@@ -5,6 +5,68 @@ var current_id = null;
 var current_table;
 var msg_err = '';
 
+var categories = [];
+var subcategories = [];
+
+
+$(document).ready(function() {
+	$.ajax({
+		url: apiUrl + '/categories',
+		type: "GET",
+		headers: { "Authorization": "Bearer " + token },
+		success: function(response) {
+			response.categories.forEach(cat => categories[cat.id] = cat); 
+		},
+		error: function(jqXHR, textStatus, errorThrown) {
+			msg_err = 'Errore nella lettura delle categorie: ' + getErrorMessage(jqXHR, textStatus, errorThrown);
+		}
+	});
+	$.ajax({
+		url: apiUrl + '/subcategories',
+		type: "GET",
+		headers: { "Authorization": "Bearer " + token },
+		success: function(response) {
+			response.subcategories.forEach(subcat => subcategories[subcat.id] = subcat); 
+		},
+		error: function(jqXHR, textStatus, errorThrown) {
+			msg_err = 'Errore nella lettura delle sottocategorie: ' + getErrorMessage(jqXHR, textStatus, errorThrown);
+		}
+	});
+
+	setInterval(sendData, 3000);
+});
+
+
+function sendData() {
+	updateStatus();
+
+	const [confirms, rollbacks] = localConfirmsAndRollbacks();
+
+	if (confirms.length + rollbacks.length > 0) {
+		$.ajax({
+			url: apiUrl + '/orders/confirm',
+			type: "PATCH",
+			data: JSON.stringify({confirms: confirms, rollbacks: rollbacks}),
+			contentType: 'application/json; charset=utf-8',
+			headers: { "Authorization": "Bearer " + token },
+			success: function(response) {
+				msg_err = '';
+				response.rollbacks_succeeded.forEach(id => localStorage.removeItem('rollback_' + id));
+				response.confirms_succeeded.forEach(id => localStorage.removeItem('order_' + id));
+				response.errors.forEach(error => {
+					msg_err += 'Errore durante l\'operazione ' + (error.type) + ' dell\'ordine ' + error.order_id + ': ' + error.message + '<br>';
+				});
+				showError();
+				updateStatus();
+			},
+			error: function(jqXHR, textStatus, errorThrown) {
+				msg_err = 'Errore nell\'invio dei dati: ' + getErrorMessage(jqXHR, textStatus, errorThrown);
+			},
+			timeout: 2000
+		});
+	}
+}
+
 
 function updateStatus() {
 	//$('#attesa').html(ordinic.length > 0 ? '<i class="bi bi-upload"></i>' : '');
@@ -69,38 +131,6 @@ function getList() {
 }
 
 
-function sendData() {
-	updateStatus();
-
-	const [confirms, rollbacks] = localConfirmsAndRollbacks();
-
-	if (confirms.length + rollbacks.length > 0) {
-		$.ajax({
-			url: apiUrl + '/orders/confirm',
-			type: "PATCH",
-			data: JSON.stringify({confirms: confirms, rollbacks: rollbacks}),
-			contentType: 'application/json; charset=utf-8',
-			headers: { "Authorization": "Bearer " + token },
-			success: function(response) {
-				msg_err = '';
-				response.rollbacks_succeeded.forEach(id => localStorage.removeItem('rollback_' + id));
-				response.confirms_succeeded.forEach(id => localStorage.removeItem('order_' + id));
-				response.errors.forEach(error => {
-					msg_err += 'Errore durante l\'operazione ' + (error.type) + ' dell\'ordine ' + error.order_id + ': ' + error.message + '<br>';
-				});
-				showError();
-				updateStatus();
-			},
-			error: function(jqXHR, textStatus, errorThrown) {
-				msg_err = 'Errore nell\'invio dei dati: ' + getErrorMessage(jqXHR, textStatus, errorThrown);
-			},
-			timeout: 2000
-		});
-	}
-}
-setInterval(sendData, 3000);
-
-
 function localConfirmsAndRollbacks() {
 	let confirms = [];
 	let rollbacks = [];
@@ -122,8 +152,9 @@ function localConfirmsAndRollbacks() {
 }
 
 
-function localConfirms() {
+function localConfirmsAndRollbacksMerged() {
 	let confirms = [];
+	let rollbacks = [];
 
 	for (let i = 0; i < localStorage.length; i++) {
 		let k = localStorage.key(i);
@@ -134,7 +165,14 @@ function localConfirms() {
 			if (rollback == null || rollback.done_at < item.done_at)
 				confirms.push(item);
 		}
+
+		if (k.startsWith('rollback_')) {
+			let item = JSON.parse(localStorage.getItem(k));
+			let confirm = localStorage.getItem('order_' + item.id);
+			if (confirm == null || confirm.done_at < item.done_at)
+				rollbacks.push(item);
+		}
 	}
 	
-	return confirms;
+	return [confirms, rollbacks];
 }
