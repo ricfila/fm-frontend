@@ -35,7 +35,7 @@
 							<a class="nav-link" onclick="lastAssociated();"><i class="bi bi-clock-history"></i> Ultimi associati</a>
 						</li>
 						<li class="nav-item lead">
-							<a class="nav-link" onclick="cercaordine();"><i class="bi bi-search"></i> Cerca un ordine</a>
+							<a class="nav-link" onclick="selectSearchMode();"><i class="bi bi-search"></i> Cerca un ordine</a>
 						</li>
 					</ul>
 				</div>
@@ -83,7 +83,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="modal fade" id="modalcerca">
+		<div class="modal fade" id="mod-search">
 			<div class="modal-dialog" role="document">
 				<div class="modal-content">
 					<div class="modal-header">
@@ -93,23 +93,20 @@
 						</button>
 					</div>
 					<div class="modal-body">
-						<span id="desccerca"></span><br>
+						<span id="search-desc"></span><br>
 						<div class="input-group mb-3 mt-3">
-							<input class="form-control form-control-lg" type="number" id="inputcerca" onkeyup="if (event.keyCode == 13) cerca();">
-							<button class="btn btn-lg btn-success" onclick="cerca();"><i class="bi bi-search"></i></button>
+							<input class="form-control form-control-lg" type="number" id="search-input" onkeyup="if (event.keyCode == 13) search();">
+							<button class="btn btn-lg btn-success" onclick="search();"><i class="bi bi-search"></i></button>
 						</div>
-						<div id="rescerca" style="text-align: center;"></div>
+						<div id="search-error" style="text-align: center;"></div>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 	
-	<?php
-	include '../pannello/php/toast.php';
-	?>
-	<!--
-	<script src="cercapalmare.js"></script-->
+	<?php include '../pannello/php/toast.php'; ?>
+
 	<script>
 	
 	let modal = new bootstrap.Modal(document.getElementById('dialog'));
