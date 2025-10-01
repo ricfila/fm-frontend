@@ -120,7 +120,7 @@ function getList() {
 		let delay = 0;
 		for (let i = 0; i < orders.length; i++) {
 			if (orders[i] != null) {
-				$('#page-body').append('<button class="btn btn-secondary w-100 mb-3 ordinesala" style="animation-delay: ' + delay + 's;" onclick="associateOrder(' + i + ');"><div class="row"><div class="col-4"><big>' + i + '</big></div><div class="col my-auto">' + orders[i].customer + '</div></div></button><br>');
+				$('#page-body').append('<button class="btn btn-secondary w-100 mb-3 btn-ordermenu" style="animation-delay: ' + delay + 's;" onclick="associateOrder(' + i + ');"><div class="row"><div class="col-4"><big>' + i + '</big></div><div class="col my-auto">' + orders[i].customer + '</div></div></button><br>');
 				delay += 0.02;
 			}
 		}

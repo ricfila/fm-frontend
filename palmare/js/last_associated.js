@@ -65,5 +65,5 @@ function lastAssociated() {
 
 
 function btnOrder(id, delay) {
-	$('#page-body').append('<button class="btn btn-secondary w-100 mb-3 ordinesala" style="animation-delay: ' + delay + 's;" onclick="orderSummary(' + id + ');"><div class="row"><div class="col-4"><big>&emsp;&emsp;' + id + '</big></div><div class="col my-auto">' + confirmed[id].customer + '</div></div></button><br>');
+	$('#page-body').append('<button class="btn btn-secondary w-100 mb-3 btn-ordermenu" style="animation-delay: ' + delay + 's;" onclick="orderSummary(' + id + ');"><div class="row"><div class="col-4"><big>&emsp;&emsp;' + id + '</big></div><div class="col my-auto">' + confirmed[id].customer + '</div></div></button><br>');
 }
