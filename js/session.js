@@ -8,6 +8,8 @@ $(document).ready(function() {
 		$.each($('.username'), function() {
 			$(this).text(username);
 		});
+		
+		$(document).trigger('fm:sessionReady');
 	} else {
 		setCookie('login_redirect', window.location.href);
 		window.location.href = 'login/';

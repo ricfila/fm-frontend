@@ -1,5 +1,4 @@
 var orders = [];
-//var ordinic = [];
 var confirmed = [];
 var current_id = null;
 var current_table;
@@ -9,7 +8,7 @@ var categories = [];
 var subcategories = [];
 
 
-$(document).ready(function() {
+$(document).one('fm:sessionReady', function() {
 	$.ajax({
 		url: apiUrl + '/categories',
 		type: "GET",
