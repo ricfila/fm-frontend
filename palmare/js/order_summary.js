@@ -1,7 +1,10 @@
-let istati = [['compass', 'printer', 'clipboard2-pulse'],
-			['hourglass-split', 'clipboard2-pulse']];
-let lstati = [['In attesa di associazione al tavolo', 'In attesa di stampa', 'In lavorazione'],
-			['In attesa', 'In lavorazione']];
+var required_for_summary = {
+	include_confirmer_user: true,
+	include_tickets: true,
+	include_products: true,
+	include_products_product: true
+};
+var lastMenuFunction = null;
 
 
 function orderSummary(id) {
@@ -12,7 +15,7 @@ function orderSummary(id) {
 		return;
 	}
 	
-	loadOrderHeader(confirmed[current_id], 'info', 'lastMenu();');
+	loadOrderHeader(confirmed[current_id], 'info', 'window[\'lastMenuFunction\']();');
 	let out = '';
 	if (!isThisSession(confirmed[current_id].created_at))
 		out += '<div class="p-2 alert alert-danger"><strong class="text-danger">Attenzione!</strong> Il presente ordine non è stato emesso in questo turno di servizio. Verifica la data sulla comanda!</div>';
@@ -34,21 +37,19 @@ function orderSummary(id) {
 		out += '<h4 class="mt-2 mb-0"><i class="bi bi-compass-fill"></i> Tavolo: <strong>';
 		if (has_table) {
 			out += table;
+			
+			let started_to_print = false;
+			if (confirmed[current_id].tickets != null) {
+				confirmed[current_id].tickets.forEach(ticket => { if (ticket.is_printed) started_to_print = true; });
+			}
+			if (!started_to_print)
+				out += '&emsp;<button class="btn btn-sm btn-outline-danger" onclick="confirmRollback();">Dissocia</button>';
 		} else {
 			if (orders[current_id] == null)
 				orders[current_id] = confirmed[current_id];
 			out += '<small class="text-body-secondary"><i>non associato</i>&emsp;<button class="btn btn-sm btn-success" onclick="associateOrder(' + current_id + ');">Associa ora</button></small>';
 		}
-
-		out += '</strong>';
-		
-		let started_to_print = false;
-		if (confirmed[current_id].tickets != null) {
-			confirmed[current_id].tickets.forEach(ticket => { if (ticket.is_printed) started_to_print = true; });
-		}
-		if (!started_to_print)
-			out += '&emsp;<button class="btn btn-sm btn-outline-danger" onclick="confirmRollback();">Dissocia</button>';
-		out += '</h4>';
+		out += '</strong></h4>';
 
 		if (confirmed[current_id].done_at != null)
 			out += '&emsp;Associato da <strong><i>te stesso</i></strong>';
@@ -60,7 +61,7 @@ function orderSummary(id) {
 	}
 
 	if (confirmed[current_id].tickets != null) {
-		out += '<br><hr>';
+		out += '<hr>';
 		confirmed[current_id].tickets.forEach(ticket => {
 			out += '<div class="row">';
 			out += '<div class="col"><h4 class="mb-0 text-info">Comanda ' + categories[ticket.category_id].name + '</h4></div>';
@@ -126,9 +127,3 @@ function rollback() {
 	modal.hide();
 	lastAssociated();
 }
-
-
-function lastMenu() {
-
-}
-

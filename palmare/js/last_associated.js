@@ -1,4 +1,5 @@
 function lastAssociated() {
+	lastMenuFunction = lastAssociated;
 	menuColor('bg-info');
 	$('#page-header').html('<h3 class="m-0"><button class="btn btn-info" onclick="initList();"><i class="bi bi-caret-left-fill"></i></button> Ultimi associati');
 	$('#page-body').html('');
@@ -7,15 +8,11 @@ function lastAssociated() {
 	$.ajax({
 		url: apiUrl + '/orders/',
 		type: "GET",
-		data: {
+		data: Object.assign({}, required_for_summary, {
 			order_by: "-confirmed_at",
 			limit: 20,
-			confirmed_by_user: true,
-			include_confirmer_user: true,
-			include_tickets: true,
-			include_products: true,
-			include_products_product: true
-		},
+			confirmed_by_user: true
+		}),
 		contentType: 'application/json; charset=utf-8',
 		headers: { "Authorization": "Bearer " + token },
 		success: function(response) {
