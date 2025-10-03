@@ -1,3 +1,8 @@
+let prevGuests = null;
+let prevTable = null;
+let prevPaymentMethod = null;
+let prevFlash = false;
+
 function loadOrder() {
 	$('#customer').val(order.customer);
 	$('#guests').val(order.guests == null ? '' : order.guests);
@@ -13,11 +18,18 @@ function loadOrder() {
 }
 
 function checkInputDisabled() {
+	let guestsWasDisabled = $('#guests').is(':disabled');
+	let tableWasDisabled = $('#table').is(':disabled');
+
 	$('#guests').prop('disabled', order.is_take_away);
 	$('#table').prop('disabled', order.is_take_away || (order.has_tickets && order_requires_confirmation));
+
+	if (guestsWasDisabled && !$('#guests').is(':disabled'))
+		$('#guests').val(prevGuests).trigger('change');
+	if (tableWasDisabled && !$('#table').is(':disabled'))
+		$('#table').val(prevTable).trigger('change');
 }
 
-let prevPaymentMethod = null;
 function loadComponents() {
 	// Menu
 	$('#newOrderItem').click(async function() {
@@ -46,8 +58,13 @@ function loadComponents() {
 	$('#is_take_away').change(function() {
 		order.is_take_away = $(this).is(':checked');
 		if (order.is_take_away) {
+			prevGuests = $('#guests').val();
 			$('#guests').val('').trigger('change');
-			$('#table').val('').trigger('change');
+
+			if (!$('#table').is(':disabled')) {
+				prevTable = $('#table').val();
+				$('#table').val('').trigger('change');
+			}
 
 			order.has_tickets = true;
 			$('#is_fast_order').prop('checked', false);
@@ -60,8 +77,8 @@ function loadComponents() {
 		if (!order.has_tickets) {
 			order.is_take_away = false;
 			$('#is_take_away').prop('checked', false);
-		} else {
-			order.table = null;
+		} else if (!$('#table').is(':disabled')) {
+			prevTable = $('#table').val();
 			$('#table').val('').trigger('change');
 		}
 		checkInputDisabled();
@@ -87,8 +104,14 @@ function loadComponents() {
 
 	$('#is_for_service').change(function() {
 		order.is_for_service = $(this).is(':checked');
-		order.is_voucher = order.is_for_service;
+
 		$('#is_voucher').prop('checked', order.is_for_service).trigger('change');
+		if (order.is_for_service) {
+			prevFlash = $('#is_fast_order').is(':checked');
+			$('#is_fast_order').prop('checked', true).trigger('change');
+		} else {
+			$('#is_fast_order').prop('checked', prevFlash).trigger('change');
+		}
 	});
 
 	$('#notes').change(function() {
