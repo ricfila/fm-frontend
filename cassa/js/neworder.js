@@ -142,23 +142,23 @@ function selectedProducts() {
 async function saveOrder() {
 	// Check products
 	if (selectedProducts() == 0) {
-		showToast(false, 'Nessun prodotto selezionato!', 1);
+		showToast(false, 'Nessun prodotto selezionato!', 2);
 		return;
 	}
 
 	// Check fields
 	if (order.customer.trim() == '') {
-		showToast(false, 'Inserire il nome del cliente!', 1);
+		showToast(false, 'Inserire il nome del cliente!', 2);
 		$('#customer').focus();
 		return;
 	}
 	if (!order.is_take_away && order.has_tickets && order.guests == null) {
-		showToast(false, 'Inserire il numero di coperti!', 1);
+		showToast(false, 'Inserire il numero di coperti!', 2);
 		$('#guests').focus();
 		return;
 	}
 	if (order.payment_method_id == null) {
-		showToast(false, 'Selezionare il metodo di pagamento!', 1);
+		showToast(false, 'Selezionare il metodo di pagamento!', 2);
 		$('#paymentMethod').focus();
 		return;
 	}

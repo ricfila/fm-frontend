@@ -118,6 +118,7 @@ DA FARE:
 
 							<div id="orderProductsContainer" class="flex-fill mb-3">
 								<div id="orderProducts" class="px-4"></div>
+								<div id="divtoast" class="toast-container bottom-0 end-0 pe-3" style="z-index: 1100; position: absolute;"></div>
 							</div>
 							<div class="px-3 py-2" id="orderFooter">
 								<div class="row mb-2">
@@ -198,7 +199,6 @@ DA FARE:
 				</div>
 			</div>
 	<?php
-	include "../pannello/php/toast.php";
 	/*
 	include "php/menuturno.php";
 	include "php/strumenti/modificaordine.php";
@@ -252,7 +252,8 @@ DA FARE:
 		</div>
 	</div>
 	
-	
+	<?php include "../pannello/php/toast.php"; ?>
+
 	<script>
 	function accessoalturno() {
 		apritab('#tabordinirecenti');

@@ -91,8 +91,6 @@
 			</div>
 		</div>
 	</div>
-	
-	<?php include '../pannello/php/toast.php'; ?>
 
 	<script>
 	let modal = new bootstrap.Modal(document.getElementById('dialog'));

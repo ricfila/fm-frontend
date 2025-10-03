@@ -1,6 +1,4 @@
 
-<div id="divtoast" class="toast-container bottom-0 end-0 p-3" style="z-index: 1100; position: absolute;"></div>
-
 <div class="modal fade" id="modalconfirm">
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
