@@ -42,8 +42,8 @@ function sendOrder() {
 				order.id = response.order.id;
 				order.created_at = response.order.created_at;
 				order.user = { name: username };
-				await printOrder();
-				//newOrder();
+				printOrder(structuredClone(order), structuredClone(order_products));
+				newOrder();
 			} else {
 				loadOrder();
 			}

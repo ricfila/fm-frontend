@@ -1,13 +1,13 @@
-async function printOrder() {
+async function printOrder(order, order_products) {
 	let called = false;
 
 	window.__printWindowReady = function(print_w) {
 		called = true;
-		populateAndPrint(print_w);
+		populateAndPrint(print_w, order, order_products);
 		delete window.__printWindowReady;
 	};
 
-	let print_w = window.open('cassa/print.html', 'PRINT', 'height=400,width=600');
+	let print_w = window.open('cassa/print.html', '', 'width=1000,height=700');
 
     if (!print_w) {
         showToast(false, 'Impossibile aprire la finestra di stampa (popup bloccato)');
@@ -16,14 +16,14 @@ async function printOrder() {
 
 	setTimeout(() => {
 		try {
-			if (!called) populateAndPrint(print_w);
+			if (!called) populateAndPrint(print_w, order, order_products);
 		} catch(e) {
 			showToast(false, 'Timeout preparazione stampa');
 		}
 	}, 3000);
 }
 
-function populateAndPrint(print_w) {
+function populateAndPrint(print_w, order, order_products) {
 	try {
 		print_w.document.getElementById('outDate').innerHTML = formatDateTime(order.created_at);
 		print_w.document.getElementById('outUser').innerHTML = order.user.name + (order.payment_method_id > 1 ? '*' : '');
@@ -61,8 +61,11 @@ function populateAndPrint(print_w) {
 			print_w.document.getElementById('divNotes').style.display = 'none';
 		}
 
-		print_w.focus(); // necessary for IE >= 10
-		print_w.print();
+		setTimeout(() => {
+			print_w.focus(); // necessary for IE >= 10
+			print_w.print();
+			print_w.close();
+		}, 200);
 	} catch (e) {
 		showToast(false, 'Errore nella preparazione della stampa: ' + e.message);
 		console.error('Errore durante populateAndPrint:', e);
