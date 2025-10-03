@@ -38,7 +38,7 @@ function loadProducts() {
 
 	let out = '';
 	for (let i = 0; i < subcats.length; i++) {
-		out += headSubcat(subcats[i].name);
+		out += headSubcat(subcats[i].name, 2);
 		out += '<div class="row">';
 		for (let j = 0; j < subcat_products[i].length; j++) {
 			let prod = subcat_products[i][j];
@@ -80,20 +80,21 @@ function loadOrderProducts() {
 	let out = '';
 	subcats.forEach((subcat, i) => {
 		if (order_products[i].length > 0) {
-			out += headSubcat(subcat.name);
+			out += headSubcat(subcat.name, 2);
 		}
 		order_products[i].forEach((p, j) => {
 			let prod = subcat_products[i][j];
 			out += productRow(i, j, prod.name, prod.price, p.quantity, p.notes);
 		});
 	});
-
+	
+	document.getElementById('orderProducts').scrollTop = 0; //TODO: risolvere l'ombra che rimane in alto se lo scorrimento è completo verso il basso al momento dello svuotamento
 	$('#orderProducts').html(out);
 	updatePrice();
 }
 
-function headSubcat(name) {
-	let out = '<div class="row mt-2">';
+function headSubcat(name, mb = 0) {
+	let out = '<div class="row mt-2 mb-' + mb + '">';
 	out += '<div class="col-auto my-auto"><h6 class="m-0">' + name + '</h6></div>';
 	out += '<div class="col p-0"><hr class="m-2"></div>';
 	out += '</div>';
