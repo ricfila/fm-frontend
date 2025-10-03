@@ -5,6 +5,7 @@ function loadOrder() {
 	$('#is_fast_order').prop('checked', !order.has_tickets);
 	$('#table').val(order.table == null ? '' : order.table);
 	$('#is_voucher').prop('checked', order.is_voucher);
+	$('#is_for_service').prop('checked', order.is_for_service);
 	$('#notes').val(order.notes == null ? '' : order.notes);
 	$('#paymentMethod').val(order.payment_method_id);
 	checkInputDisabled();
@@ -16,6 +17,7 @@ function checkInputDisabled() {
 	$('#table').prop('disabled', order.is_take_away || (order.has_tickets && order_requires_confirmation));
 }
 
+let prevPaymentMethod = null;
 function loadComponents() {
 	// Menu
 	$('#newOrderItem').click(async function() {
@@ -44,11 +46,8 @@ function loadComponents() {
 	$('#is_take_away').change(function() {
 		order.is_take_away = $(this).is(':checked');
 		if (order.is_take_away) {
-			order.guests = null;
-			$('#guests').val('');
-
-			order.table = null;
-			$('#table').val('');
+			$('#guests').val('').trigger('change');
+			$('#table').val('').trigger('change');
 
 			order.has_tickets = true;
 			$('#is_fast_order').prop('checked', false);
@@ -63,7 +62,7 @@ function loadComponents() {
 			$('#is_take_away').prop('checked', false);
 		} else {
 			order.table = null;
-			$('#table').val('');
+			$('#table').val('').trigger('change');
 		}
 		checkInputDisabled();
 	});
@@ -75,8 +74,21 @@ function loadComponents() {
 
 	$('#is_voucher').change(function() {
 		order.is_voucher = $(this).is(':checked');
-		checkInputDisabled();
+		if (order.is_voucher) {
+			prevPaymentMethod = $('#paymentMethod').val();
+			if (prevPaymentMethod == null)
+				$('#paymentMethod').val($('#paymentMethod').children().eq(1).attr('value')).trigger('change');
+		} else {
+			$('#paymentMethod').val(prevPaymentMethod).trigger('change');
+		}
+			
 		updatePrice();
+	});
+
+	$('#is_for_service').change(function() {
+		order.is_for_service = $(this).is(':checked');
+		order.is_voucher = order.is_for_service;
+		$('#is_voucher').prop('checked', order.is_for_service).trigger('change');
 	});
 
 	$('#notes').change(function() {

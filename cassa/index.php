@@ -86,21 +86,26 @@ DA FARE:
 											<div class="col-3 my-auto">Coperti:</div>
 											<div class="col"><input id="guests" type="number" class="form-control form-control-sm d-inline" min="0" autocomplete="off"></div>
 											<div class="col my-auto">
-												<div class="form-check"><input class="form-check-input" type="checkbox" id="is_take_away"><label class="form-check-label" for="is_take_away">Asporto</label></div>
+												<div class="form-check"><input class="form-check-input" type="checkbox" id="is_voucher"><label class="form-check-label" for="is_voucher">Omaggio</label></div>
 											</div>
 										</div>
 									</div>
 								</div>
 								<div class="row">
-									<div class="col-6 my-auto">
-										<div class="form-check"><input class="form-check-input" type="checkbox" id="is_fast_order"><label class="form-check-label" for="is_fast_order">Cassa veloce</label></div>
+									<div class="col-3 pe-1">
+										<input type="checkbox" class="btn-check" id="is_take_away" autocomplete="off">
+										<label class="btn btn-sm btn-outline-success w-100" for="is_take_away"><i class="bi bi-handbag-fill"></i> Asporto</label>
+									</div>
+									<div class="col-3 ps-1">
+										<input type="checkbox" class="btn-check" id="is_fast_order" autocomplete="off">
+										<label class="btn btn-sm btn-outline-primary w-100" for="is_fast_order"><i class="bi bi-lightning-charge-fill"></i> Flash</label>
 									</div>
 									<div class="col-6">
 										<div class="row">
 											<div class="col-3 my-auto">Tavolo:</div>
 											<div class="col"><input id="table" type="text" class="form-control form-control-sm d-inline mb-1" maxlength="31" autocomplete="off"></div>
 											<div class="col my-auto">
-												<div class="form-check"><input class="form-check-input" type="checkbox" id="is_voucher"><label class="form-check-label" for="is_voucher">Omaggio</label></div>
+												<div class="form-check"><input class="form-check-input" type="checkbox" id="is_for_service"><label class="form-check-label" for="is_for_service">Servizio</label></div>
 											</div>
 										</div>
 									</div>
@@ -126,7 +131,9 @@ DA FARE:
 										<div class="row">
 											<div class="col-auto my-auto">Pagamento:</div>
 											<div class="col">
-												<select id="paymentMethod" class="form-select form-select-sm"></select>
+												<select id="paymentMethod" class="form-select form-select-sm">
+													<option value="" disabled selected>Seleziona un'opzione</option>
+												</select>
 											</div>
 										</div>
 									</div>

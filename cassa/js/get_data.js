@@ -49,15 +49,10 @@ function getSettings() {
 		data: { order_by: 'order' },
 		headers: { "Authorization": "Bearer " + token },
 		success: function(response) {
-			$('#paymentMethod').html('');
 			payment_methods = response.payment_methods;
-			if (payment_methods.length == 0) {
-				$('#paymentMethod').append('<option value="">Nessun metodo di pagamento</option>');
-			} else {
-				payment_methods.forEach(element => {
-					$('#paymentMethod').append('<option value="' + element.id + '">' + element.name + '</option>');
-				});
-			}
+			payment_methods.forEach(element => {
+				$('#paymentMethod').append('<option value="' + element.id + '">' + element.name + '</option>');
+			});
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
 			showToast(false, getErrorMessage(jqXHR, textStatus, errorThrown));

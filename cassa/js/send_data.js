@@ -5,6 +5,7 @@ function sendOrder() {
 		is_take_away: order.is_take_away,
 		table: order.table,
 		is_voucher: order.is_voucher,
+		is_for_service: order.is_for_service,
 		has_tickets: order.has_tickets,
 		notes: order.notes,
 		parent_order_id: null,

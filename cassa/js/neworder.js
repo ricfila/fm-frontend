@@ -59,9 +59,10 @@ function newOrder() {
 		is_take_away: false,
 		table: null,
 		is_voucher: false,
+		is_for_service: false,
 		has_tickets: true,
 		notes: null,
-		payment_method_id: payment_methods[0].id,
+		payment_method_id: null,
 		price: 0,
 		created_at: null,
 		user: null
@@ -155,6 +156,11 @@ async function saveOrder() {
 		$('#guests').focus();
 		return;
 	}
+	if (order.payment_method_id == null) {
+		showToast(false, 'Selezionare il metodo di pagamento!', 1);
+		$('#paymentMethod').focus();
+		return;
+	}
 
 	// Check include cover charge
 	let include_cover_charge = false;
@@ -175,7 +181,7 @@ async function saveOrder() {
 
 	// Alert for no tickets
 	if (!order.has_tickets) {
-		let ok = await modalConfirm('<span class="text-primary"><i class="bi bi-lightning-charge-fill"></i> Conferma cassa veloce</span>', 'La modalità <strong>cassa veloce</strong> non prevede la stampa delle comande, e dopo la stampa della ricevuta l\'ordine verrà contrassegnato come completato.<br>Confermi la modalità <strong>cassa veloce</strong>?');
+		let ok = await modalConfirm('<span class="text-primary"><i class="bi bi-lightning-charge-fill"></i> Conferma cassa flash</span>', 'La modalità <strong>flash</strong> non prevede la stampa delle comande, e dopo la stampa della ricevuta l\'ordine verrà contrassegnato come completato.<br>Confermi la modalità <strong>flash</strong>?');
 		if (!ok) return;
 	}
 
