@@ -30,13 +30,13 @@
 				
 				<div class="collapse navbar-collapse" id="navbarColor01">
 					<ul class="navbar-nav me-auto">
-						<li class="nav-item">
+						<li class="nav-item mt-3 mt-lg-0">
 							<a class="nav-link" onclick="logout();"><strong class="lead"><i class="bi bi-person-fill"></i>&nbsp;<i class="username"></i></strong>&emsp;<i class="bi bi-door-open-fill"></i> Disconnettiti</a>
 						</li>
-						<li class="nav-item lead">
+						<li class="nav-item lead mt-3 mt-lg-0">
 							<a class="nav-link" onclick="lastAssociated();"><i class="bi bi-clock-history"></i> Ultimi associati</a>
 						</li>
-						<li class="nav-item lead">
+						<li class="nav-item lead mt-3 mt-lg-0 mb-2 mb-lg-0">
 							<a class="nav-link" onclick="selectSearchMode();"><i class="bi bi-search"></i> Cerca un ordine</a>
 						</li>
 					</ul>

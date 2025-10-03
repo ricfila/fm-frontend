@@ -68,7 +68,7 @@ function orderSummary(id) {
 			out += '<div class="col-auto"><button class="btn btn-sm btn-light" onclick="showTicket(' + ticket.category_id + ');"><i class="bi bi-list-task"></i> Leggi</button></div>';
 			out += '</div>';
 
-			let c_at = new Date(confirmed[current_id].confirmed_at);
+			let c_at = new Date(confirmed[current_id].confirmed_at != null ? confirmed[current_id].confirmed_at : confirmed[current_id].created_at);
 			let p_at = new Date(c_at.getTime() + categories[ticket.category_id].print_delay * 1000);
 			let print_at = formatTime(p_at.toISOString());
 
