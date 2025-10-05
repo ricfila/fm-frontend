@@ -55,15 +55,15 @@ DA FARE:
 			</div>
 		</nav>
 	
-		<div class="tab-content h-100 pt-2 px-0 px-md-3 px-lg-4">
+		<div class="tab-content h-100 px-0 px-md-3 px-lg-4">
 			<div id="tabneworder" class="tab-pane fade flex-column active show d-flex h-100">
 				<div class="tab-content d-flex flex-column h-100">
 					<div class="row h-100" style="overflow-x: hidden;">
 						<!-- COLONNA SINISTRA -->
 						<div class="col-md-6 h-100 d-flex flex-column">
-							<div class="row mb-2"></div>
+							<div class="row pt-2 mb-2 d-none"></div>
 
-							<div id="productList" class="px-3 pb-3">
+							<div id="productList" class="px-3 pt-2 pb-3">
 								<div class="row">
 									<div class="col-auto spinner-border m-3"></div>
 									<div class="col my-auto">Caricamento in corso...</div>
@@ -73,7 +73,7 @@ DA FARE:
 
 						<!-- COLONNA DESTRA -->
 						<div class="col-md-6 h-100 d-flex flex-column">
-							<div id="orderHeaderInputs" class="pt-1 mb-2">
+							<div id="orderHeaderInputs" class="pt-3 mb-2">
 								<div class="row">
 									<div class="col-6">
 										<div class="row">
