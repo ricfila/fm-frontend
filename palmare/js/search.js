@@ -80,7 +80,11 @@ function search() {
 
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
-			$('#search-error').html('<span class="text-danger"><strong>Errore durante la richiesta:</strong></span>' + getErrorMessage(jqXHR, textStatus, errorThrown));
+			if (jqXHR.status === 404) {
+				$('#search-error').html('<strong class="text-danger">Ordine non trovato</strong>');
+			} else {
+				$('#search-error').html('<span class="text-danger"><strong>Errore durante la richiesta:</strong></span>' + getErrorMessage(jqXHR, textStatus, errorThrown));
+			}
 		}
 	});
 }

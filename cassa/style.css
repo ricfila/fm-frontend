@@ -14,7 +14,7 @@ input[type=number] {
 /* Product list */
 #productList {
     overflow-x: hidden;
-	overflow-y: scroll;
+	overflow-y: auto;
 }
 
 .btn-product {
