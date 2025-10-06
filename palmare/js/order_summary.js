@@ -45,8 +45,11 @@ function orderSummary(id) {
 						started_to_print = true;
 				});
 			}
+			if (!confirmed[current_id].is_done)
+				out += '<button class="btn btn-sm btn-warning ms-2" onclick="orders[' + current_id + '] = confirmed[' + current_id + ']; associateOrder(' + current_id + ');"><i class="bi bi-pencil-fill"></i> Modifica</button>';
 			if (!started_to_print)
-				out += '&emsp;<button class="btn btn-sm btn-outline-danger" onclick="confirmRollback();">Dissocia</button>';
+				out += '<button class="btn btn-sm btn-danger ms-2" onclick="confirmRollback();"><i class="bi bi-x-lg"></i> Dissocia</button>';
+
 		} else {
 			if (orders[current_id] == null)
 				orders[current_id] = confirmed[current_id];

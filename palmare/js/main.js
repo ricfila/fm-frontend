@@ -82,6 +82,7 @@ function showError() {
 
 function initList() {
 	menuColor('bg-success');
+	lastMenuFunction = initList;
 	let out = '<div class="row">';
 	out += '<div class="col-auto"><button class="btn btn-success" onclick="getList();"><i class="bi bi-arrow-clockwise text-lead"></i></button></div>';
 	out += '<div class="col my-auto ps-0"><h3 class="m-0">Ordini da raccogliere</h3></div></div>';

@@ -1,7 +1,7 @@
 function associateOrder(num) {
 	menuColor('bg-warning');
 	current_id = num;
-	loadOrderHeader(orders[current_id], 'warning');
+	loadOrderHeader(orders[current_id], 'warning', 'window[\'lastMenuFunction\']();');
 	let out = '<div class="pt-1 px-3" style="overflow-x: hidden;"><div style="animation: keyboardIn 0.4s; animation-fill-mode: forwards;">';
 	out += '<div id="keyboard">' + keyboard + '</div>';
 	out += '</div></div>';
