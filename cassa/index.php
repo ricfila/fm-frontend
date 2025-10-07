@@ -252,7 +252,7 @@ DA FARE:
 		</div>
 	</div>
 	
-	<?php include "../pannello/php/toast.php"; ?>
+	<?php include "../js/toast.php"; ?>
 
 	<script>
 	function accessoalturno() {
