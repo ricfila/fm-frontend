@@ -3,20 +3,6 @@ let prevTable = null;
 let prevPaymentMethod = null;
 let prevFlash = false;
 
-function loadOrder() {
-	$('#customer').val(order.customer);
-	$('#guests').val(order.guests == null ? '' : order.guests);
-	$('#is_take_away').prop('checked', order.is_take_away);
-	$('#is_fast_order').prop('checked', !order.has_tickets);
-	$('#table').val(order.table == null ? '' : order.table);
-	$('#is_voucher').prop('checked', order.is_voucher);
-	$('#is_for_service').prop('checked', order.is_for_service);
-	$('#notes').val(order.notes == null ? '' : order.notes);
-	$('#paymentMethod').val(order.payment_method_id);
-	checkInputDisabled();
-	loadOrderProducts();
-}
-
 function checkInputDisabled() {
 	let guestsWasDisabled = $('#guests').is(':disabled');
 	let tableWasDisabled = $('#table').is(':disabled');
