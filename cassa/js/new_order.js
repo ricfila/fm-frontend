@@ -27,7 +27,6 @@ function getProducts() {
 }
 
 function loadProducts() {
-	let subcat_ids = [];
 	subcats = [];
 	subcat_products = [];
 
@@ -35,29 +34,25 @@ function loadProducts() {
 		let product = last_products[i];
 		let subcategory = product.subcategory;
 
-		let index = subcat_ids.indexOf(subcategory.id);
-		if (index == -1) {
-			subcat_ids.push(subcategory.id);
-			subcats.push(subcategory);
-			subcat_products.push([]);
-			index = subcat_ids.length - 1;
+		if (subcats[subcategory.id] == null) {
+			subcats[subcategory.id] = subcategory;
+			subcat_products[subcategory.id] = [];
 		}
 
-		subcat_products[index].push(product);
+		subcat_products[subcategory.id][product.id] = product;
 	}
 
 	let out = '';
-	for (let i = 0; i < subcats.length; i++) {
-		out += headSubcat(subcats[i].name, 2);
+	subcats.forEach((subcat, i) => {
+		out += headSubcat(subcat.name, 2);
 		out += '<div class="row">';
-		for (let j = 0; j < subcat_products[i].length; j++) {
-			let prod = subcat_products[i][j];
+		subcat_products[i].forEach((prod, j) => {
 			out += '<div class="col-6 col-sm-4 col-md-3 col-lg-2 ps-0 pe-1">';
 			out += '<button class="btn btn-product px-1 py-0 mb-1 text-light" style="--bg-color: ' + prod.color + ';" onclick="addProd(' + i + ', ' + j + ');">' + prod.frontend_name + '</button>';
 			out += '</div>';
-		}
+		});
 		out += '</div>';
-	}
+	});
 	$('#productList').html(out);
 }
 

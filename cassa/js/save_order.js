@@ -100,7 +100,13 @@ function sendOrder() {
 				order.id = response.order.id;
 				order.created_at = response.order.created_at;
 				order.user = { name: username };
-				printOrder(structuredClone(order), structuredClone(order_products));
+
+				let order_copy = structuredClone(order);
+				printOrder(order_copy, structuredClone(order_products));
+
+				recent_orders.unshift(order_copy);
+				if (recent_orders.length > MAX_RECENT_ORDERS)
+					recent_orders.pop();
 				newOrder();
 			} else {
 				loadOrder();

@@ -1,9 +1,9 @@
-async function printOrder(order, order_products) {
+async function printOrder(order, order_products, auto_close = true) {
 	let called = false;
 
 	window.__printWindowReady = function(print_w) {
 		called = true;
-		populateAndPrint(print_w, order, order_products);
+		populateAndPrint(print_w, order, order_products, auto_close);
 		delete window.__printWindowReady;
 	};
 
@@ -16,14 +16,14 @@ async function printOrder(order, order_products) {
 
 	setTimeout(() => {
 		try {
-			if (!called) populateAndPrint(print_w, order, order_products);
+			if (!called) populateAndPrint(print_w, order, order_products, auto_close);
 		} catch(e) {
 			showToast(false, 'Timeout preparazione stampa');
 		}
 	}, 3000);
 }
 
-function populateAndPrint(print_w, order, order_products) {
+function populateAndPrint(print_w, order, order_products, auto_close) {
 	try {
 		print_w.document.getElementById('outDate').innerHTML = formatDateTime(order.created_at);
 		print_w.document.getElementById('outUser').innerHTML = order.user.name + (order.payment_method_id > 1 ? '*' : '');
@@ -43,13 +43,15 @@ function populateAndPrint(print_w, order, order_products) {
 
 		let products = '';
 		subcats.forEach((subcat, i) => {
-			if (order_products[i].length > 0) {
-				products += headSubcat(subcat.name);
+			if (order_products[i] != null) {
+				if (order_products[i].length > 0) {
+					products += headSubcat(subcat.name);
+				}
+				order_products[i].forEach((p, j) => {
+					let prod = subcat_products[i][j];
+					products += productRowPrint(prod.name, prod.price, p.quantity, p.notes);
+				});
 			}
-			order_products[i].forEach((p, j) => {
-				let prod = subcat_products[i][j];
-				products += productRowPrint(prod.name, prod.price, p.quantity, p.notes);
-			});
 		});
 		print_w.document.getElementById('orderProducts').innerHTML = products;
 
@@ -64,7 +66,8 @@ function populateAndPrint(print_w, order, order_products) {
 		setTimeout(() => {
 			print_w.focus(); // necessary for IE >= 10
 			print_w.print();
-			print_w.close();
+			if (auto_close)
+				print_w.close();
 		}, 200);
 	} catch (e) {
 		showToast(false, 'Errore nella preparazione della stampa: ' + e.message);
@@ -83,7 +86,7 @@ function productRowPrint(name, price, quantity, notes) {
 		out +='<br><i class="bi bi-arrow-return-right"></i>&nbsp;' + notes;
 	out += '</div>';
 
-	out += '<div class="col-auto">' + formatPrice(price * quantity) + '</div>';
+	out += '<div class="col-auto">' + formatPrice(price * quantity) + '</div>'; //TODO: price needs to be calculated before (field price of order_product)
 	out += '</div>';
 	return out;
 }

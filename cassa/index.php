@@ -40,11 +40,11 @@ DA FARE:
 						<li class="nav-item">
 							<span class="nav-link" style="cursor: pointer;" id="newOrderItem"><i class="bi bi-plus-circle"></i> Nuovo ordine</span>
 						</li>
-						<li class="nav-item dropdown">
+						<li class="nav-item dropdown" id="dropdownOrdersContainer">
 							<a class="nav-link dropdown-toggle" href="#" id="dropdownOrders" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 								<i class="bi bi-clock-history"></i> Ordini recenti
 							</a>
-							<ul class="dropdown-menu" aria-labelledby="dropdownOrders"></ul>
+							<ul class="dropdown-menu" id="dropdownOrdersMenu" aria-labelledby="dropdownOrders"></ul>
 						</li>
 					</ul>
 					<?php //menuturno(); ?>
@@ -142,7 +142,6 @@ DA FARE:
 									</div>
 									<div class="col">
 										<button class="btn btn-success w-100" onclick="saveOrder();">Salva</button>
-										<button class="btn btn-info w-100" onclick="printOrder();">Stampa</button>
 									</div>
 								</div>
 							</div>
