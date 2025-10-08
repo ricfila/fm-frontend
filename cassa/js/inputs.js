@@ -17,15 +17,6 @@ function checkInputDisabled() {
 }
 
 function loadComponents() {
-	// Menu
-	$('#newOrderItem').click(async function() {
-		if (selectedProducts() > 0) {
-			let ok = await modalConfirm('<span class="text-success"><i class="bi bi-plus-circle"></i> Nuovo ordine</span>', 'Iniziare un <strong>nuovo ordine</strong>? Tutte le modifiche non salvate andranno perse.');
-			if (ok) newOrder();
-		} else newOrder();
-	});
-
-	// Inputs
 	$('#customer').change(function() {
 		order.customer = $(this).val().trim();
 	});

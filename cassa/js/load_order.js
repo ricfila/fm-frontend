@@ -1,3 +1,31 @@
+function loadFromServer(order_id) {
+	$.ajax({
+		async: true,
+		url: apiUrl + '/orders/' + order_id,
+		type: "GET",
+		data: { include_products: true, include_products_product: true, include_user: true },
+		headers: { "Authorization": "Bearer " + token },
+		success: async function(order) {
+			let op = [];
+
+			order.products.forEach(order_product => {
+				let subcat_id = order_product.product.subcategory_id;
+				if (op[subcat_id] == null)
+					op[subcat_id] = [];
+				op[subcat_id][order_product.product_id] = {
+					quantity: order_product.quantity,
+					notes: order_product.notes,
+					price: order_product.price
+				};
+			});
+			await printOrder(order, op, false);
+		},
+		error: function(jqXHR, textStatus, errorThrown) {
+			showToast(false, 'Errore nella ricezione dell\'ordine: ' + getErrorMessage(jqXHR, textStatus, errorThrown));
+		}
+	});
+}
+
 function loadOrder() {
 	$('#customer').val(order.customer);
 	$('#guests').val(order.guests == null ? '' : order.guests);
@@ -51,7 +79,7 @@ function productRow(i, j, name, price, quantity, notes) {
 
 	// Name and notes
 	out += '</div><div class="col">' + name;
-	out += '<span id="btnaddnotes' + id + '"' + (notes != null ? ' class="d-none"' : '') + '>&emsp;<button class="btn btn-sm btn-light" onclick="addNotes(' + i + ', ' + j + ');"><i class="bi bi-pencil-fill"></i> Note</button></span>';
+	out += '<span id="btnaddnotes' + id + '"' + (notes != null ? ' class="d-none"' : '') + '><button class="btn btn-sm btn-light ms-3" onclick="addNotes(' + i + ', ' + j + ');"><i class="bi bi-pencil-fill"></i> Note</button></span>';
 	out += '<span id="tagnotes' + id + '"' + (notes == null ? ' class="d-none"' : '') + '><br>';
 	out += '<i class="bi bi-arrow-return-right"></i>&nbsp;';
 	out += '<input class="form-control form-control-sm d-inline" type="text" id="notes' + id + '" onchange="updateNotes(' + i + ', ' + j + ');" maxlength="63" style="width: 300px;" value="' + (notes != null ? notes : '') + '" />&nbsp;';

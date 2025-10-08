@@ -4,7 +4,9 @@ var last_products = null;
 var subcats = [];
 var subcat_products = [];
 var payment_methods = [];
+
 var recent_orders = [];
+const MAX_RECENT_ORDERS = 10;
 
 var cover_charge = null;
 var order_requires_confirmation = null;
@@ -52,7 +54,7 @@ function getSettings() {
 		async: true,
 		url: apiUrl + '/orders/',
 		type: "GET",
-		data: { limit: 5, order_by: '-created_at', created_by_user: true },
+		data: { limit: MAX_RECENT_ORDERS, order_by: '-created_at', created_by_user: true },
 		headers: { "Authorization": "Bearer " + token },
 		success: function(response) {
 			recent_orders = response.orders;
@@ -62,3 +64,19 @@ function getSettings() {
 		}
 	});
 }
+
+$(document).ready(function() {
+	$('#newOrderItem').click(async function() {
+		if (selectedProducts() > 0) {
+			let ok = await modalConfirm('<span class="text-success"><i class="bi bi-plus-circle"></i> Nuovo ordine</span>', 'Iniziare un <strong>nuovo ordine</strong>? Tutte le modifiche non salvate andranno perse.');
+			if (ok) newOrder();
+		} else newOrder();
+	});
+	
+	$('#dropdownOrdersContainer').on('show.bs.dropdown', function(){
+		$('#dropdownOrdersMenu').html('');
+		recent_orders.forEach(order => {
+			$('#dropdownOrdersMenu').append('<li class="dropdown-item" onclick="loadFromServer(' + order.id + ');">' + order.id + '<i class="bi bi-dot"></i>' + order.customer + '</li>');
+		});
+	});
+});
