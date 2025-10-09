@@ -141,7 +141,7 @@ DA FARE:
 										</div>
 									</div>
 									<div class="col">
-										<button class="btn btn-success w-100" onclick="saveOrder();">Salva</button>
+										<button class="btn btn-success w-100" onclick="saveOrder();">SALVA e STAMPA</button>
 									</div>
 								</div>
 							</div>

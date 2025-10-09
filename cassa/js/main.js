@@ -13,7 +13,6 @@ var order_requires_confirmation = null;
 
 $(document).one('fm:sessionReady', function() {
 	getSettings();
-	getProducts();
 	newOrder();
 	loadComponents();
 });
