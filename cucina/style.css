@@ -1,13 +1,16 @@
 
-.rigaing {
-	width: 60px; 
-	animation: rigaIn 0.5s;
+.stock-result {
+	width: 60px;
+	text-align: center;
+	padding: 0.25rem 0rem;
+	border-radius: 0.3rem;
+	animation: stockResultIn 0.5s;
 	animation-fill-mode: forwards;
 	animation-timing-function: ease;
 	opacity: 1;
 }
 
-@keyframes rigaIn {
+@keyframes stockResultIn {
 	0% {transform: perspective(5cm) rotate3d(1, 0, 0, 180deg); opacity: 1;}
 	100% {transform: perspective(5cm) rotate3d(1, 0, 0, 0deg); opacity: 1;}
 }

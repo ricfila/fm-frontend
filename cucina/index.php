@@ -12,8 +12,10 @@
 	<script src="js/session.js"></script>
 	<script src="cucina/js/main.js"></script>
 	<script src="cucina/js/monitoring.js"></script>
+	<script src="cucina/js/stock.js"></script>
 </head>
 <body>
+	<audio id="alert-sound" src="media/alert_kitchen.mp3" preload="auto"></audio>
 	<div class="container-lg h-100" style="padding-top: 53px;">
 		<nav class="fixed-top navbar navbar-expand-lg navbar-dark bg-primary">
 			<div class="container-lg">
@@ -55,47 +57,17 @@
 			</div>
 			<div class="tab-pane fade" id="monitoring" role="tabpanel" aria-labelledby="monitoring-tab">
 				<div class="tab-content">
-					Monitoring
-
-
-
-					<p id="err" aclass="mb-0">&nbsp;</p>
-					<div id="corpo"></div>
-
-					<script>
-						function aggiorna() {
-							let pre = $('#corpo').html();
-							$('#err').html('<div class="spinner-border spinner-border-sm"></div> Caricamento in corso...');
-
-							$.getJSON("ajax.php?a=ingredienti&settore=")
-							.done(function(json) {
-								$('#err').html('&nbsp;');
-								try {
-									let out = '<div class="row">';
-									$.each(json, function(i, res) {
-										out += '<div class="col-12 col-md-6 mb-4">';
-										out += '<div class="row"><div class="col-auto">';
-										out += '<h4>' + res.descrizione + ':</h4>';
-										out += '</div><div class="col-auto">';
-										out += '<div class="bg-' + (res.qta_attiva == 0 ? "dark" : (res.qta_attiva < 10 ? "success" : "danger")) + ' text-center py-1 px-0 rounded-3 rigaing" style="animation-delay: ' + (i * 0.05) + 's;"><h4 class="text-light m-0">' + res.qta_attiva + '</h4></div>';
-										out += '</div></div>';
-										out += '<p>Ordinati: ' + (parseInt(res.qta_attiva) + parseInt(res.qta_evasa)) + ' - Evasi: ' + res.qta_evasa + '</p>';
-										out += '</div>';
-									});
-									out += '</div>';
-									$('#corpo').html(out);
-								} catch (err) {
-									$('#err').html('<span class="text-danger"><strong>Errore nell\'elaborazione della richiesta:</strong></span>' + json);
-								}
-							})
-							.fail(function(jqxhr, textStatus, error) {
-								$('#err').html('<span class="text-danger"><strong>Errore durante la richiesta:</strong></span>' + jqxhr.responseText);
-								$('#corpo').html(pre);
-							})
-						}
-						//aggiorna();
-						//setInterval(aggiorna, 30*1000);
-					</script>
+					<div class="row mb-3">
+						<div class="col my-auto"><h5 class="mb-0" id="title-monitoring"></h5></div>
+						<div class="col-auto d-flex flex-row">
+							<div class="form-check ps-0">
+								<input type="checkbox" class="btn-check" id="toggleAutoUpdate" autocomplete="off" onchange="toggleAutoUpdate(this.checked);" checked="">
+								<label class="btn btn-outline-primary" id="labeltoggleAutoUpdate" for="toggleAutoUpdate"><i class="bi bi-pause-circle-fill"></i></label>
+							</div>
+							<button class="btn btn-light ms-2" onclick="toggleAutoUpdate(true);"><i class="bi bi-arrow-clockwise"></i><span class="d-none d-md-inline"> Aggiorna</span></button>
+						</div>
+					</div>
+					<div id="ingredient-list"></div>
 				</div>
 			</div>
 			<div class="tab-pane fade" id="prints" role="tabpanel" aria-labelledby="prints-tab">
@@ -106,7 +78,7 @@
 		</div>
 
 
-		<div id="divtoast" class="toast-container bottom-0 end-0 p-3" style="z-index: 1100; position: absolute;"></div>
+		<div id="divtoast" class="toast-container bottom-0 end-0 p-3" style="z-index: 1100; position: fixed;"></div>
 		<?php include "../js/toast.php"; ?>
 	</div>
 	

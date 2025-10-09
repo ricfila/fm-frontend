@@ -40,3 +40,26 @@ $(document).one('fm:sessionReady', function() {
 		}
 	});
 });
+
+$(document).ready(function() {
+	wardsTab = bootstrap.Tab.getOrCreateInstance(document.querySelector('#wards-link'));
+	monitoringTab = bootstrap.Tab.getOrCreateInstance(document.querySelector('#monitoring-link'));
+
+	$('#monitoring-link').on('shown.bs.tab', function() {
+		$('#wards-link').addClass('active');
+	}).on('hide.bs.tab', function() {
+		$('#monitoring-link').removeClass('active');
+	});
+
+	$('#wards-link').on('click', function() {
+		$(this).removeClass('active');
+		wardsTab.show();
+	});
+
+	for (let i = 0; i < localStorage.length; i++) {
+		let k = localStorage.key(i);
+		if (k.startsWith('alertingredient_')) {
+			alert_for[localStorage.getItem(k)] = true;
+		}
+	}
+});

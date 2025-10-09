@@ -1,6 +1,6 @@
 
-<div class="modal fade" id="modalconfirm">
-	<div class="modal-dialog" role="document">
+<div class="modal fade" id="modalconfirm" style="z-index: 1061;">
+	<div class="modal-dialog modal-dialog-centered" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
 				<h5 class="modal-title" id="mctitolo"></h5>
@@ -36,9 +36,9 @@
 var tok = 0;
 var tno = 0;
 
-function showToast(type, msg, time = false) {
+function showToast(type, msg, time = null, bg = null) {
 	if (type) {
-		$('#divtoast').append('<div class="toast bg-success text-white" id="tok' + (tok) + '" role="alert" style="border-radius: 10px; margin: 10px 0px 0px 0px;" data-bs-delay="' + (time == false ? '1500' : time * 1000) + '"><div class="d-flex">' +
+		$('#divtoast').append('<div class="toast bg-' + (bg != null ? bg : 'success') + ' text-white" id="tok' + (tok) + '" role="alert" style="border-radius: 10px; margin: 10px 0px 0px 0px;" ' + (time === false ? 'data-bs-autohide="false"' : 'data-bs-delay="' + (time == null ? '1500' : time * 1000) + '"') + '><div class="d-flex">' +
 		'<div class="toast-body">' + msg + '</div>' +
 		'<button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button></div></div>');
 		$("#tok" + tok).toast("show");
