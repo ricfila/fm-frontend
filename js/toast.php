@@ -44,7 +44,7 @@ function showToast(type, msg, time = null, bg = null) {
 		$("#tok" + tok).toast("show");
 		tok++;
 	} else {
-		$('#divtoast').append('<div class="toast bg-danger text-white" id="tno' + (tno) + '" role="alert" style="border-radius: 10px; margin: 10px 0px 0px 0px;" data-bs-delay="' + (time == false ? '3000' : time * 1000) + '"><div class="d-flex">' +
+		$('#divtoast').append('<div class="toast bg-danger text-white" id="tno' + (tno) + '" role="alert" style="border-radius: 10px; margin: 10px 0px 0px 0px;" ' + (time === false ? 'data-bs-autohide="false"' : 'data-bs-delay="' + (time == null ? '3000' : time * 1000) + '"') + '><div class="d-flex">' +
 		'<div class="toast-body">' + msg + '</div>' +
 		'<button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button></div></div>');
 		$("#tno" + tno).toast("show");
