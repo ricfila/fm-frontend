@@ -17,6 +17,21 @@
 	</div>
 </div>
 
+<div class="modal fade" id="dialog">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="dialogtitle"></h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true"></span>
+				</button>
+			</div>
+			<div class="modal-body" id="dialogbody"></div>
+			<div class="modal-footer" id="dialogfooter"></div>
+		</div>
+	</div>
+</div>
+
 <script>
 var tok = 0;
 var tno = 0;
@@ -88,4 +103,18 @@ function prepareModalConfirm(title, message) {
 	$('#mcbody').html(message);
 	modconfirm.show();
 }
+
+let modal = new bootstrap.Modal(document.getElementById('dialog'));
+function dialog(title, body, actionName = null, action = null) {
+	$('#dialogtitle').html(title);
+	$('#dialogbody').html(body);
+	if (actionName != null)
+		$('#dialogfooter').html(
+			'<button class="btn btn-danger me-2" onclick="modal.hide();"><i class="bi bi-x-circle"></i> Annulla</button><button class="btn btn-success" onclick="modal.hide(); ' + action + '"><i class="bi bi-check-circle-fill"></i> ' + actionName + '</button>'
+		).show();
+	else
+		$('#dialogfooter').hide();
+	modal.show();
+}
+
 </script>

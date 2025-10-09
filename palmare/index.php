@@ -56,20 +56,6 @@
 			<button class="btn btn-outline-danger" onclick="logout();">Cambia utente</button>
 		</div>
 		
-		<div class="modal fade" id="dialog">
-			<div class="modal-dialog modal-dialog-centered" role="document">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title" id="dialogtitle"></h5>
-						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-							<span aria-hidden="true"></span>
-						</button>
-					</div>
-					<div class="modal-body" id="dialogbody"></div>
-					<div class="modal-footer" id="dialogfooter"></div>
-				</div>
-			</div>
-		</div>
 		<div class="modal fade" id="mod-search">
 			<div class="modal-dialog" role="document">
 				<div class="modal-content">
@@ -92,18 +78,8 @@
 		</div>
 	</div>
 
+	<?php include "../js/toast.php"; ?>
 	<script>
-	let modal = new bootstrap.Modal(document.getElementById('dialog'));
-	function dialog(title, body, action = null) {
-		$('#dialogtitle').html(title);
-		$('#dialogbody').html(body);
-		if (action != null)
-			$('#dialogfooter').html('<button class="btn btn-danger" onclick="modal.hide();"><i class="bi bi-x-circle"></i>&emsp;Annulla</button>&nbsp;' + action).show();
-		else
-			$('#dialogfooter').hide();
-		modal.show();
-	}
-	
 	function menuColor(colore) {
 		$('nav').removeClass('bg-warning').removeClass('bg-info').removeClass('bg-success').addClass(colore);
 		$(".collapse").collapse('hide');

@@ -124,7 +124,7 @@ function showTicket(cat_id) {
 
 
 function confirmRollback() {
-	dialog('Dissocia tavolo', 'Sei sicuro di voler annullare l\'associazione al tavolo di questo ordine?<br><br><span id="msgdrip"></span>', '<button class="btn btn-success" onclick="rollback();"><i class="bi bi-check-circle-fill"></i> Conferma</button>');
+	dialog('Dissocia tavolo', 'Sei sicuro di voler annullare l\'associazione al tavolo di questo ordine?<br><br><span id="msgdrip"></span>', 'Conferma', 'rollback();');
 }
 
 

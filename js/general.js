@@ -85,3 +85,59 @@ function isThisSession(fullStr) {
 	const orderSession = (dateObj.getHours() >= 0 && dateObj.getHours() < SPLIT_HOUR ? 0 : 1);
 	return actualSession == orderSession;
 }
+
+function getKeyboard(placeholder, sign = false) {
+	let out = '';
+	out += '<div class="row"><div class="col" style="padding: 2px;">\
+				<div class="input-group mb-3">' + (sign ? '\
+					<button class="btn btn-success btn-lg" id="keyboardSign" onclick="toggleKeyboardSign();"><i class="bi bi-plus-lg"></i></button><input type="number" class="d-none" id="keyboardSignValue" value="1"></input>' : '') + '\
+					<input type="text" class="form-control form-control text-center" id="inputKeyboard" style="padding: 5px; font-size: 1.5em; margin: 0px;" placeholder="' + placeholder + '">\
+					<button class="btn btn-dark btn-lg" onclick="key(false);"><i class="bi bi-backspace"></i></button>\
+				</div>\
+			</div></div>\
+			<div class="row">\
+				<div class="col" style="padding: 0px 2px;">\
+					<button class="btn btn-outline-dark btn-lg w-100 keyboard-btn" onclick="key(\'1\');">1</button><br>\
+					<button class="btn btn-outline-dark btn-lg w-100 keyboard-btn" onclick="key(\'4\');">4</button><br>\
+					<button class="btn btn-outline-dark btn-lg w-100 keyboard-btn" onclick="key(\'7\');">7</button><br>\
+				</div>\
+				<div class="col" style="padding: 0px 2px;">\
+					<button class="btn btn-outline-dark btn-lg w-100 keyboard-btn" onclick="key(\'2\');">2</button><br>\
+					<button class="btn btn-outline-dark btn-lg w-100 keyboard-btn" onclick="key(\'5\');">5</button><br>\
+					<button class="btn btn-outline-dark btn-lg w-100 keyboard-btn" onclick="key(\'8\');">8</button><br>\
+				</div>\
+				<div class="col" style="padding: 0px 2px;">\
+					<button class="btn btn-outline-dark btn-lg w-100 keyboard-btn" onclick="key(\'3\');">3</button><br>\
+					<button class="btn btn-outline-dark btn-lg w-100 keyboard-btn" onclick="key(\'6\');">6</button><br>\
+					<button class="btn btn-outline-dark btn-lg w-100 keyboard-btn" onclick="key(\'9\');">9</button><br>\
+				</div>\
+			</div>\
+			<div class="row">\
+				<div class="col"></div>\
+				<div class="col-4" style="padding: 0px 2px;">\
+					<button class="btn btn-outline-dark btn-lg w-100 keyboard-btn btnlater disabled" onclick="key(\'0\');">0</button>\
+				</div>\
+				<div class="col"></div>\
+			</div>';
+			
+	return out;
+}
+
+function key(string) {
+	if (!string) {
+		$('#inputKeyboard').val('');
+		$('.btnlater').each(function() {$(this).addClass('disabled');});
+	} else {
+		$('#inputKeyboard').val($('#inputKeyboard').val() + string);
+		$('.btnlater').each(function() {$(this).removeClass('disabled');});
+	}
+}
+
+function toggleKeyboardSign() {
+	$('#keyboardSignValue').val($('#keyboardSignValue').val() * -1);
+	if ($('#keyboardSignValue').val() > 0) {
+		$('#keyboardSign').removeClass('btn-danger').addClass('btn-success').html('<i class="bi bi-plus-lg"></i>');
+	} else {
+		$('#keyboardSign').removeClass('btn-success').addClass('btn-danger').html('<i class="bi bi-dash-lg"></i>');
+	}
+}
