@@ -68,28 +68,7 @@ function orderSummary(id) {
 
 	if (confirmed[current_id].tickets != null) {
 		out += '<hr>';
-
-		ordered_tickets = [...confirmed[current_id].tickets].sort((a, b) => {
-			const delayA = categories[a.category_id] ? categories[a.category_id].print_delay : 0;
-			const delayB = categories[b.category_id] ? categories[b.category_id].print_delay : 0;
-			return delayA - delayB;
-		});
-
-		ordered_tickets.forEach(ticket => {
-			out += '<div class="row">';
-			out += '<div class="col"><h4 class="mb-0 text-info">Comanda ' + categories[ticket.category_id].name + '</h4></div>';
-			out += '<div class="col-auto"><button class="btn btn-sm btn-light" onclick="showTicket(' + ticket.category_id + ');"><i class="bi bi-list-task"></i> Leggi</button></div>';
-			out += '</div>';
-
-			if (ticket.printed_at != null) {
-				out += '<p><strong class="text-success"><i class="bi bi-check-square"></i> Stampata</strong> alle ore ' + formatTime(ticket.printed_at) + '</p>';
-			} else {
-				let c_at = new Date(confirmed[current_id].confirmed_at != null ? confirmed[current_id].confirmed_at : confirmed[current_id].created_at);
-				let p_at = new Date(c_at.getTime() + categories[ticket.category_id].print_delay * 1000);
-				let print_at = formatTime(p_at.toISOString());
-				out += '<p><i class="bi bi-square"></i> Stampa prevista alle ore ' + print_at + '</p>';
-			}
-		});
+		out += ticketList(confirmed[current_id].tickets, categories, confirmed[current_id].confirmed_at, true);
 	}
 
 	$('#page-body')

@@ -133,6 +133,18 @@ input[type=number] {
 .order-row:hover {
 	background: #DDDDDD;
 }
+.order-row-inc {
+	background: #CCFFCC;
+}
+.order-row-inc:hover {
+	background: #99FF99;
+}
+.order-row-dec {
+	background: #FFCCCC;
+}
+.order-row-dec:hover {
+	background: #FF9999;
+}
 
 
 /* Order footer */

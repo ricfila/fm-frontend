@@ -1,9 +1,15 @@
-async function printOrder(order, order_products, auto_close = true) {
+async function printOrder(orderToPrint = null, order_productsToPrint = null, auto_close = true) {
 	let called = false;
+	if (orderToPrint == null) {
+		orderToPrint = order;
+		auto_close = false;
+	}
+	if (order_productsToPrint == null)
+		order_productsToPrint = order_products;
 
 	window.__printWindowReady = function(print_w) {
 		called = true;
-		populateAndPrint(print_w, order, order_products, auto_close);
+		populateAndPrint(print_w, orderToPrint, order_productsToPrint, auto_close);
 		delete window.__printWindowReady;
 	};
 
@@ -16,7 +22,7 @@ async function printOrder(order, order_products, auto_close = true) {
 
 	setTimeout(() => {
 		try {
-			if (!called) populateAndPrint(print_w, order, order_products, auto_close);
+			if (!called) populateAndPrint(print_w, orderToPrint, order_productsToPrint, auto_close);
 		} catch(e) {
 			showToast(false, 'Timeout preparazione stampa');
 		}

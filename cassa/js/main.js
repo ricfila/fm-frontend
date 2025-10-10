@@ -4,6 +4,7 @@ var last_products = null;
 var subcats = [];
 var subcat_products = [];
 var payment_methods = [];
+var categories = [];
 
 var recent_orders = [];
 const MAX_RECENT_ORDERS = 10;
@@ -46,6 +47,18 @@ function getSettings() {
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
 			showToast(false, 'Errore nella ricezione dei metodi di pagamento: ' + getErrorMessage(jqXHR, textStatus, errorThrown));
+		}
+	});
+
+	$.ajax({
+		url: apiUrl + '/categories',
+		type: "GET",
+		headers: { "Authorization": "Bearer " + token },
+		success: function(response) {
+			response.categories.forEach(cat => categories[cat.id] = cat); 
+		},
+		error: function(jqXHR, textStatus, errorThrown) {
+			msg_err = 'Errore nella lettura delle categorie: ' + getErrorMessage(jqXHR, textStatus, errorThrown);
 		}
 	});
 

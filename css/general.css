@@ -143,18 +143,6 @@
 .rigacomanda:hover {
 	background: #DDDDDD;
 }
-.rigainc {
-	background: #CCFFCC;
-}
-.rigainc:hover {
-	background: #99FF99;
-}
-.rigadec {
-	background: #FFCCCC;
-}
-.rigadec:hover {
-	background: #FF9999;
-}
 
 .form-range::-moz-range-track {
 	background: linear-gradient(to left, #dee2e6 50%, #86c8f7 50%) right;

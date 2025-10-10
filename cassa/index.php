@@ -16,6 +16,7 @@
 	<script src="cassa/js/inputs.js"></script>
 	<script src="cassa/js/save_order.js"></script>
 	<script src="cassa/js/print.js"></script>
+	<script src="cassa/js/edit_order.js"></script>
 </head>
 <!--
 DA FARE:
@@ -63,7 +64,21 @@ DA FARE:
 					<div class="row h-100" style="overflow-x: hidden;">
 						<!-- COLONNA SINISTRA -->
 						<div class="col-md-6 h-100 d-flex flex-column">
-							<div class="row pt-2 mb-2 d-none"></div>
+							<div class="pt-2 mb-2 d-none" id="infoHeader">
+								<div class="row">
+									<div class="col">
+										N° <strong id="order-id"></strong><i class="bi bi-dot"></i>Emesso da <span id="order-user"></span> <span id="order-created_at"></span>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md" id="ticket-list">
+									</div>
+									<div class="col-md-auto text-end">
+										<button class="btn btn-sm btn-outline-primary mb-2" id="print-btn" onclick="printOrder();"><i class="bi bi-printer-fill"></i> Ristampa ricevuta</button><br>
+										<span id="delete-order-btn"></span>
+									</div>
+								</div>
+							</div>
 
 							<div id="productList" class="px-3 pt-2 pb-3">
 								<div class="row">
@@ -124,7 +139,7 @@ DA FARE:
 							</div>
 							<div class="px-3 py-2" id="orderFooter">
 								<div class="row mb-2">
-									<div class="col my-auto"><strong>Totale:</strong></div>
+									<div class="col my-auto"><strong>Totale:</strong><span id="totalChangeInstructions" class="ms-3"></span></div>
 									<div class="col-auto">
 										<div class="lead p-1 border border-dark rounded-3 bg-light"><strong id="totalPrice"></strong></div>
 									</div>
@@ -141,7 +156,7 @@ DA FARE:
 										</div>
 									</div>
 									<div class="col">
-										<button class="btn btn-success w-100" onclick="saveOrder();">SALVA e STAMPA</button>
+										<button class="btn btn-success w-100" id="save-btn" onclick="saveOrder();"><i class="bi bi-save"></i> SALVA e STAMPA</button>
 									</div>
 								</div>
 							</div>

@@ -77,39 +77,47 @@ function sendOrder() {
 			params.products.push({
 				product_id: subcat_products[i][j].id,
 				quantity: prod.quantity,
-				notes: prod.notes
+				notes: prod.notes,
+				edited_product: prod.edited_product,
+				original_quantity: prod.original_quantity,
+				category_id: prod.category_id
 			});
 		});
 	});
 
+	let editing = order.id != null;
 	$.ajax({
 		async: false,
-		url: apiUrl + '/orders/',
-		type: "POST",
+		url: apiUrl + '/orders/' + (editing ? order.id : ''),
+		type: (editing ? "PUT" : "POST"),
 		data: JSON.stringify(params),
 		contentType: 'application/json; charset=utf-8',
 		headers: { "Authorization": "Bearer " + token },
 		success: async function(response) {
 			showToast(true, 'L\'ordine è stato salvato con successo');
-
-			order.guests = response.order.guests;
-			order.table = response.order.table;
-			order.price = response.order.price;
 			
-			if (order.id == null) {
-				order.id = response.order.id;
-				order.created_at = response.order.created_at;
-				order.user = { username: username };
-
-				let order_copy = structuredClone(order);
-				printOrder(order_copy, structuredClone(order_products));
-
-				recent_orders.unshift(order_copy);
-				if (recent_orders.length > MAX_RECENT_ORDERS)
-					recent_orders.pop();
-				newOrder();
+			if (editing) {
+				loadFromServer(order.id);
 			} else {
-				loadOrder();
+				order.guests = response.order.guests;
+				order.table = response.order.table;
+				order.price = response.order.price;
+				
+				if (order.id == null) {
+					order.id = response.order.id;
+					order.created_at = response.order.created_at;
+					order.user = { username: username };
+
+					let order_copy = structuredClone(order);
+					printOrder(order_copy, structuredClone(order_products));
+
+					recent_orders.unshift(order_copy);
+					if (recent_orders.length > MAX_RECENT_ORDERS)
+						recent_orders.pop();
+					newOrder();
+				} else {
+					loadOrder();
+				}
 			}
 		},
 		error: function(jqXHR, textStatus, errorThrown) {

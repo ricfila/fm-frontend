@@ -102,23 +102,71 @@ function loadComponents() {
 }
 
 function addProd(subcat_index, prod_index) {
-	let p = order_products[subcat_index][prod_index];
+	let p = (order_products[subcat_index] != null ? order_products[subcat_index][prod_index] : null);
 	if (p) {
 		p.quantity++;
+		if (order.id != null) {
+			if (p.edited_product) {
+				if (p.quantity == p.original_quantity) {
+					order_products[subcat_index][prod_index]["edited_product"] = null;
+					order_products[subcat_index][prod_index]["original_quantity"] = null;
+				}
+			} else {
+				order_products[subcat_index][prod_index]["edited_product"] = true;
+				order_products[subcat_index][prod_index]["original_quantity"] = p.quantity - 1;
+			}
+		}
 	} else {
+		if (order_products[subcat_index] == null)
+			order_products[subcat_index] = [];
+
 		order_products[subcat_index][prod_index] = { quantity: 1, notes: null };
+		if (order.id != null) {
+			order_products[subcat_index][prod_index]["edited_product"] = true;
+			order_products[subcat_index][prod_index]["original_quantity"] = 0;
+
+			let cat = subcat_products[subcat_index][prod_index].category_id;
+			if (order.tickets.filter( e => e.category_id == cat).length == 0) { // Default category for product has no ticket for this order
+				if (order.tickets.filter( e => e.category_id == categories[cat].parent_category_id).length > 0) {
+					cat = categories[cat].parent_category_id;
+				} else {
+					if (order.tickets.filter( e => e.category_id == categories[cat].parent_for_main_products_id).length > 0) {
+						cat = categories[cat].parent_for_main_products_id;
+					} else {
+						cat = categories[cat].parent_for_take_away_id;
+					}
+				}
+			}
+			order_products[subcat_index][prod_index]["category_id"] = cat;
+		}
 	}
 	loadOrderProducts();
 }
 
 function removeProd(subcat_index, prod_index) {
-	let p = order_products[subcat_index][prod_index];
-	if (p) {
+	let p = (order_products[subcat_index] != null ? order_products[subcat_index][prod_index] : null);
+	if (p && p.quantity > 0) {
 		p.quantity--;
+		let deleted = false;
+
 		if (p.quantity <= 0) {
-			order_products[subcat_index].splice(prod_index, 1);
-			if (order_products[subcat_index].filter( element => element.id != "" ).length == 0) {
-				order_products[subcat_index] = [];
+			if (order.id == null || (p.edited_product && p.original_quantity == 0)) {
+				order_products[subcat_index].splice(prod_index, 1);
+				if (order_products[subcat_index].filter( element => element.id != "" ).length == 0) {
+					order_products[subcat_index] = [];
+				}
+				deleted = true;
+			}
+		}
+		if (order.id != null && !deleted) {
+			if (p.edited_product) {
+				if (p.quantity == p.original_quantity) {
+					order_products[subcat_index][prod_index]["edited_product"] = null;
+					order_products[subcat_index][prod_index]["original_quantity"] = null;
+				}
+			} else {
+				order_products[subcat_index][prod_index]["edited_product"] = true;
+				order_products[subcat_index][prod_index]["original_quantity"] = p.quantity + 1;
 			}
 		}
 	}
@@ -149,13 +197,21 @@ function updatePrice() {
 	if (!order.is_voucher) {
 		total += cover_charge * order.guests;
 
-		subcats.forEach((_, i) => {
-			order_products[i].forEach((p, j) => {
+		order_products.forEach((subcat_p, i) => {
+			subcat_p.forEach((p, j) => {
 				let prod = subcat_products[i][j];
 				total += prod.price * p.quantity;
 			});
 		});
 	}
 	order.price = total;
-	$('#totalPrice').html(formatPrice(total));
+	if (order.id != null && total != originalTotalPrice) {
+		$('#totalPrice').html('<span style="text-decoration: line-through;">' + formatPrice(originalTotalPrice) + '</span>&nbsp;<span class="text-' + (total > originalTotalPrice ? 'success' : 'danger') + '">' + formatPrice(total) + '</span>');
+		$('#totalChangeInstructions').html(total > originalTotalPrice ?
+			'(chiedere al gent. cliente ' + formatPrice(total - originalTotalPrice) + ')' :
+			'(restituire al gent. cliente ' + formatPrice(originalTotalPrice - total) + ')');
+	} else {
+		$('#totalPrice').html(formatPrice(total));
+		$('#totalChangeInstructions').html('');
+	}
 }
