@@ -99,7 +99,7 @@ function sendOrder() {
 			if (order.id == null) {
 				order.id = response.order.id;
 				order.created_at = response.order.created_at;
-				order.user = { name: username };
+				order.user = { username: username };
 
 				let order_copy = structuredClone(order);
 				printOrder(order_copy, structuredClone(order_products));

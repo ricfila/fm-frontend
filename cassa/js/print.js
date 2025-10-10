@@ -26,7 +26,7 @@ async function printOrder(order, order_products, auto_close = true) {
 function populateAndPrint(print_w, order, order_products, auto_close) {
 	try {
 		print_w.document.getElementById('outDate').innerHTML = formatDateTime(order.created_at);
-		print_w.document.getElementById('outUser').innerHTML = order.user.name + (order.payment_method_id > 1 ? '*' : '');
+		print_w.document.getElementById('outUser').innerHTML = order.user.username + (order.payment_method_id > 1 ? '*' : '');
 		print_w.document.getElementById('outId').innerHTML = order.id;
 		print_w.document.getElementById('outCustomer').innerHTML = order.customer;
 
