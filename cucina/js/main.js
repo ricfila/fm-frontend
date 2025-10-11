@@ -8,7 +8,10 @@ $(document).one('fm:sessionReady', function() {
 		type: "GET",
 		headers: { "Authorization": "Bearer " + token },
 		success: function(response) {
-			response.categories.forEach(cat => categories[cat.id] = cat); 
+			response.categories.forEach(cat => {
+				categories[cat.id] = cat;
+				$('#categoryList').append('<div class="form-check"><input class="form-check-input category-check" type="checkbox" value="' + cat.id + '" id="categoryCheck_' + cat.id + '"><label class="form-check-label" for="categoryCheck_' + cat.id + '">' + cat.name + '</label></div>')
+			});
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
 			showToast(false, 'Errore nella lettura delle categorie: ' + getErrorMessage(jqXHR, textStatus, errorThrown));
@@ -43,12 +46,12 @@ $(document).one('fm:sessionReady', function() {
 
 $(document).ready(function() {
 	wardsTab = bootstrap.Tab.getOrCreateInstance(document.querySelector('#wards-link'));
-	monitoringTab = bootstrap.Tab.getOrCreateInstance(document.querySelector('#monitoring-link'));
+	stocksTab = bootstrap.Tab.getOrCreateInstance(document.querySelector('#stocks-link'));
 
-	$('#monitoring-link').on('shown.bs.tab', function() {
+	$('#stocks-link').on('shown.bs.tab', function() {
 		$('#wards-link').addClass('active');
 	}).on('hide.bs.tab', function() {
-		$('#monitoring-link').removeClass('active');
+		$('#stocks-link').removeClass('active');
 	});
 
 	$('#wards-link').on('click', function() {

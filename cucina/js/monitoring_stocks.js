@@ -1,4 +1,4 @@
-var wardsTab, monitoringTab;
+var wardsTab, stocksTab;
 var actual_ward = null;
 var ingredients = [];
 var last_consumed_stock = [];
@@ -7,8 +7,8 @@ var updateTask = null;
 
 function openWard(ward) {
 	actual_ward = ward;
-	monitoringTab.show();
-	$('#title-monitoring').html('Monitoraggio ' + actual_ward);
+	stocksTab.show();
+	$('#title-stocks').html('Monitoraggio stock ' + actual_ward);
 	toggleAutoUpdate(true);
 }
 

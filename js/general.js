@@ -157,15 +157,31 @@ function ticketList(tickets, categories, confirmed_at = null, showTicketBtn = fa
 			out += '<div class="col-auto"><button class="btn btn-sm btn-light" onclick="showTicket(' + ticket.category_id + ');"><i class="bi bi-list-task"></i> Leggi</button></div>';
 		out += '</div>';
 
-		if (ticket.printed_at != null) {
-			out += '<p><strong class="text-success"><i class="bi bi-check-square"></i> Stampata</strong> alle ore ' + formatTime(ticket.printed_at) + '</p>';
-		} else if (confirmed_at != null) {
-			let c_at = new Date(confirmed_at);
-			let p_at = new Date(c_at.getTime() + categories[ticket.category_id].print_delay * 1000);
-			let print_at = formatTime(p_at.toISOString());
-			out += '<p><i class="bi bi-square"></i> Stampa prevista alle ore ' + print_at + '</p>';
-		}
+		out += ticketStory(ticket, categories, confirmed_at);
 	});
 	
 	return out;
+}
+
+function ticketStory(ticket, categories, confirmed_at = null) {
+	let out = '<p>';
+
+	if (ticket.printed_at != null) {
+		out += '<strong class="text-success"><i class="bi bi-printer-fill"></i> Stampata</strong> alle ore ' + formatTime(ticket.printed_at) + '<br>';
+	} else if (confirmed_at != null) {
+		let c_at = new Date(confirmed_at);
+		let p_at = new Date(c_at.getTime() + categories[ticket.category_id].print_delay * 1000);
+		let print_at = formatTime(p_at.toISOString());
+		out += '<i class="bi bi-printer"></i> ' + (ticket.completed_at != null ? '<span style="text-decoration: line-through;">' : '') + 'Stampa prevista alle ore ' + print_at + (ticket.completed_at != null ? '</span>' : '') + '<br>';
+	}
+	if (ticket.completed_at != null) {
+		out += '<strong class="text-success"><i class="bi bi-check-circle-fill"></i> Evasa</strong> alle ore ' + formatTime(ticket.printed_at);
+	}
+
+	out +='</p>';
+	return out;
+}
+
+function orderMenuRow(id, customer, delay) {
+	return '<button class="btn btn-secondary w-100 mb-3 btn-ordermenu" style="animation-delay: ' + delay + 's;" onclick="actionOrderMenu(' + id + ');"><div class="row"><div class="col-4"><big>' + id + '</big></div><div class="col my-auto">' + customer + '</div></div></button>';
 }

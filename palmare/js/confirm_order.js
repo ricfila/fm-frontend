@@ -1,4 +1,4 @@
-function associateOrder(num) {
+function actionOrderMenu(num) {
 	menuColor('bg-warning');
 	current_id = num;
 	loadOrderHeader(orders[current_id], 'warning', 'window[\'lastMenuFunction\']();');
