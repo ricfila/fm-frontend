@@ -168,7 +168,7 @@ function ticketStory(ticket, categories, confirmed_at = null) {
 
 	if (ticket.printed_at != null) {
 		out += '<strong class="text-success"><i class="bi bi-printer-fill"></i> Stampata</strong> alle ore ' + formatTime(ticket.printed_at) + '<br>';
-	} else if (confirmed_at != null) {
+	} else if (confirmed_at != null && !categories[ticket.category_id].wait_parent_category) {
 		let c_at = new Date(confirmed_at);
 		let p_at = new Date(c_at.getTime() + categories[ticket.category_id].print_delay * 1000);
 		let print_at = formatTime(p_at.toISOString());
@@ -182,6 +182,8 @@ function ticketStory(ticket, categories, confirmed_at = null) {
 	return out;
 }
 
-function orderMenuRow(id, customer, delay) {
-	return '<button class="btn btn-secondary w-100 mb-3 btn-ordermenu" style="animation-delay: ' + delay + 's;" onclick="actionOrderMenu(' + id + ');"><div class="row"><div class="col-4"><big>' + id + '</big></div><div class="col my-auto">' + customer + '</div></div></button>';
+function orderMenuRow(id, customer, delay, id_show = null) {
+	if (id_show == null)
+		id_show = id;
+	return '<button class="btn btn-secondary w-100 mb-3 btn-ordermenu" style="animation-delay: ' + delay + 's;" onclick="actionOrderMenu(' + id + ');"><div class="row"><div class="col-4"><big>' + id_show + '</big></div><div class="col my-auto">' + customer + '</div></div></button>';
 }

@@ -1,3 +1,7 @@
+function associateOrder(num) {
+	actionOrderMenu(num);
+}
+
 function actionOrderMenu(num) {
 	menuColor('bg-warning');
 	current_id = num;

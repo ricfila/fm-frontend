@@ -47,7 +47,7 @@ function getTickets(status) {
 			$('#ticketList').html('');
 			response.tickets.forEach(ticket => {
 				tickets[ticket.id] = ticket;
-				$('#ticketList').append(orderMenuRow(ticket.id, (ticket.order.table != null ? 'Tav. ' + ticket.order.table + '<i class="bi bi-dot"></i>' : '') + ticket.order.customer, delay));
+				$('#ticketList').append(orderMenuRow(ticket.id, (ticket.order.table != null ? 'Tav. ' + ticket.order.table + '<i class="bi bi-dot"></i>' : '') + ticket.order.customer, delay, ticket.order_id));
 				delay += 0.02;
 			});
 		},
