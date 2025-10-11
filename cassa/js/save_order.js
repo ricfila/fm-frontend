@@ -19,7 +19,7 @@ async function saveOrder() {
 		$('#customer').focus();
 		return;
 	}
-	if (!order.is_take_away && order.has_tickets && order.guests == null) {
+	if (order.id == null && !order.is_take_away && order.has_tickets && order.guests == null) {
 		showToast(false, 'Inserire il numero di coperti!', 2);
 		$('#guests').focus();
 		return;
@@ -48,7 +48,7 @@ async function saveOrder() {
 	}
 
 	// Alert for no tickets
-	if (!order.has_tickets) {
+	if (order.id == null && !order.has_tickets) {
 		let ok = await modalConfirm('<span class="text-primary"><i class="bi bi-lightning-charge-fill"></i> Conferma cassa flash</span>', 'La modalità <strong>flash</strong> non prevede la stampa delle comande, e dopo la stampa della ricevuta l\'ordine verrà contrassegnato come completato.<br>Confermi la modalità <strong>flash</strong>?');
 		if (!ok) return;
 	}

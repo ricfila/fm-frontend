@@ -175,7 +175,7 @@ function ticketStory(ticket, categories, confirmed_at = null) {
 		out += '<i class="bi bi-printer"></i> ' + (ticket.completed_at != null ? '<span style="text-decoration: line-through;">' : '') + 'Stampa prevista alle ore ' + print_at + (ticket.completed_at != null ? '</span>' : '') + '<br>';
 	}
 	if (ticket.completed_at != null) {
-		out += '<strong class="text-success"><i class="bi bi-check-circle-fill"></i> Evasa</strong> alle ore ' + formatTime(ticket.printed_at);
+		out += '<strong class="text-success"><i class="bi bi-check-circle-fill"></i> Evasa</strong> alle ore ' + formatTime(ticket.completed_at);
 	}
 
 	out +='</p>';

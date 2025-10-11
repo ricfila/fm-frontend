@@ -117,4 +117,8 @@ function dialog(title, body, actionName = null, action = null) {
 	modal.show();
 }
 
+function hideDialog() {
+	modal.hide();
+}
+
 </script>
