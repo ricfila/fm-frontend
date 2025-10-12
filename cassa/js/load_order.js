@@ -37,6 +37,12 @@ function loadFromServer(order_id) {
 	});
 }
 
+function searchOrder() {
+	let input = prompt('Inserisci il numero dell\'ordine');
+	if (input != null)
+		loadFromServer(input);
+}
+
 function loadOrder() {
 	$('#customer').val(order.customer);
 	$('#guests').val(order.guests == null ? '' : order.guests);

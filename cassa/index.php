@@ -47,6 +47,9 @@ DA FARE:
 							</a>
 							<ul class="dropdown-menu" id="dropdownOrdersMenu" aria-labelledby="dropdownOrders"></ul>
 						</li>
+						<li class="nav-item">
+							<span class="nav-link" style="cursor: pointer;" onclick="searchOrder();"><i class="bi bi-search"></i> Cerca per ID</span>
+						</li>
 					</ul>
 					<?php //menuturno(); ?>
 					<ul class="navbar-nav">
