@@ -1,5 +1,6 @@
 var token;
 var username;
+var shiftDates = null;
 
 $(document).ready(function() {
 	token = localStorage.getItem('fm_token');
@@ -8,6 +9,7 @@ $(document).ready(function() {
 		$.each($('.username'), function() {
 			$(this).text(username);
 		});
+		shiftDates = getShiftDates();
 		
 		$(document).trigger('fm:sessionReady');
 	} else {

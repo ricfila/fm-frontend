@@ -29,7 +29,12 @@ function update() {
 	$.ajax({
 		url: apiUrl + '/ingredients',
 		type: "GET",
-		data: { include_completed_quantities: true, ward: actual_ward },
+		data: {
+			include_completed_quantities: true,
+			ward: actual_ward,
+			from_date: shiftDates.start,
+			to_date: shiftDates.end
+		},
 		headers: { "Authorization": "Bearer " + token },
 		success: function(response) {
 			$('#body').html('');

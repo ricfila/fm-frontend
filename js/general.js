@@ -1,3 +1,5 @@
+const SPLIT_HOUR = 17; // 17:00 (5 PM)
+
 function setCookie(cname, cvalue) {
 	const d = new Date();
 	d.setTime(d.getTime() + (730 * 24 * 60 * 60 * 1000));
@@ -71,7 +73,6 @@ function formatTime(fullStr) {
 function isThisSession(fullStr) {
     const dateObj = new Date(fullStr);
     const now = new Date();
-    const SPLIT_HOUR = 17; // 17:00 (5 PM)
 
 	// Compare date
     const actualDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -84,6 +85,39 @@ function isThisSession(fullStr) {
     const actualSession = (now.getHours() >= 0 && now.getHours() < SPLIT_HOUR ? 0 : 1);
 	const orderSession = (dateObj.getHours() >= 0 && dateObj.getHours() < SPLIT_HOUR ? 0 : 1);
 	return actualSession == orderSession;
+}
+
+function getShiftDates() {
+    const now = new Date();
+    const currentHour = now.getHours();
+
+    const formatDateTime = (date) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        
+        return `${year}-${month}-${day} ${hours}:${minutes}`;
+    };
+
+    let startDate, endDate;
+
+    if (currentHour >= 0 && currentHour < SPLIT_HOUR) {
+        startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0);
+        endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 17, 0);
+    }
+    else {
+        startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 17, 0);
+        const nextDay = new Date(now);
+        nextDay.setDate(now.getDate() + 1);
+        endDate = new Date(nextDay.getFullYear(), nextDay.getMonth(), nextDay.getDate(), 0, 0);
+    }
+    
+    return {
+        start: formatDateTime(startDate),
+        end: formatDateTime(endDate)
+    };
 }
 
 function getKeyboard(placeholder, sign = false) {

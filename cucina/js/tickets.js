@@ -14,6 +14,8 @@ function getTickets(status) {
 	});
 	console.log(cats);
 	let params = {
+		from_date: shiftDates.start,
+		to_date: shiftDates.end,
 		include_order: true,
 		categories: cats
 	};
