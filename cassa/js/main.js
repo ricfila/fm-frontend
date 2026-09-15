@@ -52,7 +52,7 @@ function initialize() {
 $(document).ready(function() {
 	$('#newOrderItem').click(async function() {
 		if (selectedProducts() > 0) {
-			let ok = await modalConfirm('<span class="text-success"><i class="bi bi-plus-circle"></i> Nuovo ordine</span>', 'Iniziare un <strong>nuovo ordine</strong>? Tutte le modifiche non salvate andranno perse.');
+			let ok = await modalConfirm('<span class="text-success"><i class="bi bi-plus-circle me-2"></i>Nuovo ordine</span>', 'Iniziare un <strong>nuovo ordine</strong>? Tutte le modifiche non salvate andranno perse.');
 			if (ok) newOrder();
 		} else newOrder();
 	});

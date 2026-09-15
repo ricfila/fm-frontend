@@ -13,11 +13,11 @@ $(document).ready(function() {
 function selectSearchMode() {
 	lastMenuFunction = selectSearchMode;
 	menuColor('bg-info');
-	$('#page-header').html('<h3 class="m-0"><button class="btn btn-info" onclick="initList();"><i class="bi bi-caret-left-fill"></i></button> Cerca un ordine');
+	$('#page-header').html('<h3 class="m-0"><button class="btn btn-info me-2" onclick="initList();"><i class="bi bi-caret-left-fill"></i></button>Cerca un ordine');
 	$('#page-body').html('<div class="btn-group-vertical w-100">\
-		<button class="btn btn-lg btn-outline-info" onclick="searchDialog(1);"><i class="bi bi-123"></i> Per numero</button>\
-		<button class="btn btn-outline-info btn-lg" onclick="searchDialog(2);"><i class="bi bi-compass"></i> Per tavolo</button>\
-		<button class="btn btn-outline-info btn-lg" onclick="searchDialog(3);"><i class="bi bi-person"></i> Per nominativo</button>\
+		<button class="btn btn-lg btn-outline-info" onclick="searchDialog(1);"><i class="bi bi-123 me-2"></i>Per numero</button>\
+		<button class="btn btn-outline-info btn-lg" onclick="searchDialog(2);"><i class="bi bi-compass me-2"></i>Per tavolo</button>\
+		<button class="btn btn-outline-info btn-lg" onclick="searchDialog(3);"><i class="bi bi-person me-2"></i>Per nominativo</button>\
 	</div>');
 }
 
@@ -92,7 +92,7 @@ function search() {
 
 function searchResult() {
 	lastMenuFunction = searchResult;
-	$('#page-header').html('<h3 class="m-0"><button class="btn btn-info" onclick="selectSearchMode();"><i class="bi bi-caret-left-fill"></i></button> Ordini ' + (searchType == 2 ? 'del tavolo ' : (searchType == 3 ? 'associati al nome ' : 'numerati ')) + $('#search-input').val());
+	$('#page-header').html('<h3 class="m-0"><button class="btn btn-info me-2" onclick="selectSearchMode();"><i class="bi bi-caret-left-fill"></i></button>Ordini ' + (searchType == 2 ? 'del tavolo ' : (searchType == 3 ? 'associati al nome ' : 'numerati ')) + $('#search-input').val());
 	if (found.length == 0) {
 		$('#page-body').html('Nessun ordine trovato.');
 	} else {

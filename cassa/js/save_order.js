@@ -39,7 +39,7 @@ async function saveOrder() {
 	});
 	if (order.guests != null && order.guests > 0) {
 		if (!include_cover_charge) {
-			let ok = await modalConfirm('<span class="text-danger"><i class="bi bi-person-slash"></i> Conferma ordine senza coperto</span>', 'Nessun prodotto selezionato prevede il coperto, pertanto <strong>i coperti indicati verranno azzerati.</strong><br>Continuare?');
+			let ok = await modalConfirm('<span class="text-danger"><i class="bi bi-person-slash me-2"></i>Conferma ordine senza coperto</span>', 'Nessun prodotto selezionato prevede il coperto, pertanto <strong>i coperti indicati verranno azzerati.</strong><br>Continuare?');
 			if (!ok) return;
 			$('#guests').val(0);
 			order.guests = 0;
@@ -49,7 +49,7 @@ async function saveOrder() {
 
 	// Alert for no tickets
 	if (order.id == null && !order.has_tickets) {
-		let ok = await modalConfirm('<span class="text-primary"><i class="bi bi-lightning-charge-fill"></i> Conferma cassa flash</span>', 'La modalità <strong>flash</strong> non prevede la stampa delle comande, e dopo la stampa della ricevuta l\'ordine verrà contrassegnato come completato.<br>Confermi la modalità <strong>flash</strong>?');
+		let ok = await modalConfirm('<span class="text-primary"><i class="bi bi-lightning-charge-fill me-2"></i>Conferma cassa flash</span>', 'La modalità <strong>flash</strong> non prevede la stampa delle comande, e dopo la stampa della ricevuta l\'ordine verrà contrassegnato come completato.<br>Confermi la modalità <strong>flash</strong>?');
 		if (!ok) return;
 	}
 

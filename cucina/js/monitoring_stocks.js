@@ -100,17 +100,17 @@ function ingredientRow(ingredient, i) {
 	// Collapsed content
 	out += '<div class="collapse" id="collapse_' + ingredient.id + '"><div class="row">';
 		out += '<div class="col">';
-			out += '<span class="text-success"><i class="bi bi-plus-square-fill"></i> ' + (ingredient.added_stock == null ? 'Non impostato' : ingredient.added_stock) + '</span><br>';
-			out += '<span class="text-danger"><i class="bi bi-dash-square-fill"></i> ' + ingredient.consumed_stock + '</span>';
+			out += '<span class="text-success"><i class="bi bi-plus-square-fill me-2"></i>' + (ingredient.added_stock == null ? 'Non impostato' : ingredient.added_stock) + '</span><br>';
+			out += '<span class="text-danger"><i class="bi bi-dash-square-fill me-2"></i>' + ingredient.consumed_stock + '</span>';
 	if (ingredient.stock_starting_from != null) {
-		out += '<br><i class="bi bi-clock"></i> A partire dalle ' + formatTime(ingredient.stock_starting_from);
+		out += '<br><i class="bi bi-clock me-2"></i>A partire dalle ' + formatTime(ingredient.stock_starting_from);
 		if (!isThisSession(ingredient.stock_starting_from))
 			out += ' del ' + formatShortDate(ingredient.stock_starting_from);
 	}
 		out += '</div>';
 		out += '<div class="col-auto align-self-end">';
-			out += '<button class="btn btn-sm btn-success" onclick="addStockModal(' + ingredient.id + ');"><i class="bi bi-database-fill-add"></i> Aggiungi stock</button>';
-			out += '<button class="btn btn-sm btn-warning ms-2" onclick="viewStockList(' + ingredient.id + ');"><i class="bi bi-clock-history"></i> Cronologia stock</button>';
+			out += '<button class="btn btn-sm btn-success" onclick="addStockModal(' + ingredient.id + ');"><i class="bi bi-database-fill-add me-2"></i>Aggiungi stock</button>';
+			out += '<button class="btn btn-sm btn-warning ms-2" onclick="viewStockList(' + ingredient.id + ');"><i class="bi bi-clock-history me-2"></i>Cronologia stock</button>';
 		out += '</div>';
 	out += '</div></div>';
 

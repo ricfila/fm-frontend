@@ -52,7 +52,7 @@ DA FARE:
 					<?php //menuturno(); ?>
 					<ul class="navbar-nav">
 						<li class="nav-item">
-							<span class="nav-link" style="cursor: pointer;" onclick="logout();"><i class="bi bi-box-arrow-right"></i> Logout</span>
+							<span class="nav-link" style="cursor: pointer;" onclick="logout();"><i class="bi bi-box-arrow-right me-2"></i>Logout</span>
 						</li>
 					</ul>
 				</div>
@@ -112,11 +112,11 @@ DA FARE:
 								<div class="row">
 									<div class="col-3 pe-1">
 										<input type="checkbox" class="btn-check" id="is_take_away" autocomplete="off">
-										<label class="btn btn-sm btn-outline-success w-100" for="is_take_away"><i class="bi bi-handbag-fill"></i> Asporto</label>
+										<label class="btn btn-sm btn-outline-success w-100" for="is_take_away"><i class="bi bi-handbag-fill me-2"></i>Asporto</label>
 									</div>
 									<div class="col-3 ps-1">
 										<input type="checkbox" class="btn-check" id="is_fast_order" autocomplete="off">
-										<label class="btn btn-sm btn-outline-primary w-100" for="is_fast_order"><i class="bi bi-lightning-charge-fill"></i> Flash</label>
+										<label class="btn btn-sm btn-outline-primary w-100" for="is_fast_order"><i class="bi bi-lightning-charge-fill me-2"></i>Flash</label>
 									</div>
 									<div class="col-6">
 										<div class="row">
@@ -157,7 +157,7 @@ DA FARE:
 										</div>
 									</div>
 									<div class="col">
-										<button class="btn btn-success w-100" id="save-btn" onclick="saveOrder();"><i class="bi bi-save"></i> SALVA e STAMPA</button>
+										<button class="btn btn-success w-100" id="save-btn" onclick="saveOrder();"><i class="bi bi-save me-2"></i>SALVA e STAMPA</button>
 									</div>
 								</div>
 							</div>
@@ -169,10 +169,10 @@ DA FARE:
 				<div class="tab-content flex-grow-1 colonnadx" style="overflow-y: auto;">
 					<div class="row">
 						<div class="col-auto">
-							<h4><i class="bi bi-clock-history"></i> Ordini recenti</h4>
+							<h4><i class="bi bi-clock-history me-2"></i>Ordini recenti</h4>
 						</div>
 						<div class="col">
-							<button class="btn btn-light" onclick="ultimiordini();"><i class="bi bi-arrow-clockwise"></i> Aggiorna</button>
+							<button class="btn btn-light" onclick="ultimiordini();"><i class="bi bi-arrow-clockwise me-2"></i>Aggiorna</button>
 						</div>
 					</div>
 					<hr>
@@ -185,7 +185,7 @@ DA FARE:
 				<div class="tab-content flex-grow-1 colonnadx" style="overflow-y: auto;">
 					<div class="row">
 						<div class="col-auto">
-							<h4><i class="bi bi-pencil"></i> Modifica ordine</h4>
+							<h4><i class="bi bi-pencil me-2"></i>Modifica ordine</h4>
 						</div>
 						<div class="col-4">
 							<div class="input-group">
@@ -199,12 +199,12 @@ DA FARE:
 			</div>
 			<div id="tabultimevendite" class="tab-pane fade flex-column">
 				<div class="tab-content flex-grow-1 colonnadx" style="overflow-y: auto;">
-					<h4><i class="bi bi-cart"></i> Ultime vendite</h4><hr>
+					<h4><i class="bi bi-cart me-2"></i>Ultime vendite</h4><hr>
 					<div class="row">
 						<div class="col-6">
 							Cerca tra gli ordini non evasi degli ultimi <strong id="ingminuti"></strong> minuti
 							<input type="range" id="rangeminuti" class="form-range" min="1" max="60" oninput="range(61 - $(this).val());"/>
-							<button class="btn btn-success btn-sm" onclick="ultimevendite();"><i class="bi bi-arrow-clockwise"></i> Ricarica vendite</button>
+							<button class="btn btn-success btn-sm" onclick="ultimevendite();"><i class="bi bi-arrow-clockwise me-2"></i>Ricarica vendite</button>
 						</div>
 						<div class="col-6">
 							<strong>Tempi di servizio di questo turno</strong>&emsp;<button class="btn btn-light btn-sm" onclick="statristrette();"><i class="bi bi-arrow-clockwise"></i></button><br>
@@ -232,7 +232,7 @@ DA FARE:
 					<div class="d-flex h-100 flex-column">
 						<div class="row">
 							<div class="col-auto"><h4><i class="bi bi-bar-chart"></i> Statistiche sul servizio</h4></div>
-							<div class="col"><button class="btn btn-light" onclick="caricastatistiche('#statistichebody');"><i class="bi bi-arrow-clockwise"></i> Aggiorna</button></div>
+							<div class="col"><button class="btn btn-light" onclick="caricastatistiche('#statistichebody');"><i class="bi bi-arrow-clockwise me-2"></i>Aggiorna</button></div>
 						</div>
 						<hr />
 						<div id="statistichebody" class="d-flex" style="padding-top: 0px; padding-right: 0px; padding-bottom: 0px; overflow-x: hidden;"></div>
@@ -241,26 +241,26 @@ DA FARE:
 			</div>
 			<div id="tabchiudicassa" class="tab-pane fade flex-column">
 				<div class="tab-content flex-grow-1 colonnadx" style="overflow-y: auto;">
-					<h4><i class="bi bi-printer"></i> Stampa rapporti</h4><hr>
+					<h4><i class="bi bi-printer me-2"></i>Stampa rapporti</h4><hr>
 					<div id="chiudicassabody"></div>
 				</div>
 			</div>
 			<div id="tabdatabase" class="tab-pane fade flex-column">
 				<div class="tab-content flex-grow-1 colonnadx" style="overflow-y: auto;">
-					<h4><i class="bi bi-clipboard-check"></i> Azioni di bonifica del database</h4><hr>
+					<h4><i class="bi bi-clipboard-check me-2"></i>Azioni di bonifica del database</h4><hr>
 					<?php //echo azionibonifica(); ?><br>
 				</div>
 			</div>
 			<div id="tabingredienti" class="tab-pane fade flex-column">
 				<div class="tab-content flex-grow-1 colonnadx" style="overflow-y: auto;">
-					<h4><i class="bi bi-list-task"></i> Anagrafica degli ingredienti e giacenze</h4><hr>
+					<h4><i class="bi bi-list-task me-2"></i>Anagrafica degli ingredienti e giacenze</h4><hr>
 					<div class="row">
 						<div class="col-auto input-group mb-3 w-50">
 							<input type="text" class="form-control" id="filtraingredienti" onkeyup="filtraingredienti();" placeholder="Cerca tra gli ingredienti..."/>
 							<button class="btn btn-danger" onclick="$('#filtraingredienti').val(''); filtraingredienti();"><i class="bi bi-x-lg"></i></button>
 						</div>
 						<div class="col">
-							<button class="btn btn-success" onclick="modificaing(null);"><i class="bi bi-plus-lg"></i> Nuovo ingrediente</button>
+							<button class="btn btn-success" onclick="modificaing(null);"><i class="bi bi-plus-lg me-2"></i>Nuovo ingrediente</button>
 						</div>
 					</div>
 					<div id="ingredientibody"></div>

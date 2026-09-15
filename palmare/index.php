@@ -22,7 +22,7 @@
 		<nav class="fixed-top navbar navbar-expand-lg navbar-dark bg-success" style="transition: 0.2s;">
 			<div class="container-lg">
 				<span class="navbar-brand">
-					<a class="navbar-brand" onclick="initList();"><i class="bi bi-compass-fill"></i> Palmare sagra&emsp;</a><span id="attesa"></span>&nbsp;<span id="errorIcon" onclick="showError();"></span>
+					<a class="navbar-brand me-4" onclick="initList();"><i class="bi bi-compass-fill me-3"></i>Palmare sagra</a><span id="attesa" class="me-4"></span><span id="errorIcon" onclick="showError();"></span>
 				</span>
 				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
 					<span class="navbar-toggler-icon"></span>
@@ -31,13 +31,13 @@
 				<div class="collapse navbar-collapse" id="navbarColor01">
 					<ul class="navbar-nav me-auto">
 						<li class="nav-item mt-3 mt-lg-0">
-							<a class="nav-link" onclick="logout();"><strong class="lead"><i class="bi bi-person-fill"></i>&nbsp;<i class="username"></i></strong>&emsp;<i class="bi bi-door-open-fill"></i> Disconnettiti</a>
+							<a class="nav-link" onclick="logout();"><strong class="lead me-4"><i class="bi bi-person-fill me-2"></i><i class="username"></i></strong><i class="bi bi-door-open-fill me-2"></i>Disconnettiti</a>
 						</li>
 						<li class="nav-item lead mt-3 mt-lg-0">
-							<a class="nav-link" onclick="lastAssociated();"><i class="bi bi-clock-history"></i> Ultimi associati</a>
+							<a class="nav-link" onclick="lastAssociated();"><i class="bi bi-clock-history me-2"></i>Ultimi associati</a>
 						</li>
 						<li class="nav-item lead mt-3 mt-lg-0 mb-2 mb-lg-0">
-							<a class="nav-link" onclick="selectSearchMode();"><i class="bi bi-search"></i> Cerca un ordine</a>
+							<a class="nav-link" onclick="selectSearchMode();"><i class="bi bi-search me-2"></i>Cerca un ordine</a>
 						</li>
 					</ul>
 				</div>

@@ -89,7 +89,7 @@ function productRowPrint(name, price, quantity, notes) {
 
 	out += '<div class="col">' + name;
 	if (notes != null && notes != '')
-		out +='<br><i class="bi bi-arrow-return-right"></i>&nbsp;' + notes;
+		out +='<br><i class="bi bi-arrow-return-right me-2"></i>' + notes;
 	out += '</div>';
 
 	out += '<div class="col-auto">' + formatPrice(price * quantity) + '</div>'; //TODO: price needs to be calculated before (field price of order_product)

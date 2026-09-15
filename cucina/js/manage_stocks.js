@@ -11,8 +11,8 @@ function viewStockList(id) {
 				list += '<div class="row mb-1">';
 				list += '<div class="col-6 my-auto">' + formatShortDate(stock.available_from) + '<i class="bi bi-dot"></i><strong>' + formatTime(stock.available_from) + '</strong></div>';
 				list += '<div class="col p-0"><div class="bg-' + (stock.quantity > 0 ? 'success' : 'danger') + ' stock-result" style="animation-delay: ' + (i * 0.05) + 's;"><h5 class="text-light mb-0">' + stock.quantity + '</h5></div></div>';
-				list += '<div class="col-auto"><button class="btn btn-sm btn-warning" onclick="editStockModal(' + id + ', ' + stock.id + ');"><i class="bi bi-pencil-fill"></i><span class="d-none d-md-inline"> Modifica</span></button>';
-				list += '<button class="btn btn-sm btn-danger ms-2" onclick="deleteStock(' + id + ', ' + stock.id + ');"><i class="bi bi-x-lg"></i><span class="d-none d-md-inline"> Elimina</span></button></div>';
+				list += '<div class="col-auto"><button class="btn btn-sm btn-warning" onclick="editStockModal(' + id + ', ' + stock.id + ');"><i class="bi bi-pencil-fill"></i><span class="d-none d-md-inline ms-2">Modifica</span></button>';
+				list += '<button class="btn btn-sm btn-danger ms-2" onclick="deleteStock(' + id + ', ' + stock.id + ');"><i class="bi bi-x-lg"></i><span class="d-none d-md-inline ms-2">Elimina</span></button></div>';
 				list += '</div>';
 			});
 			dialog('Stock inseriti per ' + ingredients[id].name, list);

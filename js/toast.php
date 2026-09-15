@@ -110,7 +110,7 @@ function dialog(title, body, actionName = null, action = null) {
 	$('#dialogbody').html(body);
 	if (actionName != null)
 		$('#dialogfooter').html(
-			'<button class="btn btn-danger me-2" onclick="modal.hide();"><i class="bi bi-x-circle"></i> Annulla</button><button class="btn btn-success" onclick="modal.hide(); ' + action + '"><i class="bi bi-check-circle-fill"></i> ' + actionName + '</button>'
+			'<button class="btn btn-danger me-2" onclick="modal.hide();"><i class="bi bi-x-circle me-2"></i>Annulla</button><button class="btn btn-success" onclick="modal.hide(); ' + action + '"><i class="bi bi-check-circle-fill me-2"></i>' + actionName + '</button>'
 		).show();
 	else
 		$('#dialogfooter').hide();

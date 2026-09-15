@@ -94,7 +94,7 @@ function showTicket(cat_id) {
 			}
 			out += '<div class="row"><div class="col-1">' + product.quantity + '</div><div class="col">' + product.product.name + '</div></div>';
 			if (product.notes != null && product.notes.length > 0)
-				out += '<div class="row"><div class="col-1"></div><div class="col"><i class="bi bi-arrow-return-right"></i>&nbsp;' + product.notes + '</div></div>';
+				out += '<div class="row"><div class="col-1"></div><div class="col"><i class="bi bi-arrow-return-right me-2"></i>' + product.notes + '</div></div>';
 		}
 	});
 

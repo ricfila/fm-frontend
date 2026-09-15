@@ -12,7 +12,7 @@ $(document).one('fm:sessionReady', function() {
 			let degree = response.total_count >= 100 ? 11 : Math.floor(response.total_count / 10) + 1;
 			let out = '<h6>Fino ad ora hai abbinato <strong>' + response.total_count + '</strong> ordin' + (response.total_count == 1 ? 'e' : 'i') + '</h6>';
 			out += '<p>Hai raggiunto il grado ' + (degree == 11 ? 'massimo' : degree) + '</p>';
-			out += '<h5 class="text-' + (degree < 7 ? 'primary' : (degree < 11 ? 'danger' : 'warning')) + '"><i class="bi bi-' + icons[degree - 1] + '"></i>&nbsp;' + degrees[degree - 1] + '</h5>';
+			out += '<h5 class="text-' + (degree < 7 ? 'primary' : (degree < 11 ? 'danger' : 'warning')) + '"><i class="bi bi-' + icons[degree - 1] + ' me-2"></i>' + degrees[degree - 1] + '</h5>';
 			$('#contest').html(out);
 		},
 		error: function(jqXHR, textStatus, errorThrown) {

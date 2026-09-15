@@ -16,12 +16,12 @@
 		<nav class="fixed-top navbar navbar-expand-lg navbar-dark bg-warning">
 			<div class="container-lg">
 				<span class="navbar-brand">
-					<a href="monitor/" class="navbar-brand"><i class="bi bi-display-fill"></i> Monitor cucina</a>
+					<a href="monitor/" class="navbar-brand"><i class="bi bi-display-fill me-3"></i>Monitor cucina</a>
 				</span>
 				
 				<ul class="navbar-nav text-end">
 					<li class="nav-item">
-						<span class="nav-link" onclick="update();"><i class="bi bi-arrow-clockwise"></i> Aggiorna</a>
+						<span class="nav-link" onclick="update();"><i class="bi bi-arrow-clockwise me-2"></i>Aggiorna</a>
 					</li>
 				</ul>
 			</div>

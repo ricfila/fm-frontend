@@ -75,9 +75,9 @@ function actionOrderMenu(id) {
 	body += ticketStory(ticket, categories, order.confirmed_at);
 
 	if (ticket.completed_at == null)
-		body += '<button class="btn btn-lg btn-info w-100" style="font-size: 2em;" onclick="completeTicket(' + id + ', true);"><i class="bi bi-star"></i> Evadi</button>';
+		body += '<button class="btn btn-lg btn-info w-100" style="font-size: 2em;" onclick="completeTicket(' + id + ', true);"><i class="bi bi-star me-2"></i>Evadi</button>';
 	else
-		body += '<button class="btn btn-lg btn-warning w-100" style="font-size: 2em;" onclick="completeTicket(' + id + ', false);"><i class="bi bi-box-arrow-left"></i> Ripristina</button>';
+		body += '<button class="btn btn-lg btn-warning w-100" style="font-size: 2em;" onclick="completeTicket(' + id + ', false);"><i class="bi bi-box-arrow-left me-2"></i>Ripristina</button>';
 	dialog(title, body);
 }
 

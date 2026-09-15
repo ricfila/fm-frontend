@@ -55,7 +55,7 @@ function loadOrder() {
 	$('#paymentMethod').val(order.payment_method_id);
 	originalTotalPrice = order.price;
 	if (order.id != null)
-	$('#save-btn').html('<i class="bi bi-save"></i> SALVA' + (order.id == null ? ' e STAMPA' : ''));
+		$('#save-btn').html('<i class="bi bi-save me-2"></i>SALVA' + (order.id == null ? ' e STAMPA' : ''));
 
 	checkInputDisabled();
 	loadOrderProducts();
@@ -102,9 +102,9 @@ function productRow(i, j, name, price, prod) {
 
 	// Name and notes
 	out += '</div><div class="col">' + name;
-	out += '<span id="btnaddnotes' + id + '"' + (prod.notes != null ? ' class="d-none"' : '') + '><button class="btn btn-sm btn-light ms-3" onclick="addNotes(' + i + ', ' + j + ');"><i class="bi bi-pencil-fill"></i> Note</button></span>';
+	out += '<span id="btnaddnotes' + id + '"' + (prod.notes != null ? ' class="d-none"' : '') + '><button class="btn btn-sm btn-light ms-3" onclick="addNotes(' + i + ', ' + j + ');"><i class="bi bi-pencil-fill me-2"></i>Note</button></span>';
 	out += '<span id="tagnotes' + id + '"' + (prod.notes == null ? ' class="d-none"' : '') + '><br>';
-	out += '<i class="bi bi-arrow-return-right"></i>&nbsp;';
+	out += '<i class="bi bi-arrow-return-right me-2"></i>';
 	out += '<input class="form-control form-control-sm d-inline" type="text" id="notes' + id + '" onchange="updateNotes(' + i + ', ' + j + ');" maxlength="63" style="width: 300px;" value="' + (prod.notes != null ? prod.notes : '') + '" />&nbsp;';
 	out += '<button class="btn btn-sm btn-light" onclick="removeNotes(' + i + ', ' + j + ');"><i class="bi bi-x-lg"></i></button></span>';
 	if (prod.category_id != null)
@@ -150,7 +150,7 @@ function loadInfoHeader() {
 	$('#ticket-list').html(outconfirm + '<br>' + ticketList(order.tickets, categories, order.confirmed_at));
 	
 	$('#delete-order-btn').html(order.is_deleted ?
-		'<button class="btn btn-sm btn-outline-success" onclick="resumeOrder();"><i class="bi bi-recycle"></i> Ripristina ordine</button>' :
-		'<button class="btn btn-sm btn-outline-danger" onclick="deleteOrder();"><i class="bi bi-trash3-fill"></i> Elimina ordine</button>');
+		'<button class="btn btn-sm btn-outline-success" onclick="resumeOrder();"><i class="bi bi-recycle me-2"></i>Ripristina ordine</button>' :
+		'<button class="btn btn-sm btn-outline-danger" onclick="deleteOrder();"><i class="bi bi-trash3-fill me-2"></i>Elimina ordine</button>');
 	$('#infoHeader').removeClass('d-none');
 }

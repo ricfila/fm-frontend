@@ -20,8 +20,8 @@ function confirmScreen() {
 		$('#keyboard')
 		.html('<h4 style="letter-spacing: 10px;" id="riep">Tavolo: <big><strong class="text-success">' + current_table + '</strong></big></h4><br>\
 			<div class="row" id="confirm-buttons"><div class="col" style="padding: 2px;">\
-				<button class="btn btn-danger btn-lg w-100 mb-2" onclick="cancelTable();"><i class="bi bi-x-circle"></i>&emsp;Annulla</button>\
-				<button class="btn btn-success btn-lg w-100" onclick="saveTable();"><i class="bi bi-check-circle-fill"></i>&emsp;Conferma</button>\
+				<button class="btn btn-danger btn-lg w-100 mb-2" onclick="cancelTable();"><i class="bi bi-x-circle me-3"></i>Annulla</button>\
+				<button class="btn btn-success btn-lg w-100" onclick="saveTable();"><i class="bi bi-check-circle-fill me-3"></i>Conferma</button>\
 			</div></div>')
 		$('#riep').animate({letterSpacing: "0px"});
 	}
@@ -75,7 +75,7 @@ function tableKeyboard() {
 				</div>\
 			</div>\
 			<div class="row"><div class="col" style="padding: 2px;">\
-				<button class="btn btn-success btn-lg w-100 btnlater disabled" onclick="confirmScreen();"><i class="bi bi-check-circle-fill"></i>&emsp;OK</button>\
+				<button class="btn btn-success btn-lg w-100 btnlater disabled" onclick="confirmScreen();"><i class="bi bi-check-circle-fill me-3"></i>OK</button>\
 			</div></div>';
 	return out;
 }

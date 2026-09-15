@@ -136,7 +136,7 @@ function ticketList(tickets, categories, confirmed_at = null, showTicketBtn = fa
 		out += '<div class="row">';
 		out += '<div class="col"><h4 class="mb-0 text-info">Comanda ' + categories[ticket.category_id].name + '</h4></div>';
 		if (showTicketBtn)
-			out += '<div class="col-auto"><button class="btn btn-sm btn-light" onclick="showTicket(' + ticket.category_id + ');"><i class="bi bi-list-task"></i> Leggi</button></div>';
+			out += '<div class="col-auto"><button class="btn btn-sm btn-light" onclick="showTicket(' + ticket.category_id + ');"><i class="bi bi-list-task me-2"></i>Leggi</button></div>';
 		out += '</div>';
 
 		out += ticketStory(ticket, categories, confirmed_at);
@@ -157,7 +157,7 @@ function ticketStory(ticket, categories, confirmed_at = null) {
 		out += '<i class="bi bi-printer"></i> ' + (ticket.completed_at != null ? '<span style="text-decoration: line-through;">' : '') + 'Stampa prevista alle ore ' + print_at + (ticket.completed_at != null ? '</span>' : '') + '<br>';
 	}
 	if (ticket.completed_at != null) {
-		out += '<strong class="text-success"><i class="bi bi-check-circle-fill"></i> Evasa</strong> alle ore ' + formatTime(ticket.completed_at);
+		out += '<strong class="text-success"><i class="bi bi-check-circle-fill me-2"></i>Evasa</strong> alle ore ' + formatTime(ticket.completed_at);
 	}
 
 	out +='</p>';
