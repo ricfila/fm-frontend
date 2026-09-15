@@ -2,6 +2,7 @@ function associateOrder(num) {
 	actionOrderMenu(num);
 }
 
+
 function actionOrderMenu(num) {
 	menuColor('bg-warning');
 	current_id = num;
@@ -59,6 +60,7 @@ function loadOrderHeader(order, style, action = "initList();") {
 	$('#page-header').html(out);
 }
 
+
 function tableKeyboard() {
 	out = getKeyboard('Tavolo');
 	out += '<div class="row mb-3">\
@@ -77,4 +79,3 @@ function tableKeyboard() {
 			</div></div>';
 	return out;
 }
-

@@ -195,7 +195,7 @@ function removeNotes(subcat_index, prod_index) {
 function updatePrice() {
 	let total = 0;
 	if (!order.is_voucher) {
-		total += cover_charge * order.guests;
+		total += settings.cover_charge * order.guests;
 
 		order_products.forEach((subcat_p, i) => {
 			subcat_p.forEach((p, j) => {

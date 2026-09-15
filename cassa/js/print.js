@@ -44,7 +44,7 @@ function populateAndPrint(print_w, order, order_products, auto_close) {
 		print_w.document.getElementById('outGuests').innerHTML = order.is_take_away ? 'ASPORTO' :
 			(order.guests == null || order.guests == 0 ? 'AGGIUNTA' :
 				'COPERTI: <strong>' + order.guests + '</strong>' +
-				(cover_charge > 0 ? '&emsp;(' + formatPrice(order.guests * cover_charge) + ')' : '')
+				(settings.cover_charge > 0 ? '&emsp;(' + formatPrice(order.guests * settings.cover_charge) + ')' : '')
 			);
 
 		let products = '';

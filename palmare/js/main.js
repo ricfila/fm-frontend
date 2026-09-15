@@ -4,34 +4,8 @@ var current_id = null;
 var current_table;
 var msg_err = '';
 
-var categories = [];
-var subcategories = [];
-
 
 $(document).one('fm:sessionReady', function() {
-	$.ajax({
-		url: apiUrl + '/categories',
-		type: "GET",
-		headers: { "Authorization": "Bearer " + token },
-		success: function(response) {
-			response.categories.forEach(cat => categories[cat.id] = cat); 
-		},
-		error: function(jqXHR, textStatus, errorThrown) {
-			msg_err = 'Errore nella lettura delle categorie: ' + getErrorMessage(jqXHR, textStatus, errorThrown);
-		}
-	});
-	$.ajax({
-		url: apiUrl + '/subcategories',
-		type: "GET",
-		headers: { "Authorization": "Bearer " + token },
-		success: function(response) {
-			response.subcategories.forEach(subcat => subcategories[subcat.id] = subcat); 
-		},
-		error: function(jqXHR, textStatus, errorThrown) {
-			msg_err = 'Errore nella lettura delle sottocategorie: ' + getErrorMessage(jqXHR, textStatus, errorThrown);
-		}
-	});
-
 	setInterval(sendData, 3000);
 });
 

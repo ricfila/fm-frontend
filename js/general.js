@@ -1,5 +1,3 @@
-const SPLIT_HOUR = 17; // 17:00 (5 PM)
-
 function setCookie(cname, cvalue) {
 	const d = new Date();
 	d.setTime(d.getTime() + (730 * 24 * 60 * 60 * 1000));
@@ -68,56 +66,6 @@ function formatTime(fullStr) {
 		minute: '2-digit',
 		hour12: false,
 	}).format(dateObj);
-}
-
-function isThisSession(fullStr) {
-    const dateObj = new Date(fullStr);
-    const now = new Date();
-
-	// Compare date
-    const actualDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const orderDate = new Date(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate());
-    if (actualDate.getTime() != orderDate.getTime()) {
-        return false;
-    }
-
-	// Compare time
-    const actualSession = (now.getHours() >= 0 && now.getHours() < SPLIT_HOUR ? 0 : 1);
-	const orderSession = (dateObj.getHours() >= 0 && dateObj.getHours() < SPLIT_HOUR ? 0 : 1);
-	return actualSession == orderSession;
-}
-
-function getShiftDates() {
-    const now = new Date();
-    const currentHour = now.getHours();
-
-    const formatDateTime = (date) => {
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        const hours = String(date.getHours()).padStart(2, '0');
-        const minutes = String(date.getMinutes()).padStart(2, '0');
-        
-        return `${year}-${month}-${day} ${hours}:${minutes}`;
-    };
-
-    let startDate, endDate;
-
-    if (currentHour >= 0 && currentHour < SPLIT_HOUR) {
-        startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0);
-        endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 17, 0);
-    }
-    else {
-        startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 17, 0);
-        const nextDay = new Date(now);
-        nextDay.setDate(now.getDate() + 1);
-        endDate = new Date(nextDay.getFullYear(), nextDay.getMonth(), nextDay.getDate(), 0, 0);
-    }
-    
-    return {
-        start: formatDateTime(startDate),
-        end: formatDateTime(endDate)
-    };
 }
 
 function getKeyboard(placeholder, sign = false) {
@@ -216,8 +164,8 @@ function ticketStory(ticket, categories, confirmed_at = null) {
 	return out;
 }
 
-function orderMenuRow(id, customer, delay, id_show = null) {
-	if (id_show == null)
-		id_show = id;
-	return '<button class="btn btn-secondary w-100 mb-3 btn-ordermenu" style="animation-delay: ' + delay + 's;" onclick="actionOrderMenu(' + id + ');"><div class="row"><div class="col-4"><big>' + id_show + '</big></div><div class="col my-auto">' + customer + '</div></div></button>';
+function orderMenuRow(id, customer, delay, id_to_show = null) {
+	if (id_to_show == null)
+		id_to_show = id;
+	return '<button class="btn btn-secondary w-100 mb-3 btn-ordermenu" style="animation-delay: ' + delay + 's;" onclick="actionOrderMenu(' + id + ');"><div class="row"><div class="col-4"><big>' + id_to_show + '</big></div><div class="col my-auto">' + customer + '</div></div></button>';
 }

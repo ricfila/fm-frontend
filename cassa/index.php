@@ -28,9 +28,7 @@ DA FARE:
 		<nav class="fixed-top navbar navbar-expand-md navbar-dark bg-danger">
 			<div class="container-lg">
 				<span class="navbar-brand">
-					<i class="bi bi-heart-fill"></i>&nbsp;
-					<span class="username"></span><!--&nbsp;
-					<!--i class="bi bi-<?php echo $lido; ?>-circle"></i-->
+					<i class="bi bi-heart-fill me-3"></i><span class="username"></span>
 				</span>
 				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
 					<span class="navbar-toggler-icon"></span>
@@ -39,16 +37,16 @@ DA FARE:
 				<div class="collapse navbar-collapse" id="navbarColor01">
 					<ul class="navbar-nav me-auto">
 						<li class="nav-item">
-							<span class="nav-link" style="cursor: pointer;" id="newOrderItem"><i class="bi bi-plus-circle"></i> Nuovo ordine</span>
+							<span class="nav-link" style="cursor: pointer;" id="newOrderItem"><i class="bi bi-plus-circle me-2"></i>Nuovo ordine</span>
 						</li>
 						<li class="nav-item dropdown" id="dropdownOrdersContainer">
 							<a class="nav-link dropdown-toggle" href="#" id="dropdownOrders" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-								<i class="bi bi-clock-history"></i> Ordini recenti
+								<i class="bi bi-clock-history me-2"></i>Ordini recenti
 							</a>
 							<ul class="dropdown-menu" id="dropdownOrdersMenu" aria-labelledby="dropdownOrders"></ul>
 						</li>
 						<li class="nav-item">
-							<span class="nav-link" style="cursor: pointer;" onclick="searchOrder();"><i class="bi bi-search"></i> Cerca per ID</span>
+							<span class="nav-link" style="cursor: pointer;" onclick="searchOrder();"><i class="bi bi-search me-2"></i>Cerca per ID</span>
 						</li>
 					</ul>
 					<?php //menuturno(); ?>

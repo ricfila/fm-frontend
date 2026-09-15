@@ -1,19 +1,8 @@
 var actual_ward = null;
 
 $(document).one('fm:sessionReady', function() {
-	$.ajax({
-		url: apiUrl + '/ingredients/wards',
-		type: "GET",
-		headers: { "Authorization": "Bearer " + token },
-		success: function(response) {
-			wards = response.wards;
-			wards.forEach(ward => {
-				$('#ward-list').append('<div class="col-6 col-sm-4 col-md-3 col-lg-2"><button class="btn btn-lg btn-warning w-100 mb-3" onclick="openWard(\'' + ward + '\');">' + ward + '</button></div>');
-			})
-		},
-		error: function(jqXHR, textStatus, errorThrown) {
-			showToast(false, 'Errore nella lettura dei reparti: ' + getErrorMessage(jqXHR, textStatus, errorThrown));
-		}
+	wards.forEach(ward => {
+		$('#ward-list').append('<div class="col-6 col-sm-4 col-md-3 col-lg-2"><button class="btn btn-lg btn-warning w-100 mb-3" onclick="openWard(\'' + ward + '\');">' + ward + '</button></div>');
 	});
 });
 

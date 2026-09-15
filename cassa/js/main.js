@@ -4,35 +4,20 @@ var last_products = null;
 var subcats = [];
 var subcat_products = [];
 var payment_methods = [];
-var categories = [];
+
+var parent_order_customer = null;
 
 var recent_orders = [];
 const MAX_RECENT_ORDERS = 10;
 
-var cover_charge = null;
-var order_requires_confirmation = null;
 
 $(document).one('fm:sessionReady', function() {
-	getSettings();
+	initialize();
 	newOrder();
 	loadComponents();
 });
 
-function getSettings() {
-	$.ajax({
-		async: false,
-		url: apiUrl + '/settings/',
-		type: "GET",
-		headers: { "Authorization": "Bearer " + token },
-		success: function(response) {
-			cover_charge = response.settings.cover_charge;
-			order_requires_confirmation = response.settings.order_requires_confirmation;
-		},
-		error: function(jqXHR, textStatus, errorThrown) {
-			showToast(false, 'Errore nella ricezione delle impostazioni: ' + getErrorMessage(jqXHR, textStatus, errorThrown));
-		}
-	});
-
+function initialize() {
 	$.ajax({
 		async: false,
 		url: apiUrl + '/payment_methods/',
@@ -49,19 +34,6 @@ function getSettings() {
 			showToast(false, 'Errore nella ricezione dei metodi di pagamento: ' + getErrorMessage(jqXHR, textStatus, errorThrown));
 		}
 	});
-
-	$.ajax({
-		url: apiUrl + '/categories',
-		type: "GET",
-		headers: { "Authorization": "Bearer " + token },
-		success: function(response) {
-			response.categories.forEach(cat => categories[cat.id] = cat); 
-		},
-		error: function(jqXHR, textStatus, errorThrown) {
-			msg_err = 'Errore nella lettura delle categorie: ' + getErrorMessage(jqXHR, textStatus, errorThrown);
-		}
-	});
-
 	$.ajax({
 		async: true,
 		url: apiUrl + '/orders/',
