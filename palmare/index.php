@@ -11,6 +11,7 @@
 
 	<script src="js/session.js"></script>
 	<script src="palmare/js/main.js"></script>
+	<script src="palmare/js/orders.js"></script>
 	<script src="palmare/js/confirm_order.js"></script>
 	<script src="palmare/js/last_associated.js"></script>
 	<script src="palmare/js/order_summary.js"></script>
