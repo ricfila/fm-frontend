@@ -80,11 +80,5 @@
 	</div>
 
 	<?php include "../js/toast.php"; ?>
-	<script>
-	function menuColor(colore) {
-		$('nav').removeClass('bg-warning').removeClass('bg-info').removeClass('bg-success').addClass(colore);
-		$(".collapse").collapse('hide');
-	}
-	</script>
 </body>
 </html>

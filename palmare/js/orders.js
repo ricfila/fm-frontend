@@ -1,10 +1,6 @@
 function initList() {
-	menuColor('bg-success');
 	lastMenuFunction = initList;
-	let out = '<div class="row">';
-	out += '<div class="col-auto"><button class="btn btn-success" onclick="getList();"><i class="bi bi-arrow-clockwise text-lead"></i></button></div>';
-	out += '<div class="col ps-0 my-auto"><h3 class="m-0">Ordini da raccogliere</h3></div></div>';
-	$('#page-header').html(out);
+	updateHeader('success', 'arrow-clockwise text-lead', 'getList();', 'Ordini da raccogliere');
 	getList();
 }
 

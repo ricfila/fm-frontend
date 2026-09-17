@@ -12,11 +12,8 @@ $(document).ready(function() {
 
 function selectSearchMode() {
 	lastMenuFunction = selectSearchMode;
-	menuColor('bg-info');
-	let out = '<div class="row">';
-	out += '<div class="col-auto"><button class="btn btn-info" onclick="initList();"><i class="bi bi-caret-left-fill"></i></button></div>';
-	out += '<div class="col ps-0 my-auto"><h3 class="m-0">Cerca un ordine</h3></div></div>';
-	$('#page-header').html(out);
+	updateHeader('info', 'caret-left-fill', 'initList();', 'Cerca un ordine');
+
 	$('#page-body').html('<div class="btn-group-vertical w-100">\
 		<button class="btn btn-lg btn-outline-info" onclick="searchDialog(1);"><i class="bi bi-123 me-2"></i>Per numero</button>\
 		<button class="btn btn-outline-info btn-lg" onclick="searchDialog(2);"><i class="bi bi-diamond me-2"></i>Per tavolo</button>\
@@ -95,10 +92,8 @@ function search() {
 
 function searchResult() {
 	lastMenuFunction = searchResult;
-	let out = '<div class="row">';
-	out += '<div class="col-auto"><button class="btn btn-info" onclick="selectSearchMode();"><i class="bi bi-caret-left-fill"></i></button></div>';
-	out += '<div class="col ps-0 my-auto"><h3 class="m-0">Ordini ' + (searchType == 2 ? 'del tavolo ' : (searchType == 3 ? 'associati al nome ' : 'numerati ')) + $('#search-input').val() + '</h3></div></div>';
-	$('#page-header').html(out);
+	updateHeader('info', 'caret-left-fill', 'selectSearchMode();', 'Ordini ' + (searchType == 2 ? 'del tavolo ' : (searchType == 3 ? 'associati al nome ' : 'numerati ')) + $('#search-input').val());
+	
 	if (found.length == 0) {
 		$('#page-body').html('Nessun ordine trovato.');
 	} else {

@@ -1,11 +1,8 @@
 function lastAssociated() {
 	lastMenuFunction = lastAssociated;
-	menuColor('bg-info');
-	let out = '<div class="row">';
-	out += '<div class="col-auto"><button class="btn btn-info" onclick="initList();"><i class="bi bi-caret-left-fill"></i></button></div>';
-	out += '<div class="col ps-0 my-auto"><h3 class="m-0">Ultimi associati</h3></div></div>';
-	$('#page-header').html(out);
+	updateHeader('info', 'caret-left-fill', 'initList();', 'Ultimi associati');
 	$('#page-body').html('');
+	
 	let ids_from_server = [];
 
 	$.ajax({

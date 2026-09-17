@@ -17,7 +17,7 @@ async function orderSummary(id) {
 		return;
 	}
 	
-	loadOrderHeader(current_order, 'info', 'window[\'lastMenuFunction\']();');
+	updateOrderHeader(current_order, 'info');
 	let out = '';
 	if (!isThisSession(confirmed[current_id].created_at))
 		out += '<div class="p-2 alert alert-danger"><strong class="text-danger">Attenzione!</strong> Il presente ordine non è stato emesso in questo turno di servizio. Verifica la data sulla comanda!</div>';
