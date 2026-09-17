@@ -16,13 +16,15 @@ function actionOrderMenu(num) {
 function confirmScreen() {
 	current_table = $('#inputKeyboard').val();
 	if (current_table.length > 0) {
-		$('#keyboard')
-		.html('<h4 style="letter-spacing: 10px;" id="riep">Tavolo: <big><strong class="text-success">' + current_table + '</strong></big></h4><br>\
-			<div class="row" id="confirm-buttons"><div class="col" style="padding: 2px;">\
+		let out = '<div id="recap-container">';
+		out += '<h4 id="recap-title" class="class="mt-2">Tavolo: </h4>';
+		out += '<strong id="recap-table" class="badge">' + current_table + '</strong>';
+		out += '\
+			<div id="confirm-buttons" class="w-100">\
 				<button class="btn btn-danger btn-lg w-100 mb-2" onclick="cancelTable();"><i class="bi bi-x-circle me-3"></i>Annulla</button>\
 				<button class="btn btn-success btn-lg w-100" onclick="saveTable();"><i class="bi bi-check-circle-fill me-3"></i>Conferma</button>\
-			</div></div>')
-		$('#riep').animate({letterSpacing: "0px"});
+			</div></div>';
+		$('#keyboard').html(out);
 	}
 }
 
