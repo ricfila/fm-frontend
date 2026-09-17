@@ -16,7 +16,7 @@ function selectSearchMode() {
 	$('#page-header').html('<h3 class="m-0"><button class="btn btn-info me-2" onclick="initList();"><i class="bi bi-caret-left-fill"></i></button>Cerca un ordine');
 	$('#page-body').html('<div class="btn-group-vertical w-100">\
 		<button class="btn btn-lg btn-outline-info" onclick="searchDialog(1);"><i class="bi bi-123 me-2"></i>Per numero</button>\
-		<button class="btn btn-outline-info btn-lg" onclick="searchDialog(2);"><i class="bi bi-compass me-2"></i>Per tavolo</button>\
+		<button class="btn btn-outline-info btn-lg" onclick="searchDialog(2);"><i class="bi bi-diamond me-2"></i>Per tavolo</button>\
 		<button class="btn btn-outline-info btn-lg" onclick="searchDialog(3);"><i class="bi bi-person me-2"></i>Per nominativo</button>\
 	</div>');
 }

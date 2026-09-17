@@ -71,7 +71,13 @@ function getList() {
 	$.ajax({
 		url: apiUrl + '/orders/',
 		type: "GET",
-		data: { order_by: "created_at", need_confirm: true, from_date: shiftDates.start, to_date: shiftDates.end },
+		data: {
+			order_by: "created_at",
+			need_confirmation: true,
+			confirmed: false,
+			from_date: shiftDates.start,
+			to_date: shiftDates.end
+		},
 		//contentType: 'application/json; charset=utf-8',
 		headers: { "Authorization": "Bearer " + token },
 		success: function(response) {

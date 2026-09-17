@@ -1,40 +1,47 @@
 var originalTotalPrice = null;
 
-function loadFromServer(order_id) {
-	$.ajax({
-		async: true,
-		url: apiUrl + '/orders/' + order_id,
-		type: "GET",
-		data: {
-			include_confirmer_user: true,
-			include_products: true,
-			include_products_product: true,
-			include_tickets: true,
-			include_user: true,
-			include_deleted_orders: true
-		},
-		headers: { "Authorization": "Bearer " + token },
-		success: async function(response) {
-			order = response;
-			order_products = [];
+async function loadFromServer(order_id, parent_order = false) {
+	try {
+		const response = await $.ajax({
+			async: true,
+			url: apiUrl + '/orders/' + order_id,
+			type: "GET",
+			data: {
+				include_confirmer_user: true,
+				include_products: true,
+				include_products_product: true,
+				include_revisions: true,
+				include_tickets: true,
+				include_user: true,
+				include_deleted_orders: true
+			},
+			headers: { "Authorization": "Bearer " + token }
+		});
 
-			order.products.forEach(order_product => {
-				let subcat_id = order_product.product.subcategory_id;
-				if (order_products[subcat_id] == null)
-					order_products[subcat_id] = [];
-				order_products[subcat_id][order_product.product_id] = {
-					quantity: order_product.quantity,
-					notes: order_product.notes,
-					price: order_product.price
-				};
-			});
-			
-			loadOrder();
-		},
-		error: function(jqXHR, textStatus, errorThrown) {
-			showToast(false, 'Errore nella ricezione dell\'ordine: ' + getErrorMessage(jqXHR, textStatus, errorThrown));
+		if (parent_order)
+			return response;
+
+		order = response;
+		if (order.parent_order_id != null) {
+			order.parent_order = await loadFromServer(order.parent_order_id, true);
 		}
-	});
+
+		order_products = [];
+		order.products.forEach(order_product => {
+			let subcat_id = order_product.product.subcategory_id;
+			if (order_products[subcat_id] == null)
+				order_products[subcat_id] = [];
+			order_products[subcat_id][order_product.product_id] = {
+				quantity: order_product.quantity,
+				notes: order_product.notes,
+				price: order_product.price
+			};
+		});
+
+		loadOrder();
+	} catch (jqXHR) {
+		showToast(false, 'Errore nella ricezione dell\'ordine: ' + getErrorMessage(jqXHR, jqXHR.statusText, jqXHR.errorThrown));
+	}
 }
 
 function searchOrder() {
@@ -46,16 +53,15 @@ function searchOrder() {
 function loadOrder() {
 	$('#customer').val(order.customer);
 	$('#guests').val(order.guests == null ? '' : order.guests);
-	$('#is_take_away').prop('checked', order.is_take_away).prop('disabled', order.id != null);
-	$('#is_fast_order').prop('checked', !order.has_tickets).prop('disabled', order.id != null);
-	$('#table').val(order.table == null ? '' : order.table);
+	$('#is_take_away').prop('checked', order.is_take_away);
+	$('#is_fast_order').prop('checked', !order.has_tickets);
+	$('#table').val(order.parent_order != null ? order.parent_order.table : (order.table == null ? '' : order.table));
 	$('#is_voucher').prop('checked', order.is_voucher);
 	$('#is_for_service').prop('checked', order.is_for_service);
 	$('#notes').val(order.notes == null ? '' : order.notes);
 	$('#paymentMethod').val(order.payment_method_id);
 	originalTotalPrice = order.price;
-	if (order.id != null)
-		$('#save-btn').html('<i class="bi bi-save me-2"></i>SALVA' + (order.id == null ? ' e STAMPA' : ''));
+	$('#save-btn').html('<i class="bi bi-save me-2"></i>SALVA' + (order.id == null ? ' e STAMPA' : ''));
 
 	checkInputDisabled();
 	loadOrderProducts();
@@ -127,28 +133,34 @@ function loadInfoHeader() {
 	}
 
 	$('#order-id').html(order.id);
+	$('#parent-order-info').html(order.parent_order != null ?
+		'<i class="bi bi-dot"></i>Aggiunta dell\'ordine <strong class="text-primary" onclick="loadFromServer(' + order.parent_order.id + ');" style="cursor: pointer;"><i class="bi bi-box-arrow-up-right me-2"></i>' + order.parent_order.id + '</strong>' :
+		''
+	);
 	$('#order-user').html(order.user.username);
 
 	let outdate = '';
 	if (!isThisSession(order.created_at))
 		outdate += '<strong class="text-danger">' + formatShortDate(order.created_at) + '</strong> ';
-	outdate += 'alle ore <strong>' + formatTime(order.created_at) + '</strong>';
+	outdate += 'alle <strong>' + formatTime(order.created_at) + '</strong>';
 	$('#order-created_at').html(outdate);
 
 	let outconfirm = '';
-	if (order.is_confirmed) {
-		outconfirm += 'Ordine confermato';
-		if (order.confirmed_by != null) {
-			outconfirm += ' da ' + order.confirmed_by.username
-		}
-		if (order.confirmed_at != null) {
-			if (!isThisSession(order.confirmed_at))
-				outconfirm += ' <strong class="text-danger">' + formatShortDate(order.confirmed_at) + '</strong> ';
-			outconfirm += ' alle ore <strong>' + formatTime(order.confirmed_at) + '</strong>';
-		}
+	if (order.confirmed_at != null) {
+		outconfirm = '<br /><i class="bi bi-diamond-fill me-2"></i>Confermato';
+		if (order.confirmed_by != null)
+			outconfirm += ' da <i>' + order.confirmed_by.username + '</i>';
+		if (!isThisSession(order.confirmed_at))
+			outconfirm += ' <strong class="text-danger">' + formatShortDate(order.confirmed_at) + '</strong> ';
+		outconfirm += ' alle <strong>' + formatTime(order.confirmed_at) + '</strong>';
 	}
-	$('#ticket-list').html(outconfirm + '<br>' + ticketList(order.tickets, categories, order.confirmed_at));
+	$('#order-confirmed_at').html(outconfirm);
+
+	let tickets = ticketList(order);
+	$('#ticket-list').html((tickets.length > 0 ? '<hr>' : '') + tickets);
 	
+	$('#adding-order-btn').css('display', order.table != null && !order.is_deleted ? 'block': 'none');
+
 	$('#delete-order-btn').html(order.is_deleted ?
 		'<button class="btn btn-sm btn-outline-success" onclick="resumeOrder();"><i class="bi bi-recycle me-2"></i>Ripristina ordine</button>' :
 		'<button class="btn btn-sm btn-outline-danger" onclick="deleteOrder();"><i class="bi bi-trash3-fill me-2"></i>Elimina ordine</button>');

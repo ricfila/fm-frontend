@@ -19,10 +19,17 @@ async function saveOrder() {
 		$('#customer').focus();
 		return;
 	}
-	if (order.id == null && !order.is_take_away && order.has_tickets && order.guests == null) {
-		showToast(false, 'Inserire il numero di coperti!', 2);
-		$('#guests').focus();
-		return;
+	if (order.id == null && !order.is_take_away && order.has_tickets && order.parent_order == null && order.table == null) {
+		if (!settings.order_requires_confirmation) {
+			showToast(false, 'Inserire il numero del tavolo!', 2);
+			$('#table').focus();
+			return;
+		} else if (order.guests == null) {
+			showToast(false, 'Inserire il numero di coperti o il numero del tavolo!', 2);
+			$('#guests').focus();
+			return;
+		}
+		
 	}
 	if (order.payment_method_id == null) {
 		showToast(false, 'Selezionare il metodo di pagamento!', 2);
@@ -59,14 +66,14 @@ async function saveOrder() {
 function sendOrder() {
 	let params = {
 		customer: order.customer,
-		guests: order.is_take_away || order.guests == 0 ? null : order.guests,
+		guests: order.is_take_away || !order.has_tickets || order.parent_order != null || order.guests == 0 ? null : order.guests,
 		is_take_away: order.is_take_away,
 		table: order.table,
 		is_voucher: order.is_voucher,
 		is_for_service: order.is_for_service,
 		has_tickets: order.has_tickets,
 		notes: order.notes,
-		parent_order_id: null,
+		parent_order_id: (order.parent_order != null ? order.parent_order.id : null),
 		payment_method_id: order.payment_method_id,
 		products: [],
 		menus: []

@@ -5,8 +5,6 @@ var subcats = [];
 var subcat_products = [];
 var payment_methods = [];
 
-var parent_order_customer = null;
-
 var recent_orders = [];
 const MAX_RECENT_ORDERS = 10;
 

@@ -44,7 +44,7 @@ function loadProducts() {
 		out += '<div class="row">';
 		subcat_products[i].forEach((prod, j) => {
 			out += '<div class="col-6 col-sm-4 col-md-3 col-lg-2 ps-0 pe-1">';
-			out += '<button class="btn btn-product px-1 py-0 mb-1 text-light' + (prod.locked ? ' disabled' : '') + '" style="--bg-color: ' + prod.color + ';" onclick="addProd(' + i + ', ' + j + ');">' + prod.frontend_name + '</button>';
+			out += '<button class="btn btn-product px-1 py-0 mb-1 text-light' + (prod.locked ? ' disabled text-decoration-line-through' : '') + '" style="--bg-color: ' + prod.color + ';" onclick="addProd(' + i + ', ' + j + ');">' + prod.short_name + '</button>';
 			out += '</div>';
 		});
 		out += '</div>';
@@ -52,12 +52,17 @@ function loadProducts() {
 	$('#productList').html(out);
 }
 
-function newOrder() {
+function newOrder(parent_order_id = null, parent_order_customer = null, parent_order_table = null) {
 	getProducts(); // Always called to update availability of products
 
+	let parent_order = null;
+	if (parent_order_id != null) {
+		parent_order = {id: parent_order_id, customer: parent_order_customer, table: parent_order_table};
+	}	
+	
 	order = {
 		id: null,
-		customer: '',
+		customer: (parent_order_customer != null ? parent_order_customer : ''),
 		guests: null,
 		is_take_away: false,
 		table: null,
@@ -65,9 +70,10 @@ function newOrder() {
 		is_for_service: false,
 		has_tickets: true,
 		notes: null,
-		payment_method_id: null,
 		price: 0,
 		created_at: null,
+		parent_order: parent_order,
+		payment_method_id: null,
 		user: null
 	};
 
@@ -75,6 +81,11 @@ function newOrder() {
 	subcats.forEach((_, i) => {
 		order_products[i] = [];
 	});
+
+	prevGuests = null;
+	prevTable = null;
+	prevPaymentMethod = null;
+	prevFlash = false;
 
 	loadOrder();
 }

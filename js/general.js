@@ -27,13 +27,15 @@ function getErrorMessage(jqXHR, textStatus, errorThrown) {
 	if (jqXHR.status === 0) {
 		return 'Impossibile connettersi al server. Il server potrebbe essere offline o irraggiungibile.';
 	} else if (jqXHR.status === 401) {
-		return 'Accesso non autorizzato. Controlla il tuo token.';
+		return 'Accesso non autorizzato.';
+	} else if (jqXHR.status === 403) {
+		return 'Utente non autorizzato.';
 	} else if (jqXHR.status === 404) {
 		return 'Risorsa non trovata. Controlla l\'URL della richiesta.';
 	} else if (jqXHR.status >= 500) {
 		return 'Errore interno del server. Riprova più tardi.';
 	} else {
-		return `Si è verificato un errore: ${textStatus} ${errorThrown}<br><strong>${jqXHR.responseJSON.message}</strong>`;
+		return `Errore ${jqXHR.status}: ${textStatus} ${errorThrown}<br><strong>${jqXHR.responseJSON.message}</strong>`;
 	}
 }
 
@@ -66,6 +68,22 @@ function formatTime(fullStr) {
 		minute: '2-digit',
 		hour12: false,
 	}).format(dateObj);
+}
+
+async function fetchOrder(id, params) {
+	try {
+		return await $.ajax({
+			async: true,
+			url: apiUrl + '/orders/' + id,
+			type: "GET",
+			data: params,
+			contentType: 'application/json; charset=utf-8',
+			headers: { "Authorization": "Bearer " + token }
+		});
+	} catch (jqXHR) {
+		dialog('Errore', getErrorMessage(jqXHR, jqXHR.statusText, jqXHR.errorThrown));
+		return null;
+	}
 }
 
 function getKeyboard(placeholder, sign = false) {
@@ -124,8 +142,8 @@ function toggleKeyboardSign() {
 	}
 }
 
-function ticketList(tickets, categories, confirmed_at = null, showTicketBtn = false) {
-	ordered_tickets = [...tickets].sort((a, b) => {
+function ticketList(order, showTicketBtn = false) {
+	ordered_tickets = [...(order.tickets)].sort((a, b) => {
 		const delayA = categories[a.category_id] ? categories[a.category_id].print_delay : 0;
 		const delayB = categories[b.category_id] ? categories[b.category_id].print_delay : 0;
 		return delayA - delayB;
@@ -139,25 +157,49 @@ function ticketList(tickets, categories, confirmed_at = null, showTicketBtn = fa
 			out += '<div class="col-auto"><button class="btn btn-sm btn-light" onclick="showTicket(' + ticket.category_id + ');"><i class="bi bi-list-task me-2"></i>Leggi</button></div>';
 		out += '</div>';
 
-		out += ticketStory(ticket, categories, confirmed_at);
+		out += ticketStory(order, ticket);
 	});
 	
 	return out;
 }
 
-function ticketStory(ticket, categories, confirmed_at = null) {
+function ticketStory(order, ticket) {
 	let out = '<p>';
 
 	if (ticket.printed_at != null) {
-		out += '<strong class="text-success"><i class="bi bi-printer-fill"></i> Stampata</strong> alle ore ' + formatTime(ticket.printed_at) + '<br>';
-	} else if (confirmed_at != null && !categories[ticket.category_id].wait_parent_category) {
-		let c_at = new Date(confirmed_at);
-		let p_at = new Date(c_at.getTime() + categories[ticket.category_id].print_delay * 1000);
-		let print_at = formatTime(p_at.toISOString());
-		out += '<i class="bi bi-printer"></i> ' + (ticket.completed_at != null ? '<span style="text-decoration: line-through;">' : '') + 'Stampa prevista alle ore ' + print_at + (ticket.completed_at != null ? '</span>' : '') + '<br>';
+		out += '<strong class="text-success"><i class="bi bi-printer-fill me-2"></i>Stampata</strong> alle ' + formatTime(ticket.printed_at) + '<br>';
+	} else {
+		let trigger_time = null;
+
+		if (!categories[ticket.category_id].wait_parent_category) {
+			if (order.needs_confirmation)
+				if (order.confirmed_at != null)
+					trigger_time = new Date(order.confirmed_at);
+				else
+					out += '<i class="bi bi-hourglass me-2"></i>In attesa dell\'associazione del tavolo<br>';
+			else
+				trigger_time = new Date(order.created_at);
+		} else {
+			let parent_category = categories[categories[ticket.category_id].parent_category_id];
+			let parent_ticket = order.tickets.find(ticket => ticket.id == parent_category.id);
+
+			if (parent_ticket == null)
+				out += '<div class="p-2 alert alert-danger"><strong class="text-danger">Attenzione!</strong> Comanda in attesa del completamento della comanda ' + parent_category.name + ', inesistente per quest\'ordine! Richiederne la stampa forzata.</div>';
+			else
+				if (parent_ticket.completed_at != null)
+					trigger_time = new Date(parent_ticket.completed_at);
+				else
+					out += '<i class="bi bi-hourglass me-2"></i>In attesa del completamento della comanda ' + parent_category.name + '<br>';
+		}
+
+		if (trigger_time != null) {
+			let print_time = new Date(trigger_time.getTime() + ((order.needs_confirmation && !categories[ticket.category_id].wait_parent_category ? settings.delay_after_confirmation : 0) + categories[ticket.category_id].print_delay) * 1000);
+			let print_at = formatTime(print_time.toISOString());
+			out += '<i class="bi bi-printer me-2"></i>' + (ticket.completed_at != null ? '<span style="text-decoration: line-through;">' : '') + 'Stampa prevista alle ' + print_at + (ticket.completed_at != null ? '</span>' : '') + '<br>';
+		}
 	}
 	if (ticket.completed_at != null) {
-		out += '<strong class="text-success"><i class="bi bi-check-circle-fill me-2"></i>Evasa</strong> alle ore ' + formatTime(ticket.completed_at);
+		out += '<strong class="text-success"><i class="bi bi-check-circle-fill me-2"></i>Evasa</strong> alle ' + formatTime(ticket.completed_at);
 	}
 
 	out +='</p>';

@@ -36,8 +36,10 @@ function lastAssociated() {
 				return a.done_at - b.done_at;
 			});
 		
-		// Warning: it overrides eventually data of the same order from the server
-		locals.forEach(order => confirmed[order.id] = order);
+		locals.forEach(order => {
+			if (confirmed[order.id] == null)
+				confirmed[order.id] = order;
+		});
 		rollbacks.forEach(rollback => {
 			confirmed[rollback.id] = null;
 			ids_from_server[ids_from_server.indexOf(rollback.id)] = null;

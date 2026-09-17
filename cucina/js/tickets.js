@@ -1,4 +1,5 @@
-var tickets = [];
+var orders = [];
+var tickets_map = {};
 var actual_status = null;
 
 function getTickets(status) {
@@ -12,67 +13,84 @@ function getTickets(status) {
 	$('.category-check').each(function() {
 		if ($(this).is(':checked')) cats.push(parseInt($(this).val()));
 	});
-	console.log(cats);
-	let params = {
+
+	const params = {
+		order_by: 'id',
 		from_date: shiftDates.start,
 		to_date: shiftDates.end,
-		include_order: true,
-		categories: cats
+		include_confirmer_user: true,
+		include_products: true,
+		include_products_product: true,
+		include_tickets: true,
+		include_user: true,
+		has_tickets: true
 	};
-	switch (status) {
-		case 0:
-			params["is_confirmed"] = false;
-			params["is_printed"] = false;
-			params["is_completed"] = false;
-			break;
-		case 1:
-			params["is_confirmed"] = true;
-			params["is_printed"] = false;
-			params["is_completed"] = false;
-			break;
-		case 2:
-			params["is_printed"] = true;
-			params["is_completed"] = false;
-			break;
-		case 3:
-			params["is_completed"] = true;
-	}
 
 	$.ajax({
-		url: apiUrl + '/tickets',
+		url: apiUrl + '/orders/',
 		type: "GET",
 		data: params,
 		traditional: true,
 		headers: { "Authorization": "Bearer " + token },
-		success: function(response) {
+		success: async function(response) {
 			let delay = 0;
 			$('#ticketList').html('');
-			response.tickets.forEach(ticket => {
-				tickets[ticket.id] = ticket;
-				$('#ticketList').append(orderMenuRow(ticket.id, (ticket.order.table != null ? 'Tav. ' + ticket.order.table + '<i class="bi bi-dot"></i>' : '') + ticket.order.customer, delay, ticket.order_id));
-				delay += 0.02;
-			});
+
+			for (const order of response.orders) {
+				if (order.parent_order_id != null)
+					order.parent_order = await fetchOrder(order.parent_order_id, params);
+
+				orders[order.id] = order;
+
+				order.tickets.forEach(ticket => {
+					if (
+						cats.includes(ticket.category_id) && (
+							(status == 0 && order.needs_confirmation && order.confirmed_at == null && ticket.printed_at == null && ticket.completed_at == null) ||
+							(status == 1 && (!order.needs_confirmation || order.confirmed_at != null) && ticket.printed_at == null && ticket.completed_at == null) ||
+							(status == 2 && ticket.printed_at != null && ticket.completed_at == null) ||
+							(status == 3 && ticket.completed_at != null)
+						)
+					) {
+						tickets_map[ticket.id] = order.id;
+						let table = (order.table != null ? order.table : (order.parent_order != null && order.parent_order.table != null ? order.parent_order.table : null));
+
+						$('#ticketList').append(
+							orderMenuRow(
+								ticket.id,
+								(table != null ? 'Tav. ' + table + '<i class="bi bi-dot"></i>' : '') + order.customer,
+								delay,
+								order.id
+							)
+						);
+						delay += 0.02;
+					}
+				});
+			}
+
+			if (delay == 0)
+				$('#ticketList').html('Nessuna comanda in questo stato');
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
 			if (jqXHR.status === 404)
 				$('#ticketList').html('Nessuna comanda in questo stato');
 			else
-				showToast(false, 'Errore nella lettura delle comande: ' + getErrorMessage(jqXHR, textStatus, errorThrown));
+				showToast(false, 'Errore nella lettura degli ordini: ' + getErrorMessage(jqXHR, textStatus, errorThrown));
 		}
 	});
 }
 
 function actionOrderMenu(id) {
-	let ticket = tickets[id];
-	let order = ticket.order;
+	let order = orders[tickets_map[id]];
+	let ticket = order.tickets.find(ticket => ticket.id == id);
+
 	let title = 'Ordine N° <strong>' + order.id + '</strong>';
 	let body = '<p>Cliente: <strong>' + order.customer + '</strong>' + (order.guests != null ? ' (' + order.guests + ' coperti)' : '') + '<br>';
-	body += 'Emesso da ' + order.user.username + ' alle ore <strong>' + formatTime(order.created_at) + '</strong><br>';
+	body += 'Emesso da ' + order.user.username + ' alle <strong>' + formatTime(order.created_at) + '</strong><br>';
 	if (order.is_confirmed)
-		body += 'Confermato' + (order.confirmed_by != null ? ' da <strong>' + order.confirmed_by.username + '</strong>': '') + ' alle ore <strong>' + formatTime(order.confirmed_at) + '</strong>';
+		body += 'Confermato' + (order.confirmed_by != null ? ' da <strong>' + order.confirmed_by.username + '</strong>': '') + ' alle <strong>' + formatTime(order.confirmed_at) + '</strong>';
 	
 	body += '</p><h4 class="mb-0 text-info">Comanda ' + categories[ticket.category_id].name + '</h4>';
-	body += ticketStory(ticket, categories, order.confirmed_at);
+	body += ticketStory(order, ticket);
 
 	if (ticket.completed_at == null)
 		body += '<button class="btn btn-lg btn-info w-100" style="font-size: 2em;" onclick="completeTicket(' + id + ', true);"><i class="bi bi-star me-2"></i>Evadi</button>';

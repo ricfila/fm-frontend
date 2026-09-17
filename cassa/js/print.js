@@ -36,10 +36,11 @@ function populateAndPrint(print_w, order, order_products, auto_close) {
 		print_w.document.getElementById('outId').innerHTML = order.id;
 		print_w.document.getElementById('outCustomer').innerHTML = order.customer;
 
-		let has_table = order.table != null && order.table != '';
-		print_w.document.getElementById('outService').style.display = order.is_take_away || (!order.has_tickets && !has_table) ? 'none' : 'block';
-		if (!order.has_tickets && has_table)
-			print_w.document.getElementById('outService').innerHTML = 'Tavolo: <strong>' + order.table + '</strong>';
+		let has_table = (order.table != null && order.table != '') ||
+			(order.parent_order != null && order.parent_order.table != null && order.parent_order.table != '');
+		print_w.document.getElementById('outService').style.display = order.needs_confirmation || has_table ? 'block' : 'none';
+		if (has_table)
+			print_w.document.getElementById('outService').innerHTML = 'Tavolo: <strong>' + (order.parent_order == null ? order.table : order.parent_order.table) + '</strong>';
 
 		print_w.document.getElementById('outGuests').innerHTML = order.is_take_away ? 'ASPORTO' :
 			(order.guests == null || order.guests == 0 ? 'AGGIUNTA' :

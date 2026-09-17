@@ -65,20 +65,20 @@ DA FARE:
 					<div class="row h-100" style="overflow-x: hidden;">
 						<!-- COLONNA SINISTRA -->
 						<div class="col-md-6 h-100 d-flex flex-column">
-							<div class="pt-2 mb-2 d-none" id="infoHeader">
-								<div class="row">
-									<div class="col">
-										N° <strong id="order-id"></strong><i class="bi bi-dot"></i>Emesso da <span id="order-user"></span> <span id="order-created_at"></span>
-									</div>
-								</div>
-								<div class="row">
-									<div class="col-md" id="ticket-list">
+							<div class="pt-2 mb-2 d-none row" id="infoHeader">
+									<div class="col-md">
+										<h4>N° <strong id="order-id"></strong><span id="parent-order-info"></span></h4>
+										<p>
+											<i class="bi bi-cart3 me-2"></i>Emesso da <i id="order-user"></i> <span id="order-created_at"></span>
+											<span id="order-confirmed_at"></span>
+										</p>
+										<p id="ticket-list"></p>
 									</div>
 									<div class="col-md-auto text-end">
-										<button class="btn btn-sm btn-outline-primary mb-2" id="print-btn" onclick="printOrder();"><i class="bi bi-printer-fill"></i> Ristampa ricevuta</button><br>
+										<button class="btn btn-sm btn-outline-primary mb-2" id="print-btn" onclick="printOrder();"><i class="bi bi-printer-fill me-2"></i>Ristampa ricevuta</button><br>
+										<span id="adding-order-btn"><button class="btn btn-sm btn-outline-success mb-2" onclick="addingOrder();"><i class="bi bi-plus-circle-fill me-2"></i>Aggiunta</button><br></span>
 										<span id="delete-order-btn"></span>
 									</div>
-								</div>
 							</div>
 
 							<div id="productList" class="px-3 pt-2 pb-3">
@@ -90,7 +90,7 @@ DA FARE:
 						</div>
 
 						<!-- COLONNA DESTRA -->
-						<div class="col-md-6 h-100 d-flex flex-column">
+						<div class="col-md-6 h-100 d-flex flex-column" id="orderContainer" style="transition: 0.2s;">
 							<div id="orderHeaderInputs" class="pt-3 mb-2">
 								<div class="row">
 									<div class="col-6">
@@ -135,7 +135,7 @@ DA FARE:
 							</div>
 
 							<div id="orderProductsContainer" class="flex-fill mb-3">
-								<div id="orderProducts" class="px-4"></div>
+								<div id="orderProducts" class="px-4 bg-white"></div>
 								<div id="divtoast" class="toast-container bottom-0 end-0 pe-3" style="z-index: 1100; position: absolute;"></div>
 							</div>
 							<div class="px-3 py-2" id="orderFooter">

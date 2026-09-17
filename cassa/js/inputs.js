@@ -4,16 +4,33 @@ let prevPaymentMethod = null;
 let prevFlash = false;
 
 function checkInputDisabled() {
-	let guestsWasDisabled = $('#guests').is(':disabled');
-	let tableWasDisabled = $('#table').is(':disabled');
+	$('#guests').prop('disabled', order.parent_order != null || !order.has_tickets ||
+		(order.id == null && (
+			order.is_take_away || (order.table != null && settings.order_requires_confirmation)
+		))
+	);
+	$('#table').prop('disabled', order.parent_order != null || !order.has_tickets ||
+		(order.id == null && (
+			order.is_take_away || (order.guests != null && settings.order_requires_confirmation)
+		))
+	);
 
-	$('#guests').prop('disabled', order.is_take_away);
-	$('#table').prop('disabled', order.is_take_away || (order.has_tickets && order_requires_confirmation));
-
-	if (guestsWasDisabled && !$('#guests').is(':disabled'))
-		$('#guests').val(prevGuests).trigger('change');
-	if (tableWasDisabled && !$('#table').is(':disabled'))
-		$('#table').val(prevTable).trigger('change');
+	$('#is_take_away').prop('disabled', order.id != null || order.parent_order != null);
+	$('#is_fast_order').prop('disabled', order.id != null);
+	
+	let background = '#ffffff';
+	let border = '#000000';
+	if (order.is_take_away) {
+		background = '#affdbc';
+		border = '#4b7151';
+	} else if (!order.has_tickets) {
+		background = '#d0eaf1';
+		border = '#165c6f';
+	} else if ((order.guests == null && order.table != null) || order.parent_order != null) {
+		background = '#ffe993';
+		border = '#d66600';
+	}
+	$('#orderContainer').css('background-color', background);//.css('border-color', border);
 }
 
 function loadComponents() {
@@ -23,28 +40,34 @@ function loadComponents() {
 
 	$('#guests').on('change keyup', function() {
 		let val = parseInt($(this).val());
-		if (isNaN(val) || val < 0) {
+		if (isNaN(val) || val <= 0) {
 			order.guests = null;
 			$(this).val('');
 		} else {
 			order.guests = val;
 		}
+		if (!$('#table').is(':disabled'))
+			prevTable = order.table;
 		updatePrice();
+		checkInputDisabled();
+	});
+
+	$('#table').on('change keyup', function() {
+		let val = $(this).val().trim();
+		order.table = val == '' ? null : val;
+		if (!$('#guests').is(':disabled'))
+			prevGuests = order.guests;
+		checkInputDisabled();
 	});
 
 	$('#is_take_away').change(function() {
 		order.is_take_away = $(this).is(':checked');
 		if (order.is_take_away) {
-			prevGuests = $('#guests').val();
-			$('#guests').val('').trigger('change');
-
-			if (!$('#table').is(':disabled')) {
-				prevTable = $('#table').val();
-				$('#table').val('').trigger('change');
-			}
-
+			disableGuestsAndTable();
 			order.has_tickets = true;
 			$('#is_fast_order').prop('checked', false);
+		} else {
+			resumeGuestsAndTable();
 		}
 		checkInputDisabled();
 	});
@@ -52,29 +75,26 @@ function loadComponents() {
 	$('#is_fast_order').change(function() {
 		order.has_tickets = !$(this).is(':checked');
 		if (!order.has_tickets) {
+			disableGuestsAndTable();
 			order.is_take_away = false;
 			$('#is_take_away').prop('checked', false);
-		} else if (!$('#table').is(':disabled')) {
-			prevTable = $('#table').val();
-			$('#table').val('').trigger('change');
+		} else {
+			resumeGuestsAndTable();
 		}
 		checkInputDisabled();
 	});
 
-	$('#table').change(function() {
-		let val = $(this).val().trim();
-		order.table = val == '' ? null : val;
-	});
-
 	$('#is_voucher').change(function() {
 		order.is_voucher = $(this).is(':checked');
-		if (order.is_voucher) {
-			prevPaymentMethod = $('#paymentMethod').val();
-			if (prevPaymentMethod == null)
-				$('#paymentMethod').val($('#paymentMethod').children().eq(1).attr('value')).trigger('change');
-		} else {
-			$('#paymentMethod').val(prevPaymentMethod).trigger('change');
-		}
+
+		if (order.id == null)
+			if (order.is_voucher) {
+				prevPaymentMethod = $('#paymentMethod').val();
+				if (prevPaymentMethod == null)
+					$('#paymentMethod').val($('#paymentMethod').children().eq(1).attr('value')).trigger('change');
+			} else {
+				$('#paymentMethod').val(prevPaymentMethod).trigger('change');
+			}
 			
 		updatePrice();
 	});
@@ -82,12 +102,14 @@ function loadComponents() {
 	$('#is_for_service').change(function() {
 		order.is_for_service = $(this).is(':checked');
 
-		$('#is_voucher').prop('checked', order.is_for_service).trigger('change');
-		if (order.is_for_service) {
-			prevFlash = $('#is_fast_order').is(':checked');
-			$('#is_fast_order').prop('checked', true).trigger('change');
-		} else {
-			$('#is_fast_order').prop('checked', prevFlash).trigger('change');
+		if (order.id == null) {
+			$('#is_voucher').prop('checked', order.is_for_service).trigger('change');
+			if (order.is_for_service) {
+				prevFlash = $('#is_fast_order').is(':checked');
+				$('#is_fast_order').prop('checked', true).trigger('change');
+			} else {
+				$('#is_fast_order').prop('checked', prevFlash).trigger('change');
+			}
 		}
 	});
 
@@ -99,6 +121,25 @@ function loadComponents() {
 	$('#paymentMethod').change(function() {
 		order.payment_method_id = $(this).val();
 	});
+}
+
+function disableGuestsAndTable() {
+	if (!$('#guests').is(':disabled')) {
+		prevGuests = order.guests;
+	}
+	if (!$('#table').is(':disabled')) {
+		prevTable = order.table;
+	}
+	$('#guests').val('').trigger('change');
+	$('#table').val('').trigger('change');
+}
+
+function resumeGuestsAndTable() {
+	$('#guests').val(prevGuests).trigger('change');
+	if (order.parent_order == null)
+		$('#table').val(prevTable).trigger('change');
+	else
+		$('#table').val(order.parent_order.table);
 }
 
 function addProd(subcat_index, prod_index) {

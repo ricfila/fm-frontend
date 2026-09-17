@@ -1,3 +1,10 @@
+function addingOrder() {
+	if (order.id != null && order.table != null)
+		newOrder(order.id, order.customer, order.table);
+	else
+		showToast(false, 'Operazione non consentita');
+}
+
 async function deleteOrder() {
 	let ok = await modalConfirm('Elimina ordine', 'Sei sicuro di voler eliminare quest\'ordine?');
 	if (ok) {

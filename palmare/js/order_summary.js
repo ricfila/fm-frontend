@@ -7,68 +7,104 @@ var required_for_summary = {
 var lastMenuFunction = null;
 
 
-function orderSummary(id) {
+async function orderSummary(id) {
 	current_id = id;
-	if (confirmed[current_id] == null) {
+	let current_order = confirmed[current_id];
+
+	if (current_order == null) {
 		initList();
 		dialog('Ordine non trovato', 'L\'ordine ' + id + ' non è presente nell\'archivio locale');
 		return;
 	}
 	
-	loadOrderHeader(confirmed[current_id], 'info', 'window[\'lastMenuFunction\']();');
+	loadOrderHeader(current_order, 'info', 'window[\'lastMenuFunction\']();');
 	let out = '';
 	if (!isThisSession(confirmed[current_id].created_at))
 		out += '<div class="p-2 alert alert-danger"><strong class="text-danger">Attenzione!</strong> Il presente ordine non è stato emesso in questo turno di servizio. Verifica la data sulla comanda!</div>';
 
-	let guests = confirmed[current_id].guests
+	let guests = current_order.guests;
 	if (guests != null)
-		out += '<h4><i class="bi bi-fork-knife"></i> Copert' + (guests == 1 ? 'o' : 'i') + ': <strong>' + guests + '</strong></h4>';
-
-	let notes = confirmed[current_id].notes;
-	if (notes != null && notes.length > 0)
-		out += '&emsp;<i class="bi bi-sticky-fill"></i>&nbsp;' + notes;
-
-	if (confirmed[current_id].is_take_away) {
-		out += '<h4 class="mt-2"><i class="bi bi-handbag"></i> Ordine per ASPORTO</h4>';
+		out += '<h4><i class="bi bi-fork-knife me-2"></i>Copert' + (guests == 1 ? 'o' : 'i') + ': <strong>' + guests + '</strong></h4>';
+	
+	if (current_order.is_take_away) {
+		out += '<h4 class="mt-2"><i class="bi bi-handbag me-2"></i>Ordine per asporto</h4>';
 	} else {
-		let table = confirmed[current_id].table;
-		let has_table = table != null && table != '';
-
-		out += '<h4 class="mt-2 mb-0"><i class="bi bi-compass-fill"></i> Tavolo: <strong>';
-		if (has_table) {
-			out += table;
-			
-			let started_to_print = false;
-			if (confirmed[current_id].tickets != null) {
-				confirmed[current_id].tickets.forEach(ticket => {
-					if (ticket.printed_at != null)
-						started_to_print = true;
-				});
+		if (current_order.has_tickets === false)
+			out += '<h4 class="mt-2"><i class="bi bi-lightning-charge-fill me-2"></i>Ordine Flash</h4>';
+		
+		if (current_order.parent_order_id != null) {
+			out += '<h4 class="mt-2"><i class="bi bi-plus-circle me-2"></i>Ordine di aggiunta al ' + current_order.parent_order_id + '</h4>'; //TODO add link
+			if (current_order.parent_order == null) {
+				let parent_order = await fetchOrder(current_order.parent_order_id, required_for_summary);
+				current_order.parent_order = parent_order;
+				confirmed[current_id].parent_order = parent_order;
 			}
-			if (!confirmed[current_id].is_done)
-				out += '<button class="btn btn-sm btn-warning ms-2" onclick="orders[' + current_id + '] = confirmed[' + current_id + ']; associateOrder(' + current_id + ');"><i class="bi bi-pencil-fill"></i> Modifica</button>';
-			if (!started_to_print)
-				out += '<button class="btn btn-sm btn-danger ms-2" onclick="confirmRollback();"><i class="bi bi-x-lg"></i> Dissocia</button>';
-
-		} else {
-			if (orders[current_id] == null)
-				orders[current_id] = confirmed[current_id];
-			out += '<small class="text-body-secondary"><i>non associato</i>&emsp;<button class="btn btn-sm btn-success" onclick="associateOrder(' + current_id + ');">Associa ora</button></small>';
 		}
-		out += '</strong></h4>';
 
-		if (confirmed[current_id].done_at != null)
-			out += '&emsp;Associato da <strong><i>te stesso</i></strong>';
-		else if (confirmed[current_id].confirmed_at != null && confirmed[current_id].confirmed_by) {
-			let name = confirmed[current_id].confirmed_by.username;
-			name = name == username ? '<i>te stesso</i>' : name;
-			out += '&emsp;Associato da <strong>' + name + '</strong> alle ' + formatTime(confirmed[current_id].confirmed_at);
+		if (current_order.guests == null && current_order.table != null)
+			out += '<h4 class="mt-2"><i class="bi bi-plus-circle me-2"></i>Ordine di aggiunta</h4>';
+
+		if (current_order.has_tickets !== false) {
+			let has_table = (current_order.table != null && current_order.table != '') ||
+				(current_order.parent_order != null && current_order.parent_order.table != null && current_order.parent_order.table != '');
+			out += '<h4 class="mt-2 amb-0"><i class="bi bi-diamond-fill me-2"></i>Tavolo: <strong>';
+
+			if (has_table) {
+				out += (current_order.parent_order == null ? current_order.table : current_order.parent_order.table);
+				
+				if (current_order.parent_order == null && current_order.guests != null) {
+					// Can edit (or remove) table only if order is not an adding one
+					let started_to_print = false;
+					let finished_to_print = true;
+					if (current_order.tickets != null) {
+						current_order.tickets.forEach(ticket => {
+							if (ticket.printed_at != null)
+								started_to_print = true;
+							else
+								finished_to_print = false;
+						});
+					}
+					if (!finished_to_print)
+						out += '<button class="btn btn-sm btn-warning ms-2" onclick="orders[' + current_id + '] = confirmed[' + current_id + ']; associateOrder(' + current_id + ');"><i class="bi bi-pencil-fill me-2"></i>Modifica</button>';
+					if (!started_to_print && current_order.needs_confirmation)
+						out += '<button class="btn btn-sm btn-danger ms-2" onclick="confirmRollback();"><i class="bi bi-x-lg me-2"></i>Dissocia</button>';
+				}
+
+			} else {
+				if (orders[current_id] == null)
+					orders[current_id] = current_order;
+				out += '<small class="text-body-secondary"><i>non associato</i>&emsp;<button class="btn btn-sm btn-success" onclick="associateOrder(' + current_id + ');">Associa ora</button></small>';
+			}
+			out += '</strong></h4>';
+
+			if (current_order.done_at != null)
+				out += '<p>Associato da <strong><i>te stesso</i></strong></p>';
+			else if (current_order.confirmed_at != null && current_order.confirmed_by != null) {
+				let name = current_order.confirmed_by.username;
+				if (name == username)
+					name = '<i>te stesso</i>';
+				out += '<p>Associato da <strong>' + name + '</strong> alle ' + formatTime(confirmed[current_id].confirmed_at) + '</p>';
+			}
 		}
 	}
 
-	if (confirmed[current_id].tickets != null) {
+	let notes = current_order.notes;
+	if (notes != null && notes.length > 0)
+		out += '<p><strong>Note:</strong> ' + notes + '</p>';
+
+
+	if (current_order.tickets != null && current_order.tickets.length > 0) {
 		out += '<hr>';
-		out += ticketList(confirmed[current_id].tickets, categories, confirmed[current_id].confirmed_at, true);
+		out += ticketList(current_order, true);
+	}
+
+	let products_outside_categories = false;
+	current_order.products.forEach(p => {
+		if (p.category_id == null)
+			products_outside_categories = true;
+	});
+	if (products_outside_categories) {
+		out += '<p><button class="btn btn-sm btn-light" onclick="showTicket(null);"><i class="bi bi-list-task me-2"></i>Leggi articoli non inclusi nelle comande</button></p>';
 	}
 
 	$('#page-body')
@@ -98,7 +134,7 @@ function showTicket(cat_id) {
 		}
 	});
 
-	dialog('<strong class="text-info">Comanda ' + categories[cat_id].name + '</strong>', out);
+	dialog('<strong class="text-info">' + (cat_id != null ? 'Comanda ' + categories[cat_id].name : 'Articoli non inclusi nelle comande') + '</strong>', out);
 }
 
 
