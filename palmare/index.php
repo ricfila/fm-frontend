@@ -16,6 +16,7 @@
 	<script src="palmare/js/last_associated.js"></script>
 	<script src="palmare/js/order_summary.js"></script>
 	<script src="palmare/js/search.js"></script>
+	<script src="palmare/js/bookmarks.js"></script>
 	<script src="palmare/js/contest.js"></script>
 </head>
 <body style="height: 100vh;">
@@ -37,8 +38,11 @@
 						<li class="nav-item lead mt-3 mt-lg-0">
 							<a class="nav-link" onclick="lastAssociated();"><i class="bi bi-clock-history me-2"></i>Ultimi associati</a>
 						</li>
-						<li class="nav-item lead mt-3 mt-lg-0 mb-2 mb-lg-0">
+						<li class="nav-item lead mt-3 mt-lg-0 mb-lg-0">
 							<a class="nav-link" onclick="selectSearchMode();"><i class="bi bi-search me-2"></i>Cerca un ordine</a>
+						</li>
+						<li class="nav-item lead mt-3 mt-lg-0 mb-2 mb-lg-0">
+							<a class="nav-link" onclick="bookmarks();"><i class="bi bi-bookmark me-2"></i>Segnalibri</a>
 						</li>
 					</ul>
 				</div>

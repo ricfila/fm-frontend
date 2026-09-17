@@ -47,12 +47,12 @@ function lastAssociated() {
 		
 		let delay = 0;
 		for (let i = 0; i < locals.length; i++) {
-			btnOrder(locals[i].id, delay);
+			$('#page-body').append(btnOrderSimple(locals[i].id, delay));
 			delay += 0.02;
 		}
 		for (let i = 0; i < ids_from_server.length; i++) {
 			if (ids_from_server[i] != null) {
-				btnOrder(ids_from_server[i], delay);
+				$('#page-body').append(btnOrderSimple(ids_from_server[i], delay));
 				delay += 0.02;
 			}
 		}
@@ -60,9 +60,4 @@ function lastAssociated() {
 			$('#page-body').append('Nessun ordine associato recentemente.');
 		updateStatus();
 	});
-}
-
-
-function btnOrder(id, delay) {
-	$('#page-body').append('<button class="btn btn-secondary w-100 mb-3 btn-ordermenu" style="animation-delay: ' + delay + 's;" onclick="orderSummary(' + id + ');"><div class="row"><div class="col-4"><big>&emsp;&emsp;' + id + '</big></div><div class="col my-auto">' + confirmed[id].customer + '</div></div></button><br>');
 }

@@ -2,6 +2,7 @@ var modSearch;
 var searchType = 0;
 var found = [];
 
+
 $(document).ready(function() {
 	modSearch = new bootstrap.Modal(document.getElementById('mod-search'));
 	document.getElementById('mod-search').addEventListener('shown.bs.modal', function (e) {
@@ -48,17 +49,11 @@ function searchDialog(type) {
 
 
 function search() {
-	let params;
-	switch (searchType) {
-		case 2:
-			params = {search_by_table: $('#search-input').val()};
-			break;
-		case 3:
-			params = {search_by_customer: $('#search-input').val()};
-			break;
-		default:
-			params = {};
-	}
+	let params = {};
+	if (searchType == 2)
+		params.search_by_table = $('#search-input').val();
+	if (searchType == 3)
+		params.search_by_customer = $('#search-input').val();
 
 	$.ajax({
 		url: apiUrl + '/orders/' + (searchType == 1 ? $('#search-input').val() : ''),
@@ -70,14 +65,11 @@ function search() {
 			if (searchType == 1) {
 				confirmed[response.id] = response;
 				orderSummary(response.id);
-				modSearch.hide();
 			} else {
 				found = response.orders;
 				searchResult();
-				modSearch.hide();
 			}
-
-
+			modSearch.hide();
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
 			if (jqXHR.status === 404) {
@@ -90,7 +82,7 @@ function search() {
 }
 
 
-function searchResult() {
+async function searchResult() {
 	lastMenuFunction = searchResult;
 	updateHeader('info', 'caret-left-fill', 'selectSearchMode();', 'Ordini ' + (searchType == 2 ? 'del tavolo ' : (searchType == 3 ? 'associati al nome ' : 'numerati ')) + $('#search-input').val());
 	
@@ -99,10 +91,14 @@ function searchResult() {
 	} else {
 		$('#page-body').html('');
 		let delay = 0;
+		
 		for (let i = 0; i < found.length; i++) {
-			confirmed[found[i].id] = found[i];
+			if (found[i].parent_order_id != null && found[i].parent_order == null)
+				found[i].parent_order = await fetchOrder(found[i].parent_order_id, required_for_summary);
 			
-			$('#page-body').append('<button class="btn btn-secondary w-100 mb-3 btn-ordermenu" style="animation-delay: ' + delay + 's;" onclick="orderSummary(' + found[i].id + ');"><div class="row"><div class="col-4 my-auto"><big>' + found[i].id + '</big></div><div class="col my-auto">' + found[i].customer + '<hr style="margin: 5px;">Ore ' + formatTime(found[i].created_at) + (found[i].table != null && found[i].table != '' ? ' - Tavolo ' + found[i].table : '') + '</div></div></button><br>');
+			confirmed[found[i].id] = found[i];
+			$('#page-body').append(btnOrder(found[i], delay));
+
 			delay += 0.02;
 		}
 	}

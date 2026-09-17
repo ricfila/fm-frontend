@@ -72,7 +72,7 @@ function formatTime(fullStr) {
 
 async function fetchOrder(id, params) {
 	try {
-		return await $.ajax({
+		let order = await $.ajax({
 			async: true,
 			url: apiUrl + '/orders/' + id,
 			type: "GET",
@@ -80,6 +80,12 @@ async function fetchOrder(id, params) {
 			contentType: 'application/json; charset=utf-8',
 			headers: { "Authorization": "Bearer " + token }
 		});
+
+		if (order.parent_order_id != null)
+			order.parent_order = await fetchOrder(order.parent_order_id, {});
+
+		return order;
+
 	} catch (jqXHR) {
 		showError(getErrorMessage(jqXHR, jqXHR.statusText, jqXHR.errorThrown));
 		return null;
