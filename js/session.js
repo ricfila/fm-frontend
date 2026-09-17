@@ -105,7 +105,7 @@ function getSettings() {
 	});
     $.ajax({
         async: false,
-		url: apiUrl + '/categories',
+		url: apiUrl + '/categories/',
 		type: "GET",
 		headers: { "Authorization": "Bearer " + token },
 		success: function(response) {
@@ -116,7 +116,7 @@ function getSettings() {
 		}
 	});
     $.ajax({ // Warning: this call is async
-		url: apiUrl + '/subcategories',
+		url: apiUrl + '/subcategories/',
 		type: "GET",
 		headers: { "Authorization": "Bearer " + token },
 		success: function(response) {
@@ -128,7 +128,7 @@ function getSettings() {
 	});
     $.ajax({
         async: false,
-		url: apiUrl + '/ingredients/wards',
+		url: apiUrl + '/ingredients/wards/',
 		type: "GET",
 		headers: { "Authorization": "Bearer " + token },
 		success: function(response) {

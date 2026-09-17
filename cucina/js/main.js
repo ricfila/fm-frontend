@@ -1,6 +1,6 @@
 $(document).one('fm:sessionReady', function() {
 	categories.forEach(category => {
-		$('#categoryList').append('<div class="form-check"><input class="form-check-input category-check" type="checkbox" value="' + category.id + '" id="categoryCheck_' + category.id + '"><label class="form-check-label" for="categoryCheck_' + category.id + '">' + category.name + '</label></div>');
+		$('#categoryList').append('<div class="form-check"><input class="form-check-input category-check" type="checkbox" value="' + category.id + '" id="categoryCheck_' + category.id + '" onchange="toggleCategorySelected(' + category.id + ');"' + (localStorage.getItem('categorySelected_' + category.id) ? ' checked=""' : '') + '><label class="form-check-label" for="categoryCheck_' + category.id + '">' + category.name + '</label></div>');
 	});
 
 	wards.forEach(ward => {
@@ -30,3 +30,10 @@ $(document).ready(function() {
 		}
 	}
 });
+
+function toggleCategorySelected(id) {
+	if ($('#categoryCheck_' + id).is(':checked'))
+		localStorage.setItem('categorySelected_' + id, true);
+	else
+		localStorage.removeItem('categorySelected_' + id);
+}

@@ -30,7 +30,7 @@ function toggleAutoUpdate(active) {
 
 function getStockQuantities() {
 	$.ajax({
-		url: apiUrl + '/ingredients',
+		url: apiUrl + '/ingredients/',
 		type: "GET",
 		data: { include_stock_quantities: true, await_cooking_time: true },
 		headers: { "Authorization": "Bearer " + token },
@@ -133,7 +133,7 @@ function toggleLock(id) {
 	$('#labellock_' + id).html('<div class="spinner-border spinner-border-sm" role="status"></div>');
 
 	$.ajax({
-		url: apiUrl + '/ingredients/' + id + '/sell_if_stocked',
+		url: apiUrl + '/ingredients/' + id + '/sell_if_stocked/',
 		type: "PUT",
 		data: JSON.stringify({ sell_if_stocked: lock }),
 		contentType: 'application/json; charset=utf-8',

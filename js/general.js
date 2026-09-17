@@ -81,7 +81,7 @@ async function fetchOrder(id, params) {
 			headers: { "Authorization": "Bearer " + token }
 		});
 	} catch (jqXHR) {
-		dialog('Errore', getErrorMessage(jqXHR, jqXHR.statusText, jqXHR.errorThrown));
+		showError(getErrorMessage(jqXHR, jqXHR.statusText, jqXHR.errorThrown));
 		return null;
 	}
 }
@@ -209,5 +209,5 @@ function ticketStory(order, ticket) {
 function orderMenuRow(id, customer, delay, id_to_show = null) {
 	if (id_to_show == null)
 		id_to_show = id;
-	return '<button class="btn btn-secondary w-100 mb-3 btn-ordermenu" style="animation-delay: ' + delay + 's;" onclick="actionOrderMenu(' + id + ');"><div class="row"><div class="col-4"><big>' + id_to_show + '</big></div><div class="col my-auto">' + customer + '</div></div></button>';
+	return '<button class="btn btn-secondary w-100 mb-3 btn-ordermenu" style="animation-delay: ' + delay + 's;" onclick="actionOrderMenu(' + id + ');"><div class="row"><div class="col-4 my-auto"><big>' + id_to_show + '</big></div><div class="col my-auto">' + customer + '</div></div></button>';
 }

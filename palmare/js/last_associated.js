@@ -1,7 +1,10 @@
 function lastAssociated() {
 	lastMenuFunction = lastAssociated;
 	menuColor('bg-info');
-	$('#page-header').html('<h3 class="m-0"><button class="btn btn-info" onclick="initList();"><i class="bi bi-caret-left-fill me-2"></i></button>Ultimi associati');
+	let out = '<div class="row">';
+	out += '<div class="col-auto"><button class="btn btn-info" onclick="initList();"><i class="bi bi-caret-left-fill"></i></button></div>';
+	out += '<div class="col ps-0 my-auto"><h3 class="m-0">Ultimi associati</h3></div></div>';
+	$('#page-header').html(out);
 	$('#page-body').html('');
 	let ids_from_server = [];
 

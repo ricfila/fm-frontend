@@ -93,15 +93,15 @@ function actionOrderMenu(id) {
 	body += ticketStory(order, ticket);
 
 	if (ticket.completed_at == null)
-		body += '<button class="btn btn-lg btn-info w-100" style="font-size: 2em;" onclick="completeTicket(' + id + ', true);"><i class="bi bi-star me-2"></i>Evadi</button>';
+		body += '<button class="btn btn-lg btn-info w-100 my-4" style="font-size: 2em;" onclick="completeTicket(' + id + ', true);"><i class="bi bi-star me-2"></i>Evadi</button>';
 	else
-		body += '<button class="btn btn-lg btn-warning w-100" style="font-size: 2em;" onclick="completeTicket(' + id + ', false);"><i class="bi bi-box-arrow-left me-2"></i>Ripristina</button>';
+		body += '<button class="btn btn-lg btn-warning w-100 my-4" style="font-size: 2em;" onclick="completeTicket(' + id + ', false);"><i class="bi bi-box-arrow-left me-2"></i>Ripristina</button>';
 	dialog(title, body);
 }
 
 function completeTicket(id, completed) {
 	$.ajax({
-		url: apiUrl + '/tickets/' + id + '/completed',
+		url: apiUrl + '/tickets/' + id + '/completed/',
 		type: "PUT",
 		data: JSON.stringify({ is_completed: completed }),
 		contentType: 'application/json; charset=utf-8',

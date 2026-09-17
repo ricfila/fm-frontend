@@ -16,7 +16,7 @@ function openWard(ward) {
 
 function update() {
 	$.ajax({
-		url: apiUrl + '/ingredients',
+		url: apiUrl + '/ingredients/',
 		type: "GET",
 		data: {
 			include_completed_quantities: true,

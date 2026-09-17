@@ -1,6 +1,6 @@
 function viewStockList(id) {
 	$.ajax({
-		url: apiUrl + '/ingredients/' + id + '/stock',
+		url: apiUrl + '/ingredients/' + id + '/stock/',
 		type: "GET",
 		data: { valid: true },
 		contentType: 'application/json; charset=utf-8',
@@ -32,7 +32,7 @@ function addStockModal(id) {
 
 function addStock(id, quantity = null) {
 	$.ajax({
-		url: apiUrl + '/ingredients/' + id + '/stock',
+		url: apiUrl + '/ingredients/' + id + '/stock/',
 		type: "POST",
 		data: JSON.stringify({ quantity: (quantity == null ? $('#inputKeyboard').val() * $('#keyboardSignValue').val() : quantity) }),
 		contentType: 'application/json; charset=utf-8',

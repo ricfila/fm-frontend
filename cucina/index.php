@@ -15,7 +15,7 @@
 	<script src="cucina/js/manage_stocks.js"></script>
 	<script src="cucina/js/tickets.js"></script>
 </head>
-<body>
+<body style="height: 100vh;">
 	<audio id="alert-sound" src="media/alert_kitchen.mp3" preload="auto"></audio>
 	<div class="container-lg h-100" style="padding-top: 53px;">
 		<nav class="fixed-top navbar navbar-expand-lg navbar-dark bg-primary">
@@ -25,10 +25,10 @@
 				</span>
 				<ul class="navbar-nav me-auto nav flex-row">
 					<li class="nav-item lead">
-						<a class="nav-link px-3 active" id="wards-link" data-bs-toggle="tab" data-bs-target="#wards"><i class="bi bi-unlock2-fill me-2"></i><span class="d-none d-md-inline">Stock</span></a>
+						<a class="nav-link px-3 active" id="wards-link" data-bs-toggle="tab" data-bs-target="#wards"><i class="bi bi-unlock2-fill"></i><span class="d-none d-md-inline ms-2">Stock</span></a>
 					</li>
 					<li class="nav-item lead">
-						<a class="nav-link px-3" data-bs-toggle="tab" data-bs-target="#tickets"><i class="bi bi-receipt me-2"></i><span class="d-none d-md-inline">Comande</span></a>
+						<a class="nav-link px-3" data-bs-toggle="tab" data-bs-target="#tickets"><i class="bi bi-patch-check-fill"></i><span class="d-none d-md-inline ms-2">Comande</span></a>
 					</li>
 					<li class="nav-item d-none">
 						<a class="nav-link" id="stocks-link" data-bs-toggle="tab" data-bs-target="#stocks"></a>
@@ -49,7 +49,7 @@
 			</div>
 		</nav>
 
-		<div class="tab-content pt-3 pt-md-4">
+		<div class="tab-content h-100 pt-3 pt-md-4">
 			<div class="tab-pane fade show active" id="wards" role="tabpanel" aria-labelledby="wards-tab">
 				<div class="tab-content">
 					<h3>Seleziona il reparto da monitorare:</h3>
@@ -71,35 +71,36 @@
 					<div id="ingredient-list"></div>
 				</div>
 			</div>
-			<div class="tab-pane fade" id="tickets" role="tabpanel" aria-labelledby="tickets-tab">
-				<div class="tab-content">
+			<div class="tab-pane fade h-100" id="tickets" role="tabpanel" aria-labelledby="tickets-tab">
+				<div class="tab-content h-100 d-flex flex-column">
 					<div class="accordion" id="accordionSettings">
 						<div class="accordion-item">
 							<h4 class="accordion-header" id="headingSettings">
 								<button class="accordion-button p-2 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-									<i class="bi bi-gear-fill me-2"></i>Impostazioni
+									<i class="bi bi-gear-fill me-2"></i>Categorie
 								</button>
 							</h4>
 							<div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingSettings" data-bs-parent="#accordionSettings" style="">
-							<div class="accordion-body" id="categoryList"></div>
+								<div class="accordion-body" id="categoryList"></div>
+							</div>
 						</div>
 					</div>
 
 					<ul class="nav nav-tabs d-flex flex-row">
 						<li class="nav-item flex-fill">
-							<a class="nav-link link-tickets px-2 text-center active" onclick="getTickets(0);" id="linktickets0"><i class="bi bi-cart3"></i><span class="d-none d-sm-inline ms-2">Ordinate</span></a>
+							<a class="nav-link link-tickets px-2 text-center active" onclick="getTickets(0);" id="linktickets0"><i class="bi bi-cart-fill"></i><span class="d-none d-sm-inline ms-2">Ordinate</span></a>
 						</li>
 						<li class="nav-item flex-fill">
-							<a class="nav-link link-tickets px-2 text-center" onclick="getTickets(1);" id="linktickets1"><i class="bi bi-compass"></i><span class="d-none d-sm-inline ms-2">Confermate</span></a>
+							<a class="nav-link link-tickets px-2 text-center" onclick="getTickets(1);" id="linktickets1"><i class="bi bi-compass-fill"></i><span class="d-none d-sm-inline ms-2">Confermate</span></a>
 						</li>
 						<li class="nav-item flex-fill">
-							<a class="nav-link link-tickets px-2 text-center" onclick="getTickets(2);" id="linktickets2"><i class="bi bi-printer"></i><span class="d-none d-sm-inline ms-2">Stampate</span></a>
+							<a class="nav-link link-tickets px-2 text-center" onclick="getTickets(2);" id="linktickets2"><i class="bi bi-printer-fill"></i><span class="d-none d-sm-inline ms-2">Stampate</span></a>
 						</li>
 						<li class="nav-item flex-fill">
-							<a class="nav-link link-tickets px-2 text-center" onclick="getTickets(3);" id="linktickets3"><i class="bi bi-check2-circle"></i><span class="d-none d-sm-inline ms-2">Evase</span></a>
+							<a class="nav-link link-tickets px-2 text-center" onclick="getTickets(3);" id="linktickets3"><i class="bi bi-patch-check-fill"></i><span class="d-none d-sm-inline ms-2">Evase</span></a>
 						</li>
 					</ul>
-					<div id="ticketList" class="pt-3"></div>
+					<div id="ticketList" class="pt-3 flex-fill overflow-auto"></div>
 				</div>
 				</div>
 			</div>
