@@ -22,6 +22,7 @@ var degrees = [
     {name: 'Sovrano della sala', icon: 'trophy-fill', color: '#ffb011'}
 ];
 
+
 $(document).one('fm:sessionReady', function() {
 	$.ajax({
 		url: apiUrl + '/orders/',
@@ -30,10 +31,13 @@ $(document).one('fm:sessionReady', function() {
 		contentType: 'application/json; charset=utf-8',
 		headers: { "Authorization": "Bearer " + token },
 		success: function(response) {
-			let degree = response.total_count >= 100 ? 11 : Math.floor(response.total_count / 10) + 1;
+			let degree = Math.floor(response.total_count / 10);
+			if (degree > degrees.length)
+				degree = degrees.length;
+
 			let out = '<h6>Fino ad ora hai abbinato <strong>' + response.total_count + '</strong> ordin' + (response.total_count == 1 ? 'e' : 'i') + '</h6>';
-			out += '<p>Hai raggiunto il grado ' + (degree == 11 ? 'massimo' : degree) + '</p>';
-			out += '<h5>' + printDegree(degree) + '</h5>';
+			out += '<p>Hai raggiunto il grado ' + (degree == degrees.length ? 'massimo' : degree + 1) + '</p>';
+			out += '<h5 class="mb-3">' + printDegree(degree) + '</h5>';
 			out += '<button class="btn btn-sm btn-outline-secondary" onclick="showDegrees();">Mostra tutti i gradi</button>';
 			$('#contest').html(out);
 		},
@@ -43,14 +47,15 @@ $(document).one('fm:sessionReady', function() {
 	});
 });
 
+
 function printDegree(degree) {
-	//class="text-' + (degree < 7 ? 'primary' : (degree < 11 ? 'danger' : 'warning')) + '"
-	return '<span style="color: ' + degrees[degree - 1].color + ';"><i class="bi bi-' + degrees[degree - 1].icon + ' me-2"></i>' + degrees[degree - 1].name + '</span>';
+	return '<span style="color: ' + degrees[degree].color + ';"><i class="bi bi-' + degrees[degree].icon + ' me-2"></i>' + degrees[degree].name + '</span>';
 }
+
 
 function showDegrees() {
 	let out = '';
-	for (let i = 1; i <= degrees.length; i++)
+	for (let i = 0; i < degrees.length; i++)
 		out += printDegree(i) + '<br/>';
 	dialog('Gradi', out);
 }
