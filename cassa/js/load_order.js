@@ -28,10 +28,10 @@ async function loadFromServer(order_id, parent_order = false) {
 
 		order_products = [];
 		order.products.forEach(order_product => {
-			let subcat_id = order_product.product.subcategory_id;
-			if (order_products[subcat_id] == null)
-				order_products[subcat_id] = [];
-			order_products[subcat_id][order_product.product_id] = {
+			let subgroup_id = order_product.product.subgroup_id;
+			if (order_products[subgroup_id] == null)
+				order_products[subgroup_id] = [];
+			order_products[subgroup_id][order_product.product_id] = {
 				quantity: order_product.quantity,
 				notes: order_product.notes,
 				price: order_product.price
@@ -70,12 +70,12 @@ function loadOrder() {
 
 function loadOrderProducts() {
 	let out = '';
-	order_products.forEach((subcat_p, i) => {
-		if (subcat_p.length > 0) {
-			out += headSubcat(subcats[i].name, 2);
+	order_products.forEach((subgroup_p, i) => {
+		if (subgroup_p.length > 0) {
+			out += headSubgroup(subgroups[i].name, 2);
 		}
-		subcat_p.forEach((p, j) => {
-			let prod = subcat_products[i][j];
+		subgroup_p.forEach((p, j) => {
+			let prod = subgroup_products[i][j];
 			out += productRow(i, j, prod.name, prod.price, p);
 		});
 	});
@@ -85,7 +85,7 @@ function loadOrderProducts() {
 	updatePrice();
 }
 
-function headSubcat(name, mb = 0) {
+function headSubgroup(name, mb = 0) {
 	let out = '<div class="row mt-2 mb-' + mb + '">';
 	out += '<div class="col-auto my-auto"><h6 class="m-0">' + name + '</h6></div>';
 	out += '<div class="col p-0"><hr class="m-2"></div>';

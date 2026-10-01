@@ -142,31 +142,31 @@ function resumeGuestsAndTable() {
 		$('#table').val(order.parent_order.table);
 }
 
-function addProd(subcat_index, prod_index) {
-	let p = (order_products[subcat_index] != null ? order_products[subcat_index][prod_index] : null);
+function addProd(subgroup_index, prod_index) {
+	let p = (order_products[subgroup_index] != null ? order_products[subgroup_index][prod_index] : null);
 	if (p) {
 		p.quantity++;
 		if (order.id != null) {
 			if (p.edited_product) {
 				if (p.quantity == p.original_quantity) {
-					order_products[subcat_index][prod_index]["edited_product"] = null;
-					order_products[subcat_index][prod_index]["original_quantity"] = null;
+					order_products[subgroup_index][prod_index]["edited_product"] = null;
+					order_products[subgroup_index][prod_index]["original_quantity"] = null;
 				}
 			} else {
-				order_products[subcat_index][prod_index]["edited_product"] = true;
-				order_products[subcat_index][prod_index]["original_quantity"] = p.quantity - 1;
+				order_products[subgroup_index][prod_index]["edited_product"] = true;
+				order_products[subgroup_index][prod_index]["original_quantity"] = p.quantity - 1;
 			}
 		}
 	} else {
-		if (order_products[subcat_index] == null)
-			order_products[subcat_index] = [];
+		if (order_products[subgroup_index] == null)
+			order_products[subgroup_index] = [];
 
-		order_products[subcat_index][prod_index] = { quantity: 1, notes: null };
+		order_products[subgroup_index][prod_index] = { quantity: 1, notes: null };
 		if (order.id != null) {
-			order_products[subcat_index][prod_index]["edited_product"] = true;
-			order_products[subcat_index][prod_index]["original_quantity"] = 0;
+			order_products[subgroup_index][prod_index]["edited_product"] = true;
+			order_products[subgroup_index][prod_index]["original_quantity"] = 0;
 
-			let cat = subcat_products[subcat_index][prod_index].category_id;
+			let cat = subgroup_products[subgroup_index][prod_index].category_id;
 			if (order.tickets.filter( e => e.category_id == cat).length == 0) { // Default category for product has no ticket for this order
 				if (order.tickets.filter( e => e.category_id == categories[cat].parent_category_id).length > 0) {
 					cat = categories[cat].parent_category_id;
@@ -178,23 +178,23 @@ function addProd(subcat_index, prod_index) {
 					}
 				}
 			}
-			order_products[subcat_index][prod_index]["category_id"] = cat;
+			order_products[subgroup_index][prod_index]["category_id"] = cat;
 		}
 	}
 	loadOrderProducts();
 }
 
-function removeProd(subcat_index, prod_index) {
-	let p = (order_products[subcat_index] != null ? order_products[subcat_index][prod_index] : null);
+function removeProd(subgroup_index, prod_index) {
+	let p = (order_products[subgroup_index] != null ? order_products[subgroup_index][prod_index] : null);
 	if (p && p.quantity > 0) {
 		p.quantity--;
 		let deleted = false;
 
 		if (p.quantity <= 0) {
 			if (order.id == null || (p.edited_product && p.original_quantity == 0)) {
-				order_products[subcat_index].splice(prod_index, 1);
-				if (order_products[subcat_index].filter( element => element.id != "" ).length == 0) {
-					order_products[subcat_index] = [];
+				order_products[subgroup_index].splice(prod_index, 1);
+				if (order_products[subgroup_index].filter( element => element.id != "" ).length == 0) {
+					order_products[subgroup_index] = [];
 				}
 				deleted = true;
 			}
@@ -202,35 +202,35 @@ function removeProd(subcat_index, prod_index) {
 		if (order.id != null && !deleted) {
 			if (p.edited_product) {
 				if (p.quantity == p.original_quantity) {
-					order_products[subcat_index][prod_index]["edited_product"] = null;
-					order_products[subcat_index][prod_index]["original_quantity"] = null;
+					order_products[subgroup_index][prod_index]["edited_product"] = null;
+					order_products[subgroup_index][prod_index]["original_quantity"] = null;
 				}
 			} else {
-				order_products[subcat_index][prod_index]["edited_product"] = true;
-				order_products[subcat_index][prod_index]["original_quantity"] = p.quantity + 1;
+				order_products[subgroup_index][prod_index]["edited_product"] = true;
+				order_products[subgroup_index][prod_index]["original_quantity"] = p.quantity + 1;
 			}
 		}
 	}
 	loadOrderProducts();
 }
 
-function addNotes(subcat_index, prod_index) {
-	let id = subcat_index + '_' + prod_index;
+function addNotes(subgroup_index, prod_index) {
+	let id = subgroup_index + '_' + prod_index;
 	$('#tagnotes' + id).removeClass('d-none');
 	$('#btnaddnotes' + id).addClass('d-none');
 	$('#notes' + id).val('').focus();
 }
 
-function updateNotes(subcat_index, prod_index) {
-	let val = $('#notes' + subcat_index + '_' + prod_index).val().trim();
-	order_products[subcat_index][prod_index].notes = val == '' ? null : val;
+function updateNotes(subgroup_index, prod_index) {
+	let val = $('#notes' + subgroup_index + '_' + prod_index).val().trim();
+	order_products[subgroup_index][prod_index].notes = val == '' ? null : val;
 }
 
-function removeNotes(subcat_index, prod_index) {
-	let id = subcat_index + '_' + prod_index;
+function removeNotes(subgroup_index, prod_index) {
+	let id = subgroup_index + '_' + prod_index;
 	$('#btnaddnotes' + id).removeClass('d-none');
 	$('#tagnotes' + id).addClass('d-none');
-	order_products[subcat_index][prod_index].notes = null;
+	order_products[subgroup_index][prod_index].notes = null;
 }
 
 function updatePrice() {
@@ -238,9 +238,9 @@ function updatePrice() {
 	if (!order.is_voucher) {
 		total += settings.cover_charge * order.guests;
 
-		order_products.forEach((subcat_p, i) => {
-			subcat_p.forEach((p, j) => {
-				let prod = subcat_products[i][j];
+		order_products.forEach((subgroup_p, i) => {
+			subgroup_p.forEach((p, j) => {
+				let prod = subgroup_products[i][j];
 				total += prod.price * p.quantity;
 			});
 		});

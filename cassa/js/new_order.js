@@ -2,7 +2,7 @@ function getProducts() {
 	const params = {
 		offset: 0,
 		order_by: 'order',
-		include_subcategory: true,
+		include_subgroup: true,
 		include_locks: true
 	};
 
@@ -23,26 +23,26 @@ function getProducts() {
 }
 
 function loadProducts() {
-	subcats = [];
-	subcat_products = [];
+	subgroups = [];
+	subgroup_products = [];
 
 	for (let i = 0; i < last_products.length; i++) {
 		let product = last_products[i];
-		let subcategory = product.subcategory;
+		let subgroup = product.subgroup;
 
-		if (subcats[subcategory.id] == null) {
-			subcats[subcategory.id] = subcategory;
-			subcat_products[subcategory.id] = [];
+		if (subgroups[subgroup.id] == null) {
+			subgroups[subgroup.id] = subgroup;
+			subgroup_products[subgroup.id] = [];
 		}
 
-		subcat_products[subcategory.id][product.id] = product;
+		subgroup_products[subgroup.id][product.id] = product;
 	}
 
 	let out = '';
-	subcats.forEach((subcat, i) => {
-		out += headSubcat(subcat.name, 2);
+	subgroups.forEach((subgroup, i) => {
+		out += headSubgroup(subgroup.name, 2);
 		out += '<div class="row">';
-		subcat_products[i].forEach((prod, j) => {
+		subgroup_products[i].forEach((prod, j) => {
 			out += '<div class="col-6 col-sm-4 col-md-3 col-lg-2 ps-0 pe-1">';
 			out += '<button class="btn btn-product px-1 py-0 mb-1 text-light' + (prod.locked ? ' disabled text-decoration-line-through' : '') + '" style="--bg-color: ' + prod.color + ';" onclick="addProd(' + i + ', ' + j + ');">' + prod.short_name + '</button>';
 			out += '</div>';
@@ -78,7 +78,7 @@ function newOrder(parent_order_id = null, parent_order_customer = null, parent_o
 	};
 
 	order_products = [];
-	subcats.forEach((_, i) => {
+	subgroups.forEach((_, i) => {
 		order_products[i] = [];
 	});
 

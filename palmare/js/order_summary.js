@@ -131,17 +131,17 @@ async function reloadSummary() {
 
 function showTicket(cat_id) {
 	let out = '';
-	let subcat = null;
+	let subgroup = null;
 	let products = confirmed[current_id].products;
 
 	products.sort(function(a, b) {
 		if (a == null || b == null) return 0;
-		return subcategories[a.product.subcategory_id].order - subcategories[b.product.subcategory_id].order;
+		return subgroups[a.product.subgroup_id].order - subgroups[b.product.subgroup_id].order;
 	}).forEach(product => {
 		if (product.category_id == cat_id) {
-			if (product.product.subcategory_id != subcat) {
-				out += '<h6 class="' + (subcat != null ? 'mt-3 ' : '') + 'p-2 text-light" style="background: var(--bs-gray);">' + subcategories[product.product.subcategory_id].name + '</h6>';
-				subcat = product.product.subcategory_id;
+			if (product.product.subgroup_id != subgroup) {
+				out += '<h6 class="' + (subgroup != null ? 'mt-3 ' : '') + 'p-2 text-light" style="background: var(--bs-gray);">' + subgroups[product.product.subgroup_id].name + '</h6>';
+				subgroup = product.product.subgroup_id;
 			}
 			out += '<div class="row"><div class="col-1">' + product.quantity + '</div><div class="col">' + product.product.name + '</div></div>';
 			if (product.notes != null && product.notes.length > 0)

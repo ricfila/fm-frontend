@@ -1,8 +1,8 @@
 var order = null;
 var order_products = [];
 var last_products = null;
-var subcats = [];
-var subcat_products = [];
+var subgroups = [];
+var subgroup_products = [];
 var payment_methods = [];
 
 var recent_orders = [];

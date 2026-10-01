@@ -49,13 +49,13 @@ function populateAndPrint(print_w, order, order_products, auto_close) {
 			);
 
 		let products = '';
-		subcats.forEach((subcat, i) => {
+		subgroups.forEach((subgroup, i) => {
 			if (order_products[i] != null) {
 				if (order_products[i].length > 0) {
-					products += headSubcat(subcat.name);
+					products += headSubgroup(subgroup.name);
 				}
 				order_products[i].forEach((p, j) => {
-					let prod = subcat_products[i][j];
+					let prod = subgroup_products[i][j];
 					products += productRowPrint(prod.name, prod.price, p.quantity, p.notes);
 				});
 			}

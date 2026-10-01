@@ -4,7 +4,7 @@ var shiftDates = null;
 
 var settings = {};
 var categories = [];
-var subcategories = [];
+var subgroups = [];
 var wards = [];
 
 const SPLIT_HOUR = 17; // 17:00 (5 PM)
@@ -116,11 +116,11 @@ function getSettings() {
 		}
 	});
     $.ajax({ // Warning: this call is async
-		url: apiUrl + '/subcategories/',
+		url: apiUrl + '/subgroups/',
 		type: "GET",
 		headers: { "Authorization": "Bearer " + token },
 		success: function(response) {
-			response.subcategories.forEach(subcat => subcategories[subcat.id] = subcat); 
+			response.subgroups.forEach(subgroup => subgroups[subgroup.id] = subgroup); 
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
 			showToast(false, 'Errore nella lettura delle sottocategorie: ' + getErrorMessage(jqXHR, textStatus, errorThrown));

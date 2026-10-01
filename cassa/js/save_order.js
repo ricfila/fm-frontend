@@ -40,7 +40,7 @@ async function saveOrder() {
 	// Check include cover charge
 	let include_cover_charge = false;
 	order_products.forEach((list, i) => {
-		if (list.length > 0 && subcats[i].include_cover_charge) {
+		if (list.length > 0 && subgroups[i].include_cover_charge) {
 			include_cover_charge = true;
 		}
 	});
@@ -79,10 +79,10 @@ function sendOrder() {
 		menus: []
 	};
 
-	order_products.forEach((subcat, i) => {
-		subcat.forEach((prod, j) => {
+	order_products.forEach((subgroup, i) => {
+		subgroup.forEach((prod, j) => {
 			params.products.push({
-				product_id: subcat_products[i][j].id,
+				product_id: subgroup_products[i][j].id,
 				quantity: prod.quantity,
 				notes: prod.notes,
 				edited_product: prod.edited_product,
