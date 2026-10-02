@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="it">
+
 <head>
 	<title>Cassa - Festival Management</title>
 
@@ -10,6 +11,7 @@
 	<link href="media/heart-fill.png" rel="icon" type="image/png" />
 
 	<script src="js/session.js"></script>
+	<script src="cassa/js/settings.js"></script>
 	<script src="cassa/js/main.js"></script>
 	<script src="cassa/js/new_order.js"></script>
 	<script src="cassa/js/load_order.js"></script>
@@ -23,6 +25,7 @@ DA FARE:
 * Finestra di riepilogo degli ordini modificati
 * Correggere il totale: per gli ordini omaggio il totale deve restare 0 anche dopo la modifica
 -->
+
 <body style="height: 100vh;">
 	<div class="container-lg h-100" style="padding-top: 53px; max-width: 100%;">
 		<nav class="fixed-top navbar navbar-expand-md navbar-dark bg-danger">
@@ -49,16 +52,20 @@ DA FARE:
 							<span class="nav-link" style="cursor: pointer;" onclick="searchOrder();"><i class="bi bi-search me-2"></i>Cerca per ID</span>
 						</li>
 					</ul>
-					<?php //menuturno(); ?>
+					<?php //menuturno(); 
+					?>
 					<ul class="navbar-nav">
 						<li class="nav-item">
 							<span class="nav-link" style="cursor: pointer;" onclick="logout();"><i class="bi bi-box-arrow-right me-2"></i>Logout</span>
+						</li>
+						<li>
+							<span class="nav-link" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#modalCheckoutSettings" onclick="loadCheckoutSettings();"><i class="bi bi-gear-fill"></i></span>
 						</li>
 					</ul>
 				</div>
 			</div>
 		</nav>
-	
+
 		<div class="tab-content h-100 px-0 px-md-3 px-lg-4">
 			<div id="tabneworder" class="tab-pane fade flex-column active show d-flex h-100">
 				<div class="tab-content d-flex flex-column h-100">
@@ -66,22 +73,32 @@ DA FARE:
 						<!-- COLONNA SINISTRA -->
 						<div class="col-md-6 h-100 d-flex flex-column">
 							<div class="pt-2 mb-2 d-none row" id="infoHeader">
-									<div class="col-md">
-										<h4>N° <strong id="order-id"></strong><span id="parent-order-info"></span></h4>
-										<p>
-											<i class="bi bi-cart3 me-2"></i>Emesso da <i id="order-user"></i> <span id="order-created_at"></span>
-											<span id="order-confirmed_at"></span>
-										</p>
-										<p id="ticket-list"></p>
-									</div>
-									<div class="col-md-auto text-end">
-										<button class="btn btn-sm btn-outline-primary mb-2" id="print-btn" onclick="printOrder();"><i class="bi bi-printer-fill me-2"></i>Ristampa ricevuta</button><br>
-										<span id="adding-order-btn"><button class="btn btn-sm btn-outline-success mb-2" onclick="addingOrder();"><i class="bi bi-plus-circle-fill me-2"></i>Aggiunta</button><br></span>
-										<span id="delete-order-btn"></span>
-									</div>
+								<div class="col-md">
+									<h4>N° <strong id="order-id"></strong><span id="parent-order-info"></span></h4>
+									<p>
+										<i class="bi bi-cart3 me-2"></i>Emesso da <i id="order-user"></i> <span id="order-created_at"></span>
+										<span id="order-confirmed_at"></span>
+									</p>
+									<p id="ticket-list"></p>
+								</div>
+								<div class="col-md-auto text-end">
+									<button class="btn btn-sm btn-outline-primary mb-2" id="print-btn" onclick="printOrder();"><i class="bi bi-printer-fill me-2"></i>Ristampa ricevuta</button><br>
+									<span id="adding-order-btn"><button class="btn btn-sm btn-outline-success mb-2" onclick="addingOrder();"><i class="bi bi-plus-circle-fill me-2"></i>Aggiunta</button><br></span>
+									<span id="delete-order-btn"></span>
+								</div>
 							</div>
-
 							<div id="productList" class="px-3 pt-2 pb-3">
+								<div class="row">
+									<div class="col-auto spinner-border m-3"></div>
+									<div class="col my-auto">Caricamento in corso...</div>
+								</div>
+							</div>
+							<div id="productTabsContainer" class="px-3 pt-2 pb-3">
+								<ul id="productTabs" class="nav nav-pills mb-3" role="tablist">
+								</ul>
+								<hr>
+								<div id="productTabsContent" class="tab-content">
+								</div>
 								<div class="row">
 									<div class="col-auto spinner-border m-3"></div>
 									<div class="col my-auto">Caricamento in corso...</div>
@@ -193,17 +210,19 @@ DA FARE:
 								<button class="btn btn-success" onclick="apriordine();"><i class="bi bi-search"></i></button>
 							</div>
 						</div>
-					</div><hr>
+					</div>
+					<hr>
 					<div id="modificaordine"></div>
 				</div>
 			</div>
 			<div id="tabultimevendite" class="tab-pane fade flex-column">
 				<div class="tab-content flex-grow-1 colonnadx" style="overflow-y: auto;">
-					<h4><i class="bi bi-cart me-2"></i>Ultime vendite</h4><hr>
+					<h4><i class="bi bi-cart me-2"></i>Ultime vendite</h4>
+					<hr>
 					<div class="row">
 						<div class="col-6">
 							Cerca tra gli ordini non evasi degli ultimi <strong id="ingminuti"></strong> minuti
-							<input type="range" id="rangeminuti" class="form-range" min="1" max="60" oninput="range(61 - $(this).val());"/>
+							<input type="range" id="rangeminuti" class="form-range" min="1" max="60" oninput="range(61 - $(this).val());" />
 							<button class="btn btn-success btn-sm" onclick="ultimevendite();"><i class="bi bi-arrow-clockwise me-2"></i>Ricarica vendite</button>
 						</div>
 						<div class="col-6">
@@ -215,8 +234,8 @@ DA FARE:
 					<div id="ingredienti"></div>
 				</div>
 			</div>
-	<?php
-	/*
+			<?php
+			/*
 	include "php/menuturno.php";
 	include "php/strumenti/modificaordine.php";
 	include "php/strumenti/statistiche.php";
@@ -224,14 +243,16 @@ DA FARE:
 	include "php/strumenti/bonifica.php";
 	include "php/strumenti/ingredienti.php";
 	*/
-	?>
-	<!--script src="js/ordinirecenti.js"></script-->
-	<!--script src="js/ultimevendite.js"></script-->
+			?>
+			<!--script src="js/ordinirecenti.js"></script-->
+			<!--script src="js/ultimevendite.js"></script-->
 			<div id="tabstatistiche" class="tab-pane fade flex-column">
 				<div class="tab-content flex-grow-1 colonnadx h-100">
 					<div class="d-flex h-100 flex-column">
 						<div class="row">
-							<div class="col-auto"><h4><i class="bi bi-bar-chart"></i> Statistiche sul servizio</h4></div>
+							<div class="col-auto">
+								<h4><i class="bi bi-bar-chart"></i> Statistiche sul servizio</h4>
+							</div>
 							<div class="col"><button class="btn btn-light" onclick="caricastatistiche('#statistichebody');"><i class="bi bi-arrow-clockwise me-2"></i>Aggiorna</button></div>
 						</div>
 						<hr />
@@ -241,22 +262,26 @@ DA FARE:
 			</div>
 			<div id="tabchiudicassa" class="tab-pane fade flex-column">
 				<div class="tab-content flex-grow-1 colonnadx" style="overflow-y: auto;">
-					<h4><i class="bi bi-printer me-2"></i>Stampa rapporti</h4><hr>
+					<h4><i class="bi bi-printer me-2"></i>Stampa rapporti</h4>
+					<hr>
 					<div id="chiudicassabody"></div>
 				</div>
 			</div>
 			<div id="tabdatabase" class="tab-pane fade flex-column">
 				<div class="tab-content flex-grow-1 colonnadx" style="overflow-y: auto;">
-					<h4><i class="bi bi-clipboard-check me-2"></i>Azioni di bonifica del database</h4><hr>
-					<?php //echo azionibonifica(); ?><br>
+					<h4><i class="bi bi-clipboard-check me-2"></i>Azioni di bonifica del database</h4>
+					<hr>
+					<?php //echo azionibonifica(); 
+					?><br>
 				</div>
 			</div>
 			<div id="tabingredienti" class="tab-pane fade flex-column">
 				<div class="tab-content flex-grow-1 colonnadx" style="overflow-y: auto;">
-					<h4><i class="bi bi-list-task me-2"></i>Anagrafica degli ingredienti e giacenze</h4><hr>
+					<h4><i class="bi bi-list-task me-2"></i>Anagrafica degli ingredienti e giacenze</h4>
+					<hr>
 					<div class="row">
 						<div class="col-auto input-group mb-3 w-50">
-							<input type="text" class="form-control" id="filtraingredienti" onkeyup="filtraingredienti();" placeholder="Cerca tra gli ingredienti..."/>
+							<input type="text" class="form-control" id="filtraingredienti" onkeyup="filtraingredienti();" placeholder="Cerca tra gli ingredienti..." />
 							<button class="btn btn-danger" onclick="$('#filtraingredienti').val(''); filtraingredienti();"><i class="bi bi-x-lg"></i></button>
 						</div>
 						<div class="col">
@@ -268,28 +293,59 @@ DA FARE:
 			</div>
 		</div>
 	</div>
-	
+
+	<!--MODALE IMPOSTAZIONI CASSA-->
+
+	<div class="modal fade" id="modalCheckoutSettings" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h1 class="modal-title fs-5" id="exampleModalLabel">Impostazioni Cassa</h1>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<div class="form-check">
+						<input class="form-check-input" type="checkbox" value="" id="flagSuggestChange" onclick="updateSuggestChange();">
+						<label class="form-check-label" for="flagSuggestChange">
+							Suggerisci resto in contanti
+						</label>
+					</div>
+					<div class="form-check">
+						<input class="form-check-input" type="checkbox" value="" id="flagShowMenuTabs" onclick="updateShowProductsTabs();">
+						<label class="form-check-label" for="flagShowMenuTabs">
+							Impagina voci di menu via tabs
+						</label>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<?php include "../js/toast.php"; ?>
 
 	<script>
-	function accessoalturno() {
-		apritab('#tabordinirecenti');
-	}
-	
-	$('.nav-link').on('shown.bs.tab', function () {
-		$($(this).attr('data-bs-target')).addClass('d-flex');
-		$($(this).attr('data-bs-target')).addClass('h-100');
-	})
-	.on('hidden.bs.tab', function() {
-		$($(this).attr('data-bs-target')).removeClass('d-flex');
-		$($(this).attr('data-bs-target')).removeClass('h-100');
-	});
-	
-	function apritab(nome) {
-		var tab = new bootstrap.Tab(document.querySelector('.nav-pills a[data-bs-target="' + nome + '"]'));
-		tab.show();
-	}
+		function accessoalturno() {
+			apritab('#tabordinirecenti');
+		}
+
+		$('.nav-link').on('shown.bs.tab', function() {
+				$($(this).attr('data-bs-target')).addClass('d-flex');
+				$($(this).attr('data-bs-target')).addClass('h-100');
+			})
+			.on('hidden.bs.tab', function() {
+				$($(this).attr('data-bs-target')).removeClass('d-flex');
+				$($(this).attr('data-bs-target')).removeClass('h-100');
+			});
+
+		function apritab(nome) {
+			var tab = new bootstrap.Tab(document.querySelector('.nav-pills a[data-bs-target="' + nome + '"]'));
+			tab.show();
+		}
 	</script>
 
 </body>
+
 </html>

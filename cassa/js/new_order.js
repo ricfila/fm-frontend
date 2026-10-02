@@ -12,11 +12,11 @@ function getProducts() {
 		type: "GET",
 		data: params,
 		headers: { "Authorization": "Bearer " + token },
-		success: function(response) {
+		success: function (response) {
 			last_products = response.products;
 			loadProducts();
 		},
-		error: function(jqXHR, textStatus, errorThrown) {
+		error: function (jqXHR, textStatus, errorThrown) {
 			showToast(false, getErrorMessage(jqXHR, textStatus, errorThrown));
 		}
 	});
@@ -38,6 +38,49 @@ function loadProducts() {
 		subgroup_products[subgroup.id][product.id] = product;
 	}
 
+	// qui si biforca se il flag è attivo diventano tabs, se il flag è disattivato diventano lista di prodotti
+	if (localStorage.getItem('FM_show_menu_tabs') == 'true') {
+		loadProductsAsTabs(subgroups, subgroup_products);
+		$('#productList').hide();
+		$('#productTabsContainer').show();
+	} else {
+		loadProductsAsList(subgroups, subgroup_products);
+		$('#productTabsContainer').hide();
+		$('#productList').show();
+	}
+}
+
+function loadProductsAsTabs(subgroups, subgroup_products) {
+	let out = '';
+
+	subgroups.forEach((subgroup, i) => {
+		out += '<li class="nav-item m-1" role="presentation">';
+		out += '<button class="tabs-product rounded p-3' + (i == 0 ? ' active' : '') + '" id="tab-' + subgroup.id + '" data-bs-toggle="tab" data-bs-target="#content-' + subgroup.id + '" type="button" role="tab" aria-controls="content-' + subgroup.id + '" aria-selected="' + (i == 0 ? 'true' : 'false') + '">' + subgroup.name + '</button>';
+		out += '</li>';
+	});
+	$('#productTabs').html(out);
+
+	const startHue = 25;  
+	$('.tabs-product').each((i, tab) => {
+		tab.style.setProperty('--bg-color', `hsl(${(startHue + i * 137.508) % 360}, 65%, 45%)`);
+	});
+
+	out = '';
+	subgroups.forEach((subgroup, i) => {
+		out += '<div class="tab-pane fade' + (i == 0 ? ' show active' : '') + '" id="content-' + subgroup.id + '" role="tabpanel" aria-labelledby="tab-' + subgroup.id + '">';
+		out += '<div class="row">';
+		subgroup_products[i].forEach((prod, j) => {
+			out += '<div class="col-6 col-sm-4 col-md-3 col-lg-2 ps-0 pe-1">';
+			out += '<button class="btn btn-product px-1 py-0 mb-1 text-light' + (prod.locked ? ' disabled text-decoration-line-through' : '') + '" style="--bg-color: ' + prod.color + ';" onclick="addProd(' + i + ', ' + j + ');">' + prod.short_name + '</button>';
+			out += '</div>';
+		});
+		out += '</div>';
+		out += '</div>';
+	});
+	$('#productTabsContent').html(out);
+}
+
+function loadProductsAsList(subgroups, subgroup_products) {
 	let out = '';
 	subgroups.forEach((subgroup, i) => {
 		out += headSubgroup(subgroup.name, 2);
@@ -52,14 +95,15 @@ function loadProducts() {
 	$('#productList').html(out);
 }
 
+
 function newOrder(parent_order_id = null, parent_order_customer = null, parent_order_table = null) {
 	getProducts(); // Always called to update availability of products
 
 	let parent_order = null;
 	if (parent_order_id != null) {
-		parent_order = {id: parent_order_id, customer: parent_order_customer, table: parent_order_table};
-	}	
-	
+		parent_order = { id: parent_order_id, customer: parent_order_customer, table: parent_order_table };
+	}
+
 	order = {
 		id: null,
 		customer: (parent_order_customer != null ? parent_order_customer : ''),
