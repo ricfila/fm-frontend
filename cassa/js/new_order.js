@@ -1,4 +1,7 @@
 function getProducts() {
+	
+	$('#productTabsSpinner').show();
+	
 	const params = {
 		offset: 0,
 		order_by: 'order',
@@ -60,7 +63,7 @@ function loadProductsAsTabs(subgroups, subgroup_products) {
 	});
 	$('#productTabs').html(out);
 
-	const startHue = 25;  
+	const startHue = 25;
 	$('.tabs-product').each((i, tab) => {
 		tab.style.setProperty('--bg-color', `hsl(${(startHue + i * 137.508) % 360}, 65%, 45%)`);
 	});
@@ -77,7 +80,12 @@ function loadProductsAsTabs(subgroups, subgroup_products) {
 		out += '</div>';
 		out += '</div>';
 	});
+
 	$('#productTabsContent').html(out);
+	// fa vedere la prima tab aperta di default, altrimenti se si cambia tab e si torna indietro rimane aperta l'ultima tab selezionata
+	$('#productTabs button:first').trigger('click');
+
+	$('#productTabsSpinner').hide();
 }
 
 function loadProductsAsList(subgroups, subgroup_products) {

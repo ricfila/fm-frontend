@@ -99,7 +99,7 @@ DA FARE:
 								<hr>
 								<div id="productTabsContent" class="tab-content">
 								</div>
-								<div class="row">
+								<div id="productTabsSpinner" class="row">
 									<div class="col-auto spinner-border m-3"></div>
 									<div class="col my-auto">Caricamento in corso...</div>
 								</div>
