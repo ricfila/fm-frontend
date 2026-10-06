@@ -19,7 +19,7 @@ async function saveOrder() {
 		$('#customer').focus();
 		return;
 	}
-	if (order.id == null && !order.is_take_away && order.has_tickets && order.parent_order == null && order.table == null) {
+	if (order.id == null && order.take_away_type == null && order.has_tickets && order.parent_order == null && order.table == null) {
 		if (!settings.order_requires_confirmation) {
 			showToast(false, 'Inserire il numero del tavolo!', 2);
 			$('#table').focus();
@@ -66,8 +66,8 @@ async function saveOrder() {
 function sendOrder() {
 	let params = {
 		customer: order.customer,
-		guests: order.is_take_away || !order.has_tickets || order.parent_order != null || order.guests == 0 ? null : order.guests,
-		is_take_away: order.is_take_away,
+		guests: order.take_away_type != null || !order.has_tickets || order.parent_order != null || order.guests == 0 ? null : order.guests,
+		take_away_type: order.take_away_type,
 		table: order.table,
 		is_voucher: order.is_voucher,
 		is_for_service: order.is_for_service,

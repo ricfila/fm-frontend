@@ -71,6 +71,8 @@ function formatTime(fullStr) {
 }
 
 async function fetchOrder(id, params) {
+	params['include_deleted_orders'] = true;
+
 	try {
 		let order = await $.ajax({
 			async: true,
@@ -90,6 +92,14 @@ async function fetchOrder(id, params) {
 		showError(getErrorMessage(jqXHR, jqXHR.statusText, jqXHR.errorThrown));
 		return null;
 	}
+}
+
+function getTakeAwayCategories() {
+	return categories.filter(cat => cat.take_away_type != null);
+}
+
+function getTakeAwayCategory(take_away_type) {
+	return categories.filter(cat => cat.take_away_type == take_away_type)[0];
 }
 
 function getKeyboard(placeholder, sign = false) {

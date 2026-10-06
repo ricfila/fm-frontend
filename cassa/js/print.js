@@ -42,11 +42,15 @@ function populateAndPrint(print_w, order, order_products, auto_close) {
 		if (has_table)
 			print_w.document.getElementById('outService').innerHTML = 'Tavolo: <strong>' + (order.parent_order == null ? order.table : order.parent_order.table) + '</strong>';
 
-		print_w.document.getElementById('outGuests').innerHTML = order.is_take_away ? 'ASPORTO' :
-			(order.guests == null || order.guests == 0 ? 'AGGIUNTA' :
-				'COPERTI: <strong>' + order.guests + '</strong>' +
-				(settings.cover_charge > 0 ? '&emsp;(' + formatPrice(order.guests * settings.cover_charge) + ')' : '')
-			);
+		let description;
+		if (order.take_away_type != null) {
+			description = getTakeAwayCategory(order.take_away_type).name.toUpperCase();
+		} else if (order.guests == null || order.guests == 0) {
+			description = 'AGGIUNTA';
+		} else {
+			description = 'COPERTI: <strong>' + order.guests + '</strong>' + (settings.cover_charge > 0 ? '&emsp;(' + formatPrice(order.guests * settings.cover_charge) + ')' : '');
+		}
+		print_w.document.getElementById('outGuests').innerHTML = description;
 
 		let products = '';
 		subgroups.forEach((subgroup, i) => {

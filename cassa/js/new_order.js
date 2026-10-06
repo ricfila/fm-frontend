@@ -116,7 +116,7 @@ function newOrder(parent_order_id = null, parent_order_customer = null, parent_o
 		id: null,
 		customer: (parent_order_customer != null ? parent_order_customer : ''),
 		guests: null,
-		is_take_away: false,
+		take_away_type: null,
 		table: null,
 		is_voucher: false,
 		is_for_service: false,

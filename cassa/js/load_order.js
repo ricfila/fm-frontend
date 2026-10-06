@@ -53,7 +53,9 @@ function searchOrder() {
 function loadOrder() {
 	$('#customer').val(order.customer);
 	$('#guests').val(order.guests == null ? '' : order.guests);
-	$('#is_take_away').prop('checked', order.is_take_away);
+	$('.take_away_button').prop('checked', null);
+	if (order.take_away_type != null)
+		$('#take_away_' + order.take_away_type).prop('checked', true);
 	$('#is_fast_order').prop('checked', !order.has_tickets);
 	$('#table').val(order.parent_order != null ? order.parent_order.table : (order.table == null ? '' : order.table));
 	$('#is_voucher').prop('checked', order.is_voucher);
@@ -66,6 +68,7 @@ function loadOrder() {
 	checkInputDisabled();
 	loadOrderProducts();
 	loadInfoHeader();
+	updateTakeAwayButtons();
 }
 
 function loadOrderProducts() {
@@ -114,7 +117,9 @@ function productRow(i, j, name, price, prod) {
 	out += '<input class="form-control form-control-sm d-inline" type="text" id="notes' + id + '" onchange="updateNotes(' + i + ', ' + j + ');" maxlength="63" style="width: 300px;" value="' + (prod.notes != null ? prod.notes : '') + '" />&nbsp;';
 	out += '<button class="btn btn-sm btn-light" onclick="removeNotes(' + i + ', ' + j + ');"><i class="bi bi-x-lg"></i></button></span>';
 	if (prod.category_id != null)
-	out += '<br><small>Assegnato alla comanda ' + categories[prod.category_id].name + '</small>';
+		out += '<br><small>Assegnato alla comanda ' + categories[prod.category_id].name + '</small>';
+	else if (prod.original_quantity == 0)
+		out += '<br><small class="text-danger">Non assegnato a una comanda</small>';
 	out += '</div>';
 
 	// Price
@@ -138,6 +143,11 @@ function loadInfoHeader() {
 		''
 	);
 	$('#order-user').html(order.user.username);
+	if (order.is_deleted) {
+		$('#title-order').addClass('bg-danger').addClass('text-white');
+	} else {
+		$('#title-order').removeClass('bg-danger').removeClass('text-white');
+	}
 
 	let outdate = '';
 	if (!isThisSession(order.created_at))

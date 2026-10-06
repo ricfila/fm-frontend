@@ -59,7 +59,7 @@ DA FARE:
 							<span class="nav-link" style="cursor: pointer;" onclick="logout();"><i class="bi bi-box-arrow-right me-2"></i>Logout</span>
 						</li>
 						<li>
-							<span class="nav-link" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#modalCheckoutSettings" onclick="loadCheckoutSettings();"><i class="bi bi-gear-fill"></i></span>
+							<span class="nav-link" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#modalCheckoutSettings"><i class="bi bi-gear-fill"></i></span>
 						</li>
 					</ul>
 				</div>
@@ -74,7 +74,7 @@ DA FARE:
 						<div class="col-md-6 h-100 d-flex flex-column">
 							<div class="pt-2 mb-2 d-none row" id="infoHeader">
 								<div class="col-md">
-									<h4>N° <strong id="order-id"></strong><span id="parent-order-info"></span></h4>
+									<h4 id="title-order">N° <strong id="order-id"></strong><span id="parent-order-info"></span></h4>
 									<p>
 										<i class="bi bi-cart3 me-2"></i>Emesso da <i id="order-user"></i> <span id="order-created_at"></span>
 										<span id="order-confirmed_at"></span>
@@ -127,14 +127,10 @@ DA FARE:
 									</div>
 								</div>
 								<div class="row">
-									<div class="col-3 pe-1">
-										<input type="checkbox" class="btn-check" id="is_take_away" autocomplete="off">
-										<label class="btn btn-sm btn-outline-success w-100" for="is_take_away"><i class="bi bi-handbag-fill me-2"></i>Asporto</label>
+									<div class="col-6">
+										<div class="row px-2" id="take_away_buttons"></div>
 									</div>
-									<div class="col-3 ps-1">
-										<input type="checkbox" class="btn-check" id="is_fast_order" autocomplete="off">
-										<label class="btn btn-sm btn-outline-primary w-100" for="is_fast_order"><i class="bi bi-lightning-charge-fill me-2"></i>Flash</label>
-									</div>
+									
 									<div class="col-6">
 										<div class="row">
 											<div class="col-3 my-auto">Tavolo:</div>
@@ -300,7 +296,7 @@ DA FARE:
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h1 class="modal-title fs-5" id="exampleModalLabel">Impostazioni Cassa</h1>
+					<h1 class="modal-title fs-5" id="exampleModalLabel">Impostazioni cassa</h1>
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
 				<div class="modal-body">
@@ -315,6 +311,11 @@ DA FARE:
 						<label class="form-check-label" for="flagShowMenuTabs">
 							Impagina voci di menu via tabs
 						</label>
+					</div>
+					<div id="form-choose-mods">
+						<hr>
+						<h6>Mostra le modalità:</h6>
+						<div id="mod-list"></div>
 					</div>
 				</div>
 				<div class="modal-footer">

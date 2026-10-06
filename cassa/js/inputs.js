@@ -6,21 +6,21 @@ let prevFlash = false;
 function checkInputDisabled() {
 	$('#guests').prop('disabled', order.parent_order != null || !order.has_tickets ||
 		(order.id == null && (
-			order.is_take_away || (order.table != null && settings.order_requires_confirmation)
+			order.take_away_type != null || (order.table != null && settings.order_requires_confirmation)
 		))
 	);
 	$('#table').prop('disabled', order.parent_order != null || !order.has_tickets ||
 		(order.id == null && (
-			order.is_take_away || (order.guests != null && settings.order_requires_confirmation)
+			order.take_away_type != null || (order.guests != null && settings.order_requires_confirmation)
 		))
 	);
 
-	$('#is_take_away').prop('disabled', order.id != null || order.parent_order != null);
+	$('.take_away_button').prop('disabled', order.id != null || order.parent_order != null);
 	$('#is_fast_order').prop('disabled', order.id != null);
 	
 	let background = '#ffffff';
 	let border = '#000000';
-	if (order.is_take_away) {
+	if (order.take_away_type != null) {
 		background = '#affdbc';
 		border = '#4b7151';
 	} else if (!order.has_tickets) {
@@ -60,9 +60,15 @@ function loadComponents() {
 		checkInputDisabled();
 	});
 
-	$('#is_take_away').change(function() {
-		order.is_take_away = $(this).is(':checked');
-		if (order.is_take_away) {
+	$('.take_away_button').change(function() {
+		order.take_away_type = ($(this).is(':checked') ? $(this).val() : null);
+		let actual_id = $(this).prop('id');
+		$('.take_away_button').each(function() {
+			if ($(this).prop('id') != actual_id)
+				$(this).prop('checked', false);
+		});
+
+		if (order.take_away_type != null) {
 			disableGuestsAndTable();
 			order.has_tickets = true;
 			$('#is_fast_order').prop('checked', false);
@@ -76,8 +82,8 @@ function loadComponents() {
 		order.has_tickets = !$(this).is(':checked');
 		if (!order.has_tickets) {
 			disableGuestsAndTable();
-			order.is_take_away = false;
-			$('#is_take_away').prop('checked', false);
+			order.take_away_type = null;
+			$('.take_away_button').prop('checked', false);
 		} else {
 			resumeGuestsAndTable();
 		}
@@ -165,23 +171,35 @@ function addProd(subgroup_index, prod_index) {
 		if (order.id != null) {
 			order_products[subgroup_index][prod_index]["edited_product"] = true;
 			order_products[subgroup_index][prod_index]["original_quantity"] = 0;
-
-			let cat = subgroup_products[subgroup_index][prod_index].category_id;
-			if (order.tickets.filter( e => e.category_id == cat).length == 0) { // Default category for product has no ticket for this order
-				if (order.tickets.filter( e => e.category_id == categories[cat].parent_category_id).length > 0) {
-					cat = categories[cat].parent_category_id;
-				} else {
-					if (order.tickets.filter( e => e.category_id == categories[cat].parent_for_main_products_id).length > 0) {
-						cat = categories[cat].parent_for_main_products_id;
-					} else {
-						cat = categories[cat].parent_for_take_away_id;
-					}
-				}
-			}
-			order_products[subgroup_index][prod_index]["category_id"] = cat;
+			order_products[subgroup_index][prod_index]["category_id"] = fallbackCategory(subgroup_products[subgroup_index][prod_index].category_id);
 		}
 	}
 	loadOrderProducts();
+}
+
+function fallbackCategory(cat) {
+	if (order.tickets.filter(t => t.category_id == cat).length == 1)
+		return cat;
+
+	// Default category for product has no ticket for this order
+
+	// First: check fallback for take away
+	if (order.take_away_type != null) {
+		let take_away_tickets = order.tickets.filter(t => categories[t.category_id].take_away_type == order.take_away_type);
+		if (take_away_tickets.length == 1)
+			return take_away_tickets[0].category_id;
+	}
+
+	// Second: check fallback for parent for main products
+	if (order.tickets.filter(t => t.category_id == categories[cat].parent_for_main_products_id).length == 1)
+		return categories[cat].parent_for_main_products_id;
+
+	// Third: check fallback for parent
+	if (order.tickets.filter(t => t.category_id == categories[cat].parent_category_id).length == 1)
+		return categories[cat].parent_category_id;
+
+	// Default (even for order with no tickets)
+	return null;
 }
 
 function removeProd(subgroup_index, prod_index) {

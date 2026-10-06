@@ -50,6 +50,8 @@ function searchDialog(type) {
 
 function search() {
 	let params = {};
+	if (searchType == 1)
+		params.include_deleted_orders = true;
 	if (searchType == 2)
 		params.search_by_table = $('#search-input').val();
 	if (searchType == 3)

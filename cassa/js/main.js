@@ -32,6 +32,7 @@ function initialize() {
 			showToast(false, 'Errore nella ricezione dei metodi di pagamento: ' + getErrorMessage(jqXHR, textStatus, errorThrown));
 		}
 	});
+
 	$.ajax({
 		async: true,
 		url: apiUrl + '/orders/',
@@ -45,6 +46,9 @@ function initialize() {
 			showToast(false, 'Errore nella ricezione degli ordini recenti: ' + getErrorMessage(jqXHR, textStatus, errorThrown));
 		}
 	});
+
+	initSettings();
+	loadTakeAwayButtons();
 }
 
 $(document).ready(function() {
@@ -62,3 +66,36 @@ $(document).ready(function() {
 		});
 	});
 });
+
+function loadTakeAwayButtons() {
+	let icons = ['handbag-fill', 'cup-hot-fill'];
+	let out = '';
+	take_away_categories = getTakeAwayCategories();
+	take_away_categories.forEach(cat => {
+		out += '\
+		<div class="col px-1">\
+			<input type="checkbox" class="btn-check take_away_button" id="take_away_' + cat.take_away_type + '" value="' + cat.take_away_type + '" autocomplete="off">\
+			<label class="btn btn-sm btn-outline-success w-100" for="take_away_' + cat.take_away_type + '"><i class="bi bi-' + icons[cat.take_away_type - 1] + ' me-2"></i>' + cat.name.charAt(0).toUpperCase() + cat.name.slice(1) + '</label>\
+		</div>';
+	});
+
+	out += '\
+	<div class="col px-1">\
+		<input type="checkbox" class="btn-check" id="is_fast_order" autocomplete="off">\
+		<label class="btn btn-sm btn-outline-primary w-100" for="is_fast_order"><i class="bi bi-lightning-charge-fill me-2"></i>Flash</label>\
+	</div>';
+									
+	$('#take_away_buttons').html(out);
+	updateTakeAwayButtons();
+}
+
+function updateTakeAwayButtons() {
+	let showAll = (order != null && order.id != null);
+
+	$('.take_away_button').each(function() {
+		if (showAll || localStorage.getItem('FM_show_take_away_' + $(this).val()) != 'false')
+			$(this).parent().show();
+		else
+			$(this).parent().hide();
+	});
+}

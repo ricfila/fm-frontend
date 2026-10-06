@@ -24,6 +24,9 @@ async function orderSummary(id) {
 	out += '<button class="btn btn-sm btn-info" onclick="reloadSummary();"><i class="bi bi-arrow-clockwise me-2"></i>Aggiorna</button>';
 	out += '</div>';
 	
+	if (order.is_deleted)
+		out += '<div class="p-2 alert alert-danger"><strong class="text-danger">Attenzione!</strong> Quest\'ordine è stato eliminato!</div>';
+	
 	if (!isThisSession(order.created_at))
 		out += '<div class="p-2 alert alert-danger"><strong class="text-danger">Attenzione!</strong> Il presente ordine non è stato emesso in questo turno di servizio!</div>';
 
@@ -31,8 +34,8 @@ async function orderSummary(id) {
 	if (guests != null)
 		out += '<h4><i class="bi bi-fork-knife me-2"></i>Copert' + (guests == 1 ? 'o' : 'i') + ': <strong>' + guests + '</strong></h4>';
 	
-	if (order.is_take_away) {
-		out += '<h4 class="mt-2"><i class="bi bi-handbag me-2"></i>Ordine per asporto</h4>';
+	if (order.take_away_type != null) {
+		out += '<h4 class="mt-2"><i class="bi bi-handbag me-2"></i>Ordine ' + getTakeAwayCategory(order.take_away_type).name + '</h4>';
 	} else {
 		if (order.has_tickets === false)
 			out += '<h4 class="mt-2"><i class="bi bi-lightning-charge-fill me-2"></i>Ordine Flash</h4>';
