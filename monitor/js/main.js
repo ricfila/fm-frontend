@@ -35,7 +35,7 @@ function update() {
 				out += '</div><div class="col-auto">';
 				out += '<div class="bg-' + (ingredient.sold_quantity == 0 ? "dark" : (ingredient.sold_quantity < 20 ? "success" : "danger")) + ' stock-result" style="animation-delay: ' + (i * 0.05) + 's;"><h4 class="text-light m-0">' + ingredient.sold_quantity + '</h4></div>';
 				out += '</div></div>';
-				out += '<p>Ordinati: ' + (parseInt(ingredient.sold_quantity) + parseInt(ingredient.completed_quantity)) + ' - Evasi: ' + ingredient.completed_quantity + '</p>';
+				out += '<p>Ordinati: ' + (Math.ceil(ingredient.sold_quantity) + Math.ceil(ingredient.completed_quantity)) + ' - Evasi: ' + ingredient.completed_quantity + '</p>';
 				out += '</div>';
 			});
 			out += '</div>';

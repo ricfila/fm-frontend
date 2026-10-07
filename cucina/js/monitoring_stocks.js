@@ -32,7 +32,12 @@ function getStockQuantities() {
 	$.ajax({
 		url: apiUrl + '/ingredients/',
 		type: "GET",
-		data: { include_stock_quantities: true, await_cooking_time: true },
+		data: {
+			include_stock_quantities: true,
+			await_cooking_time: false,
+			from_date: shiftDates.start,
+			to_date: shiftDates.end
+		},
 		headers: { "Authorization": "Bearer " + token },
 		success: function(response) {
 			$('#ingredient-list').html('');

@@ -2,7 +2,11 @@ function viewStockList(id) {
 	$.ajax({
 		url: apiUrl + '/ingredients/' + id + '/stock/',
 		type: "GET",
-		data: { valid: true },
+		data: {
+			valid: true,
+			from_date: shiftDates.start,
+			to_date: shiftDates.end
+		},
 		contentType: 'application/json; charset=utf-8',
 		headers: { "Authorization": "Bearer " + token },
 		success: function(response) {
@@ -34,7 +38,9 @@ function addStock(id, quantity = null) {
 	$.ajax({
 		url: apiUrl + '/ingredients/' + id + '/stock/',
 		type: "POST",
-		data: JSON.stringify({ quantity: (quantity == null ? $('#inputKeyboard').val() * $('#keyboardSignValue').val() : quantity) }),
+		data: JSON.stringify({
+			quantity: (quantity == null ? $('#inputKeyboard').val() * $('#keyboardSignValue').val() : quantity)
+		}),
 		contentType: 'application/json; charset=utf-8',
 		headers: { "Authorization": "Bearer " + token },
 		success: function(response) {
@@ -56,7 +62,9 @@ function editStock(id, id_stock) {
 	$.ajax({
 		url: apiUrl + '/ingredients/' + id + '/stock/' + id_stock,
 		type: "PUT",
-		data: JSON.stringify({ quantity: ($('#inputKeyboard').val() * $('#keyboardSignValue').val()) }),
+		data: JSON.stringify({
+			quantity: ($('#inputKeyboard').val() * $('#keyboardSignValue').val())
+		}),
 		contentType: 'application/json; charset=utf-8',
 		headers: { "Authorization": "Bearer " + token },
 		success: function(response) {
