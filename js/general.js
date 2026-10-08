@@ -1,7 +1,7 @@
 function setCookie(cname, cvalue) {
 	const d = new Date();
 	d.setTime(d.getTime() + (730 * 24 * 60 * 60 * 1000));
-	let expires = 'expires='+ d.toUTCString();
+	let expires = 'expires=' + d.toUTCString();
 	document.cookie = cname + '=' + cvalue + ';' + expires + ';path=/';
 }
 
@@ -135,17 +135,17 @@ function getKeyboard(placeholder, sign = false) {
 				</div>\
 				<div class="col"></div>\
 			</div>';
-			
+
 	return out;
 }
 
 function key(string) {
 	if (!string) {
 		$('#inputKeyboard').val('');
-		$('.btnlater').each(function() {$(this).addClass('disabled');});
+		$('.btnlater').each(function () { $(this).addClass('disabled'); });
 	} else {
 		$('#inputKeyboard').val($('#inputKeyboard').val() + string);
-		$('.btnlater').each(function() {$(this).removeClass('disabled');});
+		$('.btnlater').each(function () { $(this).removeClass('disabled'); });
 	}
 }
 
@@ -175,7 +175,7 @@ function ticketList(order, showTicketBtn = false) {
 
 		out += ticketStory(order, ticket);
 	});
-	
+
 	return out;
 }
 
@@ -218,7 +218,7 @@ function ticketStory(order, ticket) {
 		out += '<strong class="text-success"><i class="bi bi-check-circle-fill me-2"></i>Evasa</strong> alle ' + formatTime(ticket.completed_at);
 	}
 
-	out +='</p>';
+	out += '</p>';
 	return out;
 }
 
@@ -226,4 +226,9 @@ function orderMenuRow(id, customer, delay, id_to_show = null) {
 	if (id_to_show == null)
 		id_to_show = id;
 	return '<button class="btn btn-secondary w-100 mb-3 btn-ordermenu" style="animation-delay: ' + delay + 's;" onclick="actionOrderMenu(' + id + ');"><div class="row"><div class="col-4 my-auto"><big>' + id_to_show + '</big></div><div class="col my-auto">' + customer + '</div></div></button>';
+}
+
+//esegue l'escape del decimale "," italiano e lo converte in numero
+function escapeDecimal(v) {
+	return parseFloat(String(v).replace(',', '.')).valueOf() - 0;
 }

@@ -82,7 +82,7 @@ function loadOrderProducts() {
 			out += productRow(i, j, prod.name, prod.price, p);
 		});
 	});
-	
+
 	document.getElementById('orderProducts').scrollTop = 0; //TODO: risolvere l'ombra che rimane in alto se lo scorrimento è completo verso il basso al momento dello svuotamento
 	$('#orderProducts').html(out);
 	updatePrice();
@@ -131,6 +131,9 @@ function formatPrice(p) {
 	return '&euro;&nbsp;' + ('' + p).replace(".", ",") + ((p - Math.trunc(p)) != 0 ? '0' : ',00');
 }
 
+
+
+
 function loadInfoHeader() {
 	if (order.id == null) {
 		$('#infoHeader').addClass('d-none');
@@ -168,8 +171,8 @@ function loadInfoHeader() {
 
 	let tickets = ticketList(order);
 	$('#ticket-list').html((tickets.length > 0 ? '<hr>' : '') + tickets);
-	
-	$('#adding-order-btn').css('display', order.table != null && !order.is_deleted ? 'block': 'none');
+
+	$('#adding-order-btn').css('display', order.table != null && !order.is_deleted ? 'block' : 'none');
 
 	$('#delete-order-btn').html(order.is_deleted ?
 		'<button class="btn btn-sm btn-outline-success" onclick="resumeOrder();"><i class="bi bi-recycle me-2"></i>Ripristina ordine</button>' :

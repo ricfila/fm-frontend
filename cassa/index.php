@@ -12,6 +12,7 @@
 
 	<script src="js/session.js"></script>
 	<script src="cassa/js/settings.js"></script>
+	<script src="cassa/js/checkout_change.js"></script>
 	<script src="cassa/js/main.js"></script>
 	<script src="cassa/js/new_order.js"></script>
 	<script src="cassa/js/load_order.js"></script>
@@ -130,7 +131,7 @@ DA FARE:
 									<div class="col-6">
 										<div class="row px-2" id="take_away_buttons"></div>
 									</div>
-									
+
 									<div class="col-6">
 										<div class="row">
 											<div class="col-3 my-auto">Tavolo:</div>
@@ -285,6 +286,48 @@ DA FARE:
 						</div>
 					</div>
 					<div id="ingredientibody"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!--MODALE SUGGERIMENTO RESTO CASSA-->
+
+	<div class="modal fade" id="modalChange" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<i class="bi bi-currency-exchange fw-bold fs-1 me-2"></i>
+					<h1 class="modal-title fs-5" id="">Rendi Resto</h1>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<div class="row">
+						<div class="col">Pagato
+							<div class="input-group mb-3">
+								<input id="paidAmount" type="number" min="0" step="0.01" autocomplete="off" class="form-control" placeholder="00,00">
+								<button id="btn-erase" class="btn btn-danger" onclick="erasePaidAmount()"><i class="bi bi-trash"></i></button>
+							</div>
+						</div>
+						<div class="col">Dovuto
+							<div class="input-group mb-3">
+								<input readonly id="dueAmount" type="text" class="form-control" placeholder="00,00" value="0.00">
+								<span class="input-group-text" id="basic-addon2">€</span>
+							</div>
+						</div>
+						<div class="col">Resto
+							<div class="input-group mb-3">
+								<input readonly id="dueChange" type="text" class="form-control" placeholder="00,00" value="0.00">
+								<span class="input-group-text" id="basic-addon2">€</span>
+							</div>
+						</div>
+					</div>
+					<hr>
+					<div id="currencyCuts" class="row">
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button disabled id="btn-change" class="btn btn-success w-100" data-bs-dismiss="modal"><i class="bi bi-save me-2"></i>CONFERMA</button>
 				</div>
 			</div>
 		</div>

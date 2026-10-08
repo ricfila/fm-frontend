@@ -17,7 +17,7 @@ function checkInputDisabled() {
 
 	$('.take_away_button').prop('disabled', order.id != null || order.parent_order != null);
 	$('#is_fast_order').prop('disabled', order.id != null);
-	
+
 	let background = '#ffffff';
 	let border = '#000000';
 	if (order.take_away_type != null) {
@@ -34,11 +34,11 @@ function checkInputDisabled() {
 }
 
 function loadComponents() {
-	$('#customer').change(function() {
+	$('#customer').change(function () {
 		order.customer = $(this).val().trim();
 	});
 
-	$('#guests').on('change keyup', function() {
+	$('#guests').on('change keyup', function () {
 		let val = parseInt($(this).val());
 		if (isNaN(val) || val <= 0) {
 			order.guests = null;
@@ -52,7 +52,7 @@ function loadComponents() {
 		checkInputDisabled();
 	});
 
-	$('#table').on('change keyup', function() {
+	$('#table').on('change keyup', function () {
 		let val = $(this).val().trim();
 		order.table = val == '' ? null : val;
 		if (!$('#guests').is(':disabled'))
@@ -60,10 +60,10 @@ function loadComponents() {
 		checkInputDisabled();
 	});
 
-	$('.take_away_button').change(function() {
+	$('.take_away_button').change(function () {
 		order.take_away_type = ($(this).is(':checked') ? $(this).val() : null);
 		let actual_id = $(this).prop('id');
-		$('.take_away_button').each(function() {
+		$('.take_away_button').each(function () {
 			if ($(this).prop('id') != actual_id)
 				$(this).prop('checked', false);
 		});
@@ -78,7 +78,7 @@ function loadComponents() {
 		checkInputDisabled();
 	});
 
-	$('#is_fast_order').change(function() {
+	$('#is_fast_order').change(function () {
 		order.has_tickets = !$(this).is(':checked');
 		if (!order.has_tickets) {
 			disableGuestsAndTable();
@@ -90,7 +90,7 @@ function loadComponents() {
 		checkInputDisabled();
 	});
 
-	$('#is_voucher').change(function() {
+	$('#is_voucher').change(function () {
 		order.is_voucher = $(this).is(':checked');
 
 		if (order.id == null)
@@ -101,11 +101,11 @@ function loadComponents() {
 			} else {
 				$('#paymentMethod').val(prevPaymentMethod).trigger('change');
 			}
-			
+
 		updatePrice();
 	});
 
-	$('#is_for_service').change(function() {
+	$('#is_for_service').change(function () {
 		order.is_for_service = $(this).is(':checked');
 
 		if (order.id == null) {
@@ -119,12 +119,12 @@ function loadComponents() {
 		}
 	});
 
-	$('#notes').change(function() {
+	$('#notes').change(function () {
 		let val = $(this).val().trim();
 		order.notes = val == '' ? null : val;
 	});
 
-	$('#paymentMethod').change(function() {
+	$('#paymentMethod').change(function () {
 		order.payment_method_id = $(this).val();
 	});
 }
@@ -211,7 +211,7 @@ function removeProd(subgroup_index, prod_index) {
 		if (p.quantity <= 0) {
 			if (order.id == null || (p.edited_product && p.original_quantity == 0)) {
 				order_products[subgroup_index].splice(prod_index, 1);
-				if (order_products[subgroup_index].filter( element => element.id != "" ).length == 0) {
+				if (order_products[subgroup_index].filter(element => element.id != "").length == 0) {
 					order_products[subgroup_index] = [];
 				}
 				deleted = true;
@@ -269,8 +269,16 @@ function updatePrice() {
 		$('#totalChangeInstructions').html(total > originalTotalPrice ?
 			'(chiedere al gent. cliente ' + formatPrice(total - originalTotalPrice) + ')' :
 			'(restituire al gent. cliente ' + formatPrice(originalTotalPrice - total) + ')');
+
+		//gestione rendiresto
+		$('#dueAmount').val(escapeDecimal(total - originalTotalPrice).toFixed(2));
+
 	} else {
 		$('#totalPrice').html(formatPrice(total));
 		$('#totalChangeInstructions').html('');
+
+		//gestione rendiresto
+		$('#dueAmount').val((total).toFixed(2));
+
 	}
 }
