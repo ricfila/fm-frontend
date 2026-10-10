@@ -63,6 +63,8 @@ function loadComponents() {
 	$('.take_away_button').change(function () {
 		order.take_away_type = ($(this).is(':checked') ? $(this).val() : null);
 		let actual_id = $(this).prop('id');
+		const actualCustomer = $.trim($('#customer').val());
+
 		$('.take_away_button').each(function () {
 			if ($(this).prop('id') != actual_id)
 				$(this).prop('checked', false);
@@ -75,17 +77,32 @@ function loadComponents() {
 		} else {
 			resumeGuestsAndTable();
 		}
+
 		checkInputDisabled();
+
+		//autocompilazione x ordini bar e ordini flash
+		console.log('take_away_type: ' + order.take_away_type);
+		if (actualCustomer == "FLASH" || actualCustomer == "BAR" || actualCustomer == "")
+			$('#customer').val($('.take_away_button:checked').data('fast-description'));
+
 	});
 
 	$('#is_fast_order').change(function () {
+		const actualCustomer = $.trim($('#customer').val());
 		order.has_tickets = !$(this).is(':checked');
+		
 		if (!order.has_tickets) {
 			disableGuestsAndTable();
 			order.take_away_type = null;
 			$('.take_away_button').prop('checked', false);
+
+			//per ora necessariamente hardcoded, da integrare in un oggetto globale in futuro x estendere i tipi ordini indefinitamente
+			if (actualCustomer == "BAR" || actualCustomer == "")
+				$('#customer').val($('#is_fast_order').data('fast-description'));
 		} else {
 			resumeGuestsAndTable();
+			if (actualCustomer == "FLASH")
+				$('#customer').val('');
 		}
 		checkInputDisabled();
 	});
