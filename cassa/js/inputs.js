@@ -83,7 +83,7 @@ function loadComponents() {
 		//autocompilazione x ordini bar e ordini flash
 		console.log('take_away_type: ' + order.take_away_type);
 		if (actualCustomer == "FLASH" || actualCustomer == "BAR" || actualCustomer == "")
-			$('#customer').val($('.take_away_button:checked').data('fast-description'));
+			$('#customer').val($('.take_away_button:checked').data('fast-description')).trigger('change');
 
 	});
 
@@ -98,11 +98,11 @@ function loadComponents() {
 
 			//per ora necessariamente hardcoded, da integrare in un oggetto globale in futuro x estendere i tipi ordini indefinitamente
 			if (actualCustomer == "BAR" || actualCustomer == "")
-				$('#customer').val($('#is_fast_order').data('fast-description'));
+				$('#customer').val($('#is_fast_order').data('fast-description')).trigger('change');
 		} else {
 			resumeGuestsAndTable();
 			if (actualCustomer == "FLASH")
-				$('#customer').val('');
+				$('#customer').val('').trigger('change');
 		}
 		checkInputDisabled();
 	});
