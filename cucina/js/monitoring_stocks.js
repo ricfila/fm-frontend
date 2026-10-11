@@ -34,7 +34,7 @@ function getStockQuantities() {
 		type: "GET",
 		data: {
 			include_stock_quantities: true,
-			await_cooking_time: false,
+			await_cooking_time: true, //TODO: make checkbox for this
 			from_date: shiftDates.start,
 			to_date: shiftDates.end
 		},

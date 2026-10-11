@@ -92,11 +92,37 @@ function actionOrderMenu(id) {
 	body += '</p><h4 class="mb-0 text-info">Comanda ' + categories[ticket.category_id].name + '</h4>';
 	body += ticketStory(order, ticket);
 
+	body += '<div class="row mb-3">';
+	body += '<div class="col-auto">Id stampante:</div>';
+	body += '<div class="col"><input id="input_printer_id" class="form-control form-control-sm" type="number" autocomplete="off" value="' + categories[ticket.category_id].printer_id + '"></div>';
+	body += '<div class="col-auto"><button class="btn btn-sm btn-dark" onclick="printTicket(' + id + ');"><i class="bi bi-printer me-2"></i>' + (ticket.printed_at == null ? 'Stampa adesso' : 'Ristampa') + '</button></div>';
+	body += '</div>';
+
 	if (ticket.completed_at == null)
 		body += '<button class="btn btn-lg btn-info w-100 my-4" style="font-size: 2em;" onclick="completeTicket(' + id + ', true);"><i class="bi bi-star me-2"></i>Evadi</button>';
 	else
 		body += '<button class="btn btn-lg btn-warning w-100 my-4" style="font-size: 2em;" onclick="completeTicket(' + id + ', false);"><i class="bi bi-box-arrow-left me-2"></i>Ripristina</button>';
 	dialog(title, body);
+}
+
+function printTicket(id) {
+	let printer_id = $('#input_printer_id').val();
+
+	$.ajax({
+		url: apiUrl + '/tickets/' + id + '/print/',
+		type: "GET",
+		data: { printer_id: printer_id },
+		contentType: 'application/json; charset=utf-8',
+		headers: { "Authorization": "Bearer " + token },
+		success: function(response) {
+			showToast(true, 'La comanda è stata stampata con successo');
+			hideDialog();
+			getTickets(actual_status);
+		},
+		error: function(jqXHR, textStatus, errorThrown) {
+			showToast(false, 'Errore nella stampa della comanda: ' + getErrorMessage(jqXHR, textStatus, errorThrown));
+		}
+	});
 }
 
 function completeTicket(id, completed) {
