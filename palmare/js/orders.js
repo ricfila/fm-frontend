@@ -20,6 +20,7 @@ function getList() {
 		},
 		//contentType: 'application/json; charset=utf-8',
 		headers: { "Authorization": "Bearer " + token },
+		timeout: 5000,
 		success: function(response) {
 			$('#page-body').html('');
 			try {

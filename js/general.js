@@ -25,7 +25,7 @@ function getErrorMessage(jqXHR, textStatus, errorThrown) {
 	console.error("Errore AJAX:", textStatus, errorThrown, jqXHR);
 
 	if (jqXHR.status === 0) {
-		return 'Impossibile connettersi al server. Il server potrebbe essere offline o irraggiungibile.';
+		return 'Impossibile connettersi al server, potrebbe essere offline o irraggiungibile.';
 	} else if (jqXHR.status === 401) {
 		return 'Accesso non autorizzato.';
 	} else if (jqXHR.status === 403) {
