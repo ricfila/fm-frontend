@@ -22,7 +22,7 @@
 	<script src="cassa/js/edit_order.js"></script>
 </head>
 <!--
-DA FARE:
+TODO:
 * Finestra di riepilogo degli ordini modificati
 * Correggere il totale: per gli ordini omaggio il totale deve restare 0 anche dopo la modifica
 -->
@@ -293,12 +293,12 @@ DA FARE:
 
 	<!--MODALE SUGGERIMENTO RESTO CASSA-->
 
-	<div class="modal fade" id="modalChange" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal fade" id="modalChange" tabindex="-1" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
 					<i class="bi bi-currency-exchange fw-bold fs-1 me-2"></i>
-					<h1 class="modal-title fs-5" id="">Rendi Resto</h1>
+					<h1 class="modal-title fs-5">Rendi Resto</h1>
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
 				<div class="modal-body">
@@ -335,11 +335,11 @@ DA FARE:
 
 	<!--MODALE IMPOSTAZIONI CASSA-->
 
-	<div class="modal fade" id="modalCheckoutSettings" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal fade" id="modalCheckoutSettings" tabindex="-1" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h1 class="modal-title fs-5" id="exampleModalLabel">Impostazioni cassa</h1>
+					<h1 class="modal-title fs-5">Impostazioni cassa</h1>
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
 				<div class="modal-body">

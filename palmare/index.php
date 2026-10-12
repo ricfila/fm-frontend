@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-	<title>Palmare sagra</title>
+	<title>Palmare - Festival Management</title>
 
 	<base href="../" />
 	<?php include "../bootstrap.php" ?>
@@ -24,7 +24,7 @@
 		<nav class="fixed-top navbar navbar-expand-lg navbar-dark bg-success" style="transition: 0.2s;">
 			<div class="container-lg">
 				<span class="navbar-brand">
-					<a class="navbar-brand me-4" onclick="initList();"><i class="bi bi-compass-fill me-3"></i>Palmare sagra</a><span id="attesa" class="me-4"></span><span id="errorIcon" onclick="showError();"></span>
+					<a class="navbar-brand me-4" onclick="initList();"><i class="bi bi-compass-fill me-3"></i>Palmare</a><span id="attesa" class="me-4"></span><span id="errorIcon" onclick="showError();"></span>
 				</span>
 				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
 					<span class="navbar-toggler-icon"></span>

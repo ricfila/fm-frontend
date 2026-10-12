@@ -4,7 +4,7 @@
 	<base href="../" />
 	<?php include "../bootstrap.php" ?>
 	<title>Login - Festival Management</title>
-	<link rel="icon" type="image/png" href="media/heart-fill.png" />
+	<link rel="icon" type="image/png" href="media/festival-management-logo.png" />
 </head>
 <body>
 	<div class="container">

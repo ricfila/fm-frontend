@@ -7,70 +7,123 @@
 	<?php include "../bootstrap.php" ?>
 
 	<link href="cucina/style.css" rel="stylesheet" />
-	<link href="media/star-fill.png" rel="icon" type="image/png" />
+	<link href="media/display-fill.png" rel="icon" type="image/png" />
 
 	<script src="js/session.js"></script>
 	<script src="cucina/js/main.js"></script>
-	<script src="cucina/js/monitoring_stocks.js"></script>
+	<script src="cucina/js/alerts.js"></script>
 	<script src="cucina/js/manage_stocks.js"></script>
+	<script src="cucina/js/residuals.js"></script>
+	<script src="cucina/js/stocks.js"></script>
 	<script src="cucina/js/tickets.js"></script>
 </head>
 <body style="height: 100vh;">
 	<audio id="alert-sound" src="media/alert_kitchen.mp3" preload="auto"></audio>
 	<div class="container-lg h-100" style="padding-top: 53px;">
-		<nav class="fixed-top navbar navbar-expand-lg navbar-dark bg-primary">
+		<nav class="fixed-top navbar navbar-expand-lg navbar-dark bg-warning">
 			<div class="container-lg">
 				<span class="navbar-brand">
-					<a class="navbar-brand"><i class="bi bi-star-fill me-3"></i>Cucina</a>
+					<a class="navbar-brand"><i class="bi bi-display-fill"></i><span class="d-none d-md-inline ms-3">Cucina</span></a>
 				</span>
 				<ul class="navbar-nav me-auto nav flex-row">
-					<li class="nav-item lead">
-						<a class="nav-link px-3 active" id="wards-link" data-bs-toggle="tab" data-bs-target="#wards"><i class="bi bi-unlock2-fill"></i><span class="d-none d-md-inline ms-2">Stock</span></a>
+					<li class="nav-item lead m-0">
+						<a class="nav-link px-3 active" data-bs-toggle="tab" data-bs-target="#residuals"><i class="bi bi-list-nested"></i><span class="d-none d-md-inline ms-2">Residui</span></a>
 					</li>
-					<li class="nav-item lead">
-						<a class="nav-link px-3" data-bs-toggle="tab" data-bs-target="#tickets"><i class="bi bi-patch-check-fill"></i><span class="d-none d-md-inline ms-2">Comande</span></a>
+					<li class="nav-item lead m-0">
+						<a class="nav-link px-3" data-bs-toggle="tab" data-bs-target="#alerts"><i class="bi bi-bell-fill"></i><span class="d-none d-md-inline ms-2">Notifiche</span></a>
 					</li>
-					<li class="nav-item d-none">
-						<a class="nav-link" id="stocks-link" data-bs-toggle="tab" data-bs-target="#stocks"></a>
+					<li class="nav-item lead m-0">
+						<a class="nav-link px-3" id="wards-link" data-bs-toggle="tab" data-bs-target="#stocks"><i class="bi bi-database-fill"></i><span class="d-none d-md-inline ms-2">Stock</span></a>
+					</li>
+					<li class="nav-item lead m-0">
+						<a class="nav-link px-3" data-bs-toggle="tab" data-bs-target="#settings"><i class="bi bi-gear-fill"></i><span class="d-none d-md-inline ms-2">Impostazioni</span></a>
+					</li>
+					<li class="nav-item lead m-0">
+						<a class="nav-link px-3" data-bs-toggle="tab" data-bs-target="#tickets"><i class="bi bi-printer-fill"></i><span class="d-none d-md-inline ms-2">Comande</span></a>
 					</li>
 				</ul>
-
-				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
-					<span class="navbar-toggler-icon"></span>
-				</button>
-				
-				<div class="collapse navbar-collapse" id="navbarColor01">
-					<ul class="navbar-nav ms-auto">
-						<li class="nav-item mt-3 mt-lg-0">
-							<a class="nav-link" onclick="logout();"><strong class="lead me-4"><i class="bi bi-person-fill me-2"></i><i class="username"></i></strong><i class="bi bi-door-open-fill me-2"></i>Disconnettiti</a>
-						</li>
-					</ul>
-				</div>
 			</div>
 		</nav>
 
 		<div class="tab-content h-100 pt-3 pt-md-4">
-			<div class="tab-pane fade show active" id="wards" role="tabpanel" aria-labelledby="wards-tab">
-				<div class="tab-content">
-					<h3>Seleziona il reparto da monitorare:</h3>
-					<div class="row mt-3" id="ward-list"></div>
+			<div class="tab-pane fade h-100 show active" id="residuals" role="tabpanel" aria-labelledby="residuals-tab">
+				<div class="tab-content h-100 d-flex flex-column">
+					<div class="row mb-3">
+						<div class="col my-auto">
+							<h4 class="m-0"><strong>Quantità residue</strong></h4>
+						</div>
+						<div class="col-auto">
+							<button class="btn btn-lg btn-light py-1" onclick="getResidualQuantities();"><i class="bi bi-arrow-clockwise"></i><span class="d-none d-md-inline ms-2">Aggiorna</span></button>
+						</div>
+					</div>
+					<div id="residuals-body" class="flex-fill" style="overflow-x: hidden; overflow-y: auto;"></div>
 				</div>
 			</div>
-			<div class="tab-pane fade" id="stocks" role="tabpanel" aria-labelledby="stocks-tab">
-				<div class="tab-content">
+
+			<div class="tab-pane fade h-100" id="alerts" role="tabpanel" aria-labelledby="alerts-tab">
+				<div class="tab-content h-100 d-flex flex-column">
 					<div class="row mb-3">
-						<div class="col my-auto"><h5 class="mb-0" id="title-stocks"></h5></div>
-						<div class="col-auto d-flex flex-row">
-							<div class="form-check ps-0">
+						<div class="col my-auto">
+							<h4 class="m-0"><strong>Notifiche</strong></h4>
+						</div>
+						<div class="col-auto">
+							<button class="btn btn-lg btn-light py-1" onclick="getStockQuantities();"><i class="bi bi-arrow-clockwise"></i><span class="d-none d-md-inline ms-2">Aggiorna</span></button>
+						</div>
+					</div>
+					<div id="alert-list" class="flex-fill" style="overflow-x: hidden; overflow-y: auto;"></div>
+				</div>
+			</div>
+
+			<div class="tab-pane fade h-100" id="stocks" role="tabpanel" aria-labelledby="stocks-tab">
+				<div class="tab-content h-100 d-flex flex-column">
+					<div class="row mb-3">
+						<div class="col my-auto">
+							<h4 class="m-0"><strong>Stock</strong></h4>
+						</div>
+						<div class="col-auto">
+							<button class="btn btn-lg btn-light py-1" onclick="getStockQuantities();"><i class="bi bi-arrow-clockwise"></i><span class="d-none d-md-inline ms-2">Aggiorna</span></button>
+						</div>
+					</div>
+					<div id="stock-list" class="flex-fill" style="overflow-x: hidden; overflow-y: auto;"></div>
+				</div>
+			</div>
+
+			<div class="tab-pane fade" id="settings" role="tabpanel" aria-labelledby="alerts-tab">
+				<div class="tab-content">
+					<h4><strong>Impostazioni</strong></h4>
+
+					<div class="row">
+						<div class="col-auto">
+							<div class="form-check ps-0 m-0 h-100">
 								<input type="checkbox" class="btn-check" id="toggleAutoUpdate" autocomplete="off" onchange="toggleAutoUpdate(this.checked);" checked="">
 								<label class="btn btn-outline-primary" id="labeltoggleAutoUpdate" for="toggleAutoUpdate"><i class="bi bi-pause-circle-fill"></i></label>
 							</div>
-							<button class="btn btn-light ms-2" onclick="toggleAutoUpdate(true);"><i class="bi bi-arrow-clockwise"></i><span class="d-none d-md-inline ms-2">Aggiorna</span></button>
 						</div>
+						<div class="col my-auto"><h6 class="m-0">Aggiornamento automatico</h6></div>
 					</div>
-					<div id="ingredient-list"></div>
+
+					<hr>
+					<h2 class="text-primary">Reparti monitorati</h2>
+					<div id="ward-list"></div>
+
+					<hr>
+					<h2 class="text-primary">Ricevi nuove quantità</h2>
+						<div class="form-check">
+							<input class="form-check-input" type="radio" name="inputAwaitCookingTime" id="inputAwaitCookingTime_false" value="false" onchange="toggleAwaitCookingTime('false');">
+							<label class="form-check-label" for="inputAwaitCookingTime_false">Subito dopo la vendita</label>
+						</div>
+						<div class="form-check">
+							<input class="form-check-input" type="radio" name="inputAwaitCookingTime" id="inputAwaitCookingTime_true" value="true" onchange="toggleAwaitCookingTime('true');">
+							<label class="form-check-label" for="inputAwaitCookingTime_true">In anticipo sincronizzato sulla comanda</label>
+						</div>
+
+					<hr>
+					<h2 class="text-primary">Attiva le notifiche per</h2>
+					Puoi selezionare anche ingredienti di reparti non monitorati.
+					<div id="ingredientListAlerts"></div>
 				</div>
 			</div>
+
 			<div class="tab-pane fade h-100" id="tickets" role="tabpanel" aria-labelledby="tickets-tab">
 				<div class="tab-content h-100 d-flex flex-column">
 					<div class="accordion" id="accordionSettings">
@@ -100,7 +153,7 @@
 							<a class="nav-link link-tickets px-2 text-center" onclick="getTickets(3);" id="linktickets3"><i class="bi bi-patch-check-fill"></i><span class="d-none d-sm-inline ms-2">Evase</span></a>
 						</li>
 					</ul>
-					<div id="ticketList" class="pt-3 flex-fill overflow-auto"></div>
+					<div id="ticketList" class="pt-3 flex-fill" style="overflow-x: hidden; overflow-y: auto;"></div>
 				</div>
 				</div>
 			</div>

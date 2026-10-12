@@ -197,15 +197,15 @@ function ticketStory(order, ticket) {
 				trigger_time = new Date(order.created_at);
 		} else {
 			let parent_category = categories[categories[ticket.category_id].parent_category_id];
-			let parent_ticket = order.tickets.find(ticket => ticket.id == parent_category.id);
+			let parent_ticket = order.tickets.find(ticket => ticket.category_id == parent_category.id);
 
 			if (parent_ticket == null)
-				out += '<div class="p-2 alert alert-danger"><strong class="text-danger">Attenzione!</strong> Comanda in attesa del completamento della comanda ' + parent_category.name + ', inesistente per quest\'ordine! Richiederne la stampa forzata.</div>';
+				out += '<div class="p-2 alert alert-danger"><strong class="text-danger">Attenzione!</strong> Comanda in attesa del completamento della comanda <strong>' + parent_category.name + '</strong>, inesistente per quest\'ordine! Richiederne la stampa forzata.</div>';
 			else
 				if (parent_ticket.completed_at != null)
 					trigger_time = new Date(parent_ticket.completed_at);
 				else
-					out += '<i class="bi bi-hourglass me-2"></i>In attesa del completamento della comanda ' + parent_category.name + '<br>';
+					out += '<i class="bi bi-hourglass me-2"></i>In attesa del completamento della comanda <strong>' + parent_category.name + '</strong><br>';
 		}
 
 		if (trigger_time != null) {
