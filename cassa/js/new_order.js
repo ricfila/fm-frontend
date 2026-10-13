@@ -1,106 +1,159 @@
 function getProducts() {
 	
 	$('#productTabsSpinner').show();
-	
-	const params = {
-		offset: 0,
-		order_by: 'order',
-		include_subgroup: true,
-		include_locks: true
-	};
 
 	$.ajax({
 		async: false,
 		url: apiUrl + '/products/',
 		type: "GET",
-		data: params,
+		data: {
+			order_by: 'order',
+			include_ingredients: true,
+			include_locks: true,
+			include_salable_quantity: true,
+			from_date: shiftDates.start,
+			to_date: shiftDates.end
+		},
 		headers: { "Authorization": "Bearer " + token },
 		success: function (response) {
-			last_products = response.products;
-			loadProducts();
+			products = [];
+			response.products.forEach(prod => {
+				products[prod.id] = prod;
+			});
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
 			showToast(false, getErrorMessage(jqXHR, textStatus, errorThrown));
 		}
 	});
+
+	$.ajax({
+		async: false,
+		url: apiUrl + '/ingredients/',
+		type: "GET",
+		data: {
+			include_stock_quantities: true,
+			await_cooking_time: false,
+			from_date: shiftDates.start,
+			to_date: shiftDates.end
+		},
+		headers: { "Authorization": "Bearer " + token },
+		success: function(response) {
+			ingredients = [];
+			response.ingredients.forEach(ingredient => {
+				if (ingredient.sell_if_stocked) {
+					ingredients[ingredient.id] = ingredient.added_stock - ingredient.consumed_stock;
+				}
+			});
+		},
+		error: function(jqXHR, textStatus, errorThrown) {
+			showToast(false, 'Errore nella lettura degli ingredienti: ' + getErrorMessage(jqXHR, textStatus, errorThrown));
+		}
+	});
+	
+	loadProducts();
 }
 
 function loadProducts() {
-	subgroups = [];
-	subgroup_products = [];
+	let subgroup_html = [];
 
-	for (let i = 0; i < last_products.length; i++) {
-		let product = last_products[i];
-		let subgroup = product.subgroup;
-
-		if (subgroups[subgroup.id] == null) {
-			subgroups[subgroup.id] = subgroup;
-			subgroup_products[subgroup.id] = [];
+	products.forEach(prod => {
+		if (subgroup_html[prod.subgroup_id] == null) {
+			subgroup_html[prod.subgroup_id] = headSubgroup(subgroups[prod.subgroup_id].name, 2);
+			subgroup_html[prod.subgroup_id] += '<div class="row">';
 		}
 
-		subgroup_products[subgroup.id][product.id] = product;
-	}
+		subgroup_html[prod.subgroup_id] += btnProduct(prod);
+	});
+	subgroup_html.forEach((_, id) => { subgroup_html[id] += '</div>'; });
 
-	// qui si biforca se il flag è attivo diventano tabs, se il flag è disattivato diventano lista di prodotti
 	if (localStorage.getItem('FM_show_menu_tabs') == 'true') {
-		loadProductsAsTabs(subgroups, subgroup_products);
+		let group_html = [];
+
+		subgroup_html.forEach((html, subgroup_id) => {
+			let group_id = subgroups[subgroup_id].group_id;
+			if (group_html[group_id] == null)
+				group_html[group_id] = '';
+
+			group_html[group_id] += html;
+		});
+
+		let i = 0;
+		let outTab = '';
+		let outContent = '';
+		group_html.forEach((html, group_id) => {
+			outTab += '<li class="nav-item m-1" role="presentation">';
+			outTab += '<button class="tabs-product rounded p-3' + (i == 0 ? ' active' : '') + '" id="tab-' + group_id + '" data-bs-toggle="tab" data-bs-target="#content-' + group_id + '" type="button" role="tab" aria-controls="content-' + group_id + '" aria-selected="' + (i == 0 ? 'true' : 'false') + '">' + groups[group_id].name + '</button>';
+			outTab += '</li>';
+
+			outContent += '<div class="tab-pane fade' + (i == 0 ? ' show active' : '') + '" id="content-' + group_id + '" role="tabpanel" aria-labelledby="tab-' + group_id + '">';
+			outContent += '<div class="row">';
+			outContent += html;
+			outContent += '</div>';
+			outContent += '</div>';
+
+			i++;
+		});
+
+		$('#productTabs').html(outTab);
+		const startHue = 25;
+		$('.tabs-product').each((i, tab) => {
+			tab.style.setProperty('--bg-color', `hsl(${(startHue + i * 137.508) % 360}, 65%, 45%)`);
+		});
+		
+		$('#productTabsContent').html(outContent);
+		// fa vedere la prima tab aperta di default, altrimenti se si cambia tab e si torna indietro rimane aperta l'ultima tab selezionata
+		$('#productTabs button:first').trigger('click');
+
+		$('#productTabsSpinner').hide();
+		
 		$('#productList').hide();
 		$('#productTabsContainer').show();
 	} else {
-		loadProductsAsList(subgroups, subgroup_products);
+		let out = '';
+		subgroup_html.forEach(html => { out += html; });
+		$('#productList').html(out);
+
 		$('#productTabsContainer').hide();
 		$('#productList').show();
 	}
 }
 
-function loadProductsAsTabs(subgroups, subgroup_products) {
-	let out = '';
-
-	subgroups.forEach((subgroup, i) => {
-		out += '<li class="nav-item m-1" role="presentation">';
-		out += '<button class="tabs-product rounded p-3' + (i == 0 ? ' active' : '') + '" id="tab-' + subgroup.id + '" data-bs-toggle="tab" data-bs-target="#content-' + subgroup.id + '" type="button" role="tab" aria-controls="content-' + subgroup.id + '" aria-selected="' + (i == 0 ? 'true' : 'false') + '">' + subgroup.name + '</button>';
-		out += '</li>';
-	});
-	$('#productTabs').html(out);
-
-	const startHue = 25;
-	$('.tabs-product').each((i, tab) => {
-		tab.style.setProperty('--bg-color', `hsl(${(startHue + i * 137.508) % 360}, 65%, 45%)`);
-	});
-
-	out = '';
-	subgroups.forEach((subgroup, i) => {
-		out += '<div class="tab-pane fade' + (i == 0 ? ' show active' : '') + '" id="content-' + subgroup.id + '" role="tabpanel" aria-labelledby="tab-' + subgroup.id + '">';
-		out += '<div class="row">';
-		subgroup_products[i].forEach((prod, j) => {
-			out += '<div class="col-6 col-sm-4 col-md-3 col-lg-2 ps-0 pe-1">';
-			out += '<button class="btn btn-product px-1 py-0 mb-1 text-light' + (prod.locked ? ' disabled text-decoration-line-through' : '') + '" style="--bg-color: ' + prod.color + ';" onclick="addProd(' + i + ', ' + j + ');">' + prod.short_name + '</button>';
-			out += '</div>';
-		});
-		out += '</div>';
-		out += '</div>';
-	});
-
-	$('#productTabsContent').html(out);
-	// fa vedere la prima tab aperta di default, altrimenti se si cambia tab e si torna indietro rimane aperta l'ultima tab selezionata
-	$('#productTabs button:first').trigger('click');
-
-	$('#productTabsSpinner').hide();
+function headSubgroup(name, mb = 0) {
+	let out = '<div class="row mt-2 mb-' + mb + '">';
+	out += '<div class="col-auto my-auto"><h6 class="m-0">' + name + '</h6></div>';
+	out += '<div class="col p-0"><hr class="m-2"></div>';
+	out += '</div>';
+	return out;
 }
 
-function loadProductsAsList(subgroups, subgroup_products) {
-	let out = '';
-	subgroups.forEach((subgroup, i) => {
-		out += headSubgroup(subgroup.name, 2);
-		out += '<div class="row">';
-		subgroup_products[i].forEach((prod, j) => {
-			out += '<div class="col-6 col-sm-4 col-md-3 col-lg-2 ps-0 pe-1">';
-			out += '<button class="btn btn-product px-1 py-0 mb-1 text-light' + (prod.locked ? ' disabled text-decoration-line-through' : '') + '" style="--bg-color: ' + prod.color + ';" onclick="addProd(' + i + ', ' + j + ');">' + prod.short_name + '</button>';
-			out += '</div>';
-		});
-		out += '</div>';
+function btnProduct(prod) {
+	out = '<div class="col-6 col-sm-4 col-md-3 col-lg-2 ps-0 pe-1">';
+	out += '<button class="btn btn-product px-1 py-0 mb-1 text-light' + (prod.locked ? ' disabled text-decoration-line-through' : '') + '" style="--bg-color: ' + prod.color + ';" onclick="addProd(' + prod.id + ');">';
+	out += prod.short_name;
+
+	let salable_quantity = getSalableQuantity(prod.id);
+	if (salable_quantity != null && salable_quantity <= 20) {
+		products[prod.id].salable_quantity = salable_quantity;
+		out += ' <span class="badge bg-danger badge_salable_quantity" id="salable_quantity_' + prod.id + '">' + products[prod.id].salable_quantity + '</span>';
+	}
+		
+	out += '</button>';
+	out += '</div>';
+	return out;
+}
+
+function getSalableQuantity(prod_id) {
+	let quantities = [];
+	products[prod_id].ingredients.forEach(prod_ing => {
+		let ing_id = prod_ing.ingredient_id;
+		if (prod_ing.is_default && ingredients[ing_id] != null) {
+			quantities.push(Math.floor(ingredients[ing_id] / prod_ing.max_quantity));
+		}
 	});
-	$('#productList').html(out);
+	if (quantities.length > 0)
+		return Math.min(...quantities);
+	else
+		return null;
 }
 
 
@@ -130,9 +183,6 @@ function newOrder(parent_order_id = null, parent_order_customer = null, parent_o
 	};
 
 	order_products = [];
-	subgroups.forEach((_, i) => {
-		order_products[i] = [];
-	});
 
 	prevGuests = null;
 	prevTable = null;

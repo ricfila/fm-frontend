@@ -95,11 +95,8 @@ TODO:
 								</div>
 							</div>
 							<div id="productTabsContainer" class="px-3 pt-2 pb-3">
-								<ul id="productTabs" class="nav nav-pills mb-3" role="tablist">
-								</ul>
-								<hr>
-								<div id="productTabsContent" class="tab-content">
-								</div>
+								<ul id="productTabs" class="nav nav-pills mb-3" role="tablist"></ul>
+								<div id="productTabsContent" class="tab-content"></div>
 								<div id="productTabsSpinner" class="row">
 									<div class="col-auto spinner-border m-3"></div>
 									<div class="col my-auto">Caricamento in corso...</div>

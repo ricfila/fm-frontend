@@ -28,10 +28,7 @@ async function loadFromServer(order_id, parent_order = false) {
 
 		order_products = [];
 		order.products.forEach(order_product => {
-			let subgroup_id = order_product.product.subgroup_id;
-			if (order_products[subgroup_id] == null)
-				order_products[subgroup_id] = [];
-			order_products[subgroup_id][order_product.product_id] = {
+			order_products[order_product.product_id] = {
 				quantity: order_product.quantity,
 				notes: order_product.notes,
 				price: order_product.price
@@ -72,58 +69,51 @@ function loadOrder() {
 }
 
 function loadOrderProducts() {
-	let out = '';
-	order_products.forEach((subgroup_p, i) => {
-		if (subgroup_p.length > 0) {
-			out += headSubgroup(subgroups[i].name, 2);
-		}
-		subgroup_p.forEach((p, j) => {
-			let prod = subgroup_products[i][j];
-			out += productRow(i, j, prod.name, prod.price, p);
-		});
+	let subgroup_html = [];
+
+	order_products.forEach((prod, id) => {
+		let subgroup_id = products[id].subgroup_id;
+		if (subgroup_html[subgroup_id] == null)
+			subgroup_html[subgroup_id] = headSubgroup(subgroups[subgroup_id].name, 2);
+
+		subgroup_html[subgroup_id] += productRow(id, prod);
 	});
 
 	document.getElementById('orderProducts').scrollTop = 0; //TODO: risolvere l'ombra che rimane in alto se lo scorrimento è completo verso il basso al momento dello svuotamento
+
+	let out = '';
+	subgroup_html.forEach(html => { out += html; });
 	$('#orderProducts').html(out);
 	updatePrice();
 }
 
-function headSubgroup(name, mb = 0) {
-	let out = '<div class="row mt-2 mb-' + mb + '">';
-	out += '<div class="col-auto my-auto"><h6 class="m-0">' + name + '</h6></div>';
-	out += '<div class="col p-0"><hr class="m-2"></div>';
-	out += '</div>';
-	return out;
-}
-
-function productRow(i, j, name, price, prod) {
-	let id = i + '_' + j;
+function productRow(id, order_product) {
 	let out = '';
-	let rowClass = (prod.original_quantity != null ? (prod.quantity > prod.original_quantity ? 'order-row-inc' : 'order-row-dec') : 'order-row');
+	let rowClass = (order_product.original_quantity != null ? (order_product.quantity > order_product.original_quantity ? 'order-row-inc' : 'order-row-dec') : 'order-row');
 	out += '<div class="row d-flex align-items-center py-1 ' + rowClass + '">';
 
 	// Buttons and quantity
 	out += '<div class="col-auto p-0"><div class="row d-flex align-items-center">';
-	out += '<div class="col pe-1"><button class="btn btn-sm btn-dark" onclick="removeProd(' + i + ', ' + j + ');"><i class="bi bi-dash-lg"></i></button></div>';
-	out += '<div class="col p-0 text-right"><button class="btn btn-sm btn-info" onclick="addProd(' + i + ', ' + j + ');"><i class="bi bi-plus-lg"></i></button></div>';
-	out += '<div class="col"><strong>' + prod.quantity + '</strong></div>';
+	out += '<div class="col pe-1"><button class="btn btn-sm btn-dark" onclick="removeProd(' + id + ');"><i class="bi bi-dash-lg"></i></button></div>';
+	out += '<div class="col p-0 text-right"><button class="btn btn-sm btn-info" onclick="addProd(' + id + ');"><i class="bi bi-plus-lg"></i></button></div>';
+	out += '<div class="col"><strong>' + order_product.quantity + '</strong></div>';
 	out += '</div>';
 
 	// Name and notes
-	out += '</div><div class="col">' + name;
-	out += '<span id="btnaddnotes' + id + '"' + (prod.notes != null ? ' class="d-none"' : '') + '><button class="btn btn-sm btn-light ms-3" onclick="addNotes(' + i + ', ' + j + ');"><i class="bi bi-pencil-fill me-2"></i>Note</button></span>';
-	out += '<span id="tagnotes' + id + '"' + (prod.notes == null ? ' class="d-none"' : '') + '><br>';
+	out += '</div><div class="col">' + products[id].name;
+	out += '<span id="btnaddnotes' + id + '"' + (order_product.notes != null ? ' class="d-none"' : '') + '><button class="btn btn-sm btn-light ms-3" onclick="addNotes(' + id + ');"><i class="bi bi-pencil-fill me-2"></i>Note</button></span>';
+	out += '<span id="tagnotes' + id + '"' + (order_product.notes == null ? ' class="d-none"' : '') + '><br>';
 	out += '<i class="bi bi-arrow-return-right me-2"></i>';
-	out += '<input class="form-control form-control-sm d-inline" type="text" id="notes' + id + '" onchange="updateNotes(' + i + ', ' + j + ');" maxlength="63" style="width: 300px;" value="' + (prod.notes != null ? prod.notes : '') + '" />&nbsp;';
-	out += '<button class="btn btn-sm btn-light" onclick="removeNotes(' + i + ', ' + j + ');"><i class="bi bi-x-lg"></i></button></span>';
-	if (prod.category_id != null)
-		out += '<br><small>Assegnato alla comanda ' + categories[prod.category_id].name + '</small>';
-	else if (prod.original_quantity == 0)
+	out += '<input class="form-control form-control-sm d-inline" type="text" id="notes' + id + '" onchange="updateNotes(' + id + ');" maxlength="63" style="width: 300px;" value="' + (order_product.notes != null ? order_product.notes : '') + '" />&nbsp;';
+	out += '<button class="btn btn-sm btn-light" onclick="removeNotes(' + id + ');"><i class="bi bi-x-lg"></i></button></span>';
+	if (order_product.category_id != null)
+		out += '<br><small>Assegnato alla comanda ' + categories[order_product.category_id].name + '</small>';
+	else if (order_product.original_quantity == 0)
 		out += '<br><small class="text-danger">Non assegnato a una comanda</small>';
 	out += '</div>';
 
 	// Price
-	out += '<div class="col-auto p-0">' + formatPrice(price * prod.quantity) + '</div></div>';
+	out += '<div class="col-auto p-0">' + formatPrice(products[id].price * order_product.quantity) + '</div></div>';
 	return out;
 }
 

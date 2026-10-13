@@ -1,14 +1,6 @@
-function selectedProducts() {
-	let num_products = 0;
-	order_products.forEach((list, _) => {
-		num_products += list.filter(element => element.id != "").length;
-	});
-	return num_products;
-}
-
 async function saveOrder() {
 	// Check products
-	if (selectedProducts() == 0) {
+	if (order_products.filter(() => { return true; }).length == 0) {
 		showToast(false, 'Nessun prodotto selezionato!', 2);
 		return;
 	}
@@ -39,8 +31,8 @@ async function saveOrder() {
 
 	// Check include cover charge
 	let include_cover_charge = false;
-	order_products.forEach((list, i) => {
-		if (list.length > 0 && subgroups[i].include_cover_charge) {
+	order_products.forEach((_, id) => {
+		if (subgroups[products[id].subgroup_id].include_cover_charge) {
 			include_cover_charge = true;
 		}
 	});
@@ -79,16 +71,14 @@ function sendOrder() {
 		menus: []
 	};
 
-	order_products.forEach((subgroup, i) => {
-		subgroup.forEach((prod, j) => {
-			params.products.push({
-				product_id: subgroup_products[i][j].id,
-				quantity: prod.quantity,
-				notes: prod.notes,
-				edited_product: prod.edited_product,
-				original_quantity: prod.original_quantity,
-				category_id: prod.category_id
-			});
+	order_products.forEach((prod, id) => {
+		params.products.push({
+			product_id: id,
+			quantity: prod.quantity,
+			notes: prod.notes,
+			edited_product: prod.edited_product,
+			original_quantity: prod.original_quantity,
+			category_id: prod.category_id
 		});
 	});
 

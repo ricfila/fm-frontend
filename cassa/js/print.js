@@ -52,19 +52,18 @@ function populateAndPrint(print_w, order, order_products, auto_close) {
 		}
 		print_w.document.getElementById('outGuests').innerHTML = description;
 
-		let products = '';
-		subgroups.forEach((subgroup, i) => {
-			if (order_products[i] != null) {
-				if (order_products[i].length > 0) {
-					products += headSubgroup(subgroup.name);
-				}
-				order_products[i].forEach((p, j) => {
-					let prod = subgroup_products[i][j];
-					products += productRowPrint(prod.name, prod.price, p.quantity, p.notes);
-				});
-			}
+		let subgroup_html = [];
+		order_products.forEach((prod, id) => {
+			let subgroup_id = products[id].subgroup_id;
+			if (subgroup_html[subgroup_id] == null)
+				subgroup_html[subgroup_id] = headSubgroup(subgroups[subgroup_id].name);
+
+			subgroup_html[subgroup_id] += productRowPrint(id, prod);
 		});
-		print_w.document.getElementById('orderProducts').innerHTML = products;
+
+		let out_products = '';
+		subgroup_html.forEach(html => { out_products += html; });
+		print_w.document.getElementById('orderProducts').innerHTML = out_products;
 
 		print_w.document.getElementById('outPrice').innerHTML = formatPrice(order.price);
 		if (order.notes != null && order.notes != '') {
@@ -86,18 +85,18 @@ function populateAndPrint(print_w, order, order_products, auto_close) {
 	}
 };
 
-function productRowPrint(name, price, quantity, notes) {
+function productRowPrint(id, order_product) {
 	let out = '';
 	out += '<div class="row">';
 
-	out += '<div class="col-1 text-center">' + quantity + '</div>';
+	out += '<div class="col-1 text-center">' + order_product.quantity + '</div>';
 
-	out += '<div class="col">' + name;
-	if (notes != null && notes != '')
-		out +='<br><i class="bi bi-arrow-return-right me-2"></i>' + notes;
+	out += '<div class="col">' + products[id].name;
+	if (order_product.notes != null && order_product.notes != '')
+		out +='<br><i class="bi bi-arrow-return-right me-2"></i>' + order_product.notes;
 	out += '</div>';
 
-	out += '<div class="col-auto">' + formatPrice(price * quantity) + '</div>'; //TODO: price needs to be calculated before (field price of order_product)
+	out += '<div class="col-auto">' + formatPrice(products[id].price * order_product.quantity) + '</div>'; //TODO: price needs to be calculated before (field price of order_product)
 	out += '</div>';
 	return out;
 }

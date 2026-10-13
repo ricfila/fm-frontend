@@ -165,32 +165,37 @@ function resumeGuestsAndTable() {
 		$('#table').val(order.parent_order.table);
 }
 
-function addProd(subgroup_index, prod_index) {
-	let p = (order_products[subgroup_index] != null ? order_products[subgroup_index][prod_index] : null);
-	if (p) {
-		p.quantity++;
+function addProd(prod_id) {
+	let prod = order_products[prod_id];
+
+	if (prod) {
+		prod.quantity++;
+
 		if (order.id != null) {
-			if (p.edited_product) {
-				if (p.quantity == p.original_quantity) {
-					order_products[subgroup_index][prod_index]["edited_product"] = null;
-					order_products[subgroup_index][prod_index]["original_quantity"] = null;
+			if (prod.edited_product) {
+				if (prod.quantity == prod.original_quantity) {
+					prod.edited_product = null;
+					prod.original_quantity = null;
 				}
 			} else {
-				order_products[subgroup_index][prod_index]["edited_product"] = true;
-				order_products[subgroup_index][prod_index]["original_quantity"] = p.quantity - 1;
+				prod.edited_product = true;
+				prod.original_quantity = prod.quantity - 1;
 			}
 		}
 	} else {
-		if (order_products[subgroup_index] == null)
-			order_products[subgroup_index] = [];
+		order_products[prod_id] = {
+			quantity: 1,
+			notes: null
+		};
 
-		order_products[subgroup_index][prod_index] = { quantity: 1, notes: null };
 		if (order.id != null) {
-			order_products[subgroup_index][prod_index]["edited_product"] = true;
-			order_products[subgroup_index][prod_index]["original_quantity"] = 0;
-			order_products[subgroup_index][prod_index]["category_id"] = fallbackCategory(subgroup_products[subgroup_index][prod_index].category_id);
+			order_products[prod_id].edited_product = true;
+			order_products[prod_id].original_quantity = 0;
+			order_products[prod_id].category_id = fallbackCategory(products[prod_id].category_id);
 		}
 	}
+
+	updateIngredients(prod_id, true);
 	loadOrderProducts();
 }
 
@@ -219,68 +224,85 @@ function fallbackCategory(cat) {
 	return null;
 }
 
-function removeProd(subgroup_index, prod_index) {
-	let p = (order_products[subgroup_index] != null ? order_products[subgroup_index][prod_index] : null);
-	if (p && p.quantity > 0) {
-		p.quantity--;
+function removeProd(prod_id) {
+	let prod = order_products[prod_id];
+
+	if (prod && prod.quantity > 0) {
+		prod.quantity--;
 		let deleted = false;
 
-		if (p.quantity <= 0) {
-			if (order.id == null || (p.edited_product && p.original_quantity == 0)) {
-				order_products[subgroup_index].splice(prod_index, 1);
-				if (order_products[subgroup_index].filter(element => element.id != "").length == 0) {
-					order_products[subgroup_index] = [];
-				}
+		if (prod.quantity <= 0) {
+			if (order.id == null || (prod.edited_product && prod.original_quantity == 0)) {
+				delete order_products[prod_id];
 				deleted = true;
 			}
 		}
 		if (order.id != null && !deleted) {
-			if (p.edited_product) {
-				if (p.quantity == p.original_quantity) {
-					order_products[subgroup_index][prod_index]["edited_product"] = null;
-					order_products[subgroup_index][prod_index]["original_quantity"] = null;
+			if (prod.edited_product) {
+				if (prod.quantity == prod.original_quantity) {
+					prod.edited_product = null;
+					prod.original_quantity = null;
 				}
 			} else {
-				order_products[subgroup_index][prod_index]["edited_product"] = true;
-				order_products[subgroup_index][prod_index]["original_quantity"] = p.quantity + 1;
+				prod.edited_product = true;
+				prod.original_quantity = prod.quantity + 1;
 			}
 		}
 	}
+
+	updateIngredients(prod_id, false);
 	loadOrderProducts();
 }
 
-function addNotes(subgroup_index, prod_index) {
-	let id = subgroup_index + '_' + prod_index;
-	$('#tagnotes' + id).removeClass('d-none');
-	$('#btnaddnotes' + id).addClass('d-none');
-	$('#notes' + id).val('').focus();
+function updateIngredients(prod_id, adding) {
+	products[prod_id].ingredients.forEach(prod_ing => {
+		if (prod_ing.is_default && ingredients[prod_ing.ingredient_id] != null) {
+			if (adding)
+				ingredients[prod_ing.ingredient_id] -= prod_ing.max_quantity;
+			else
+				ingredients[prod_ing.ingredient_id] += prod_ing.max_quantity;
+		}
+	});
+
+	products.forEach((prod, id) => {
+		if (prod.salable_quantity != null) {
+			$('#salable_quantity_' + id).html(getSalableQuantity(id));
+		}
+	});
 }
 
-function updateNotes(subgroup_index, prod_index) {
-	let val = $('#notes' + subgroup_index + '_' + prod_index).val().trim();
-	order_products[subgroup_index][prod_index].notes = val == '' ? null : val;
+//TODO changing notes and not quantity needs anyway to set edited_product = true
+
+function addNotes(prod_id) {
+	$('#tagnotes' + prod_id).removeClass('d-none');
+	$('#btnaddnotes' + prod_id).addClass('d-none');
+	$('#notes' + prod_id).val('').focus();
 }
 
-function removeNotes(subgroup_index, prod_index) {
-	let id = subgroup_index + '_' + prod_index;
-	$('#btnaddnotes' + id).removeClass('d-none');
-	$('#tagnotes' + id).addClass('d-none');
-	order_products[subgroup_index][prod_index].notes = null;
+function updateNotes(prod_id) {
+	let val = $('#notes' + prod_id).val().trim();
+	order_products[prod_id].notes = val == '' ? null : val;
+}
+
+function removeNotes(prod_id) {
+	$('#btnaddnotes' + prod_id).removeClass('d-none');
+	$('#tagnotes' + prod_id).addClass('d-none');
+	order_products[prod_id].notes = null;
 }
 
 function updatePrice() {
 	let total = 0;
+
 	if (!order.is_voucher) {
 		total += settings.cover_charge * order.guests;
 
-		order_products.forEach((subgroup_p, i) => {
-			subgroup_p.forEach((p, j) => {
-				let prod = subgroup_products[i][j];
-				total += prod.price * p.quantity;
-			});
+		order_products.forEach((prod, id) => {
+			total += products[id].price * prod.quantity;
 		});
 	}
+
 	order.price = total;
+
 	if (order.id != null && total != originalTotalPrice) {
 		$('#totalPrice').html('<span style="text-decoration: line-through;">' + formatPrice(originalTotalPrice) + '</span>&nbsp;<span class="text-' + (total > originalTotalPrice ? 'success' : 'danger') + '">' + formatPrice(total) + '</span>');
 		$('#totalChangeInstructions').html(total > originalTotalPrice ?

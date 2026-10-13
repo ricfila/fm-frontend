@@ -1,8 +1,9 @@
 var order = null;
 var order_products = [];
-var last_products = null;
+var groups = [];
 var subgroups = [];
-var subgroup_products = [];
+var products = [];
+var ingredients = [];
 var payment_methods = [];
 
 var recent_orders = [];
@@ -34,10 +35,46 @@ function initialize() {
 	});
 
 	$.ajax({
+		async: false,
+		url: apiUrl + '/groups/',
+		type: "GET",
+		data: { order_by: 'order' },
+		headers: { "Authorization": "Bearer " + token },
+		success: function (response) {
+			response.groups.forEach(group => {
+				groups[group.id] = group;
+			});
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+			showToast(false, 'Errore nella ricezione dei gruppi di prodotti: ' + getErrorMessage(jqXHR, textStatus, errorThrown));
+		}
+	});
+
+	$.ajax({
+		async: false,
+		url: apiUrl + '/subgroups/',
+		type: "GET",
+		data: { order_by: 'order' },
+		headers: { "Authorization": "Bearer " + token },
+		success: function (response) {
+			response.subgroups.forEach(subgroup => {
+				subgroups[subgroup.id] = subgroup;
+			});
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+			showToast(false, 'Errore nella ricezione dei sottogruppi di prodotti: ' + getErrorMessage(jqXHR, textStatus, errorThrown));
+		}
+	});
+
+	$.ajax({
 		async: true,
 		url: apiUrl + '/orders/',
 		type: "GET",
-		data: { limit: MAX_RECENT_ORDERS, order_by: '-created_at', created_by_user: true },
+		data: {
+			limit: MAX_RECENT_ORDERS,
+			order_by: '-created_at',
+			created_by_user: true
+		},
 		headers: { "Authorization": "Bearer " + token },
 		success: function (response) {
 			recent_orders = response.orders;
@@ -53,7 +90,7 @@ function initialize() {
 
 $(document).ready(function () {
 	$('#newOrderItem').click(async function () {
-		if (selectedProducts() > 0) {
+		if (order_products.filter((el) => { return el.edited_product; }).length > 0) {
 			let ok = await modalConfirm('<span class="text-success"><i class="bi bi-plus-circle me-2"></i>Nuovo ordine</span>', 'Iniziare un <strong>nuovo ordine</strong>? Tutte le modifiche non salvate andranno perse.');
 			if (ok) newOrder();
 		} else newOrder();
